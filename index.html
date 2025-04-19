@@ -1,0 +1,889 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <title>Three.js MarchingCubes - 線條生長</title>
+  <style>
+    body { 
+        position: relative;
+        margin: 0; 
+        overflow: hidden; 
+        background-color: #ffffff; /* 改為白色背景 */
+    }
+    canvas { display: block; }
+    .control-panel {
+      position: absolute;
+      width: 250px; /* 稍微加寬 */
+      padding: 15px;
+      border-radius: 8px;
+      font-family: 'Arial', sans-serif;
+      font-size: 14px;
+      background: rgba(25, 25, 25, 0.85);
+      color: #e0e0e0;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+      max-height: calc(100vh - 20px); /* 避免超出視窗 */
+      overflow-y: auto;
+    }
+    .thick-to-thin-panel {
+        top: 10px;
+        left: 10px;
+    }
+    .thin-to-thick-panel {
+        top: 10px;
+        right: 10px;
+    }
+    .common-panel {
+        position: absolute;
+        bottom: 10px;
+        left: 50%;
+        transform: translateX(-50%);
+        height: auto;
+        width: 350px; /* 可以根據內容調整寬度 */
+        flex-direction: column; /* 讓元素垂直排列 */
+        align-items: center; /* 居中對齊 */
+    }
+    .panel-title {
+      font-size: 16px;
+      font-weight: bold;
+      margin-top: 5px;
+      margin-bottom: 15px;
+      text-align: center;
+      border-bottom: 1px solid #444;
+      padding-bottom: 8px;
+      width: 100%;
+    }
+    .control-group {
+      margin-bottom: 12px;
+      width: 100%;
+    }
+    .control-label {
+      display: block;
+      margin-bottom: 5px;
+      font-weight: bold;
+      color: #e0e0e0;
+    }
+    .value-display {
+      float: right;
+      font-weight: normal;
+      color: #bdbdbd;
+    }
+    input[type="range"] {
+      width: 100%;
+      margin-top: 5px;
+      -webkit-appearance: none;
+      height: 6px;
+      background: #444;
+      border-radius: 3px;
+      outline: none;
+    }
+    input[type="range"]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      width: 15px;
+      height: 15px;
+      background: #e0e0e0;
+      border-radius: 50%;
+      cursor: pointer;
+    }
+    input[type="range"]::-moz-range-thumb {
+      width: 15px;
+      height: 15px;
+      background: #e0e0e0;
+      border-radius: 50%;
+      cursor: pointer;
+      border: none;
+    }
+    button {
+      width: 100%;
+      margin-top: 15px;
+      padding: 8px;
+      background-color: #424242;
+      color: #e0e0e0;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-weight: bold;
+      transition: background-color 0.2s;
+    }
+    button:hover {
+      background-color: #616161;
+    }
+  </style>
+
+  <!-- Import Map：把三方模組名稱映射到 CDN ESM URL -->
+  <script type="importmap">
+  {
+    "imports": {
+      "three": "https://cdn.jsdelivr.net/npm/three@0.158.0/build/three.module.js",
+      "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.158.0/examples/jsm/",
+      "GLTFExporter": "https://cdn.jsdelivr.net/npm/three@0.158.0/examples/jsm/exporters/GLTFExporter.js"
+    }
+  }
+  </script>
+
+  <!-- Shader 直接內嵌 -->
+  <script id="vertexShader" type="x-shader/x-vertex">
+    uniform vec3 viewVector;
+    uniform vec2 uResolution;
+    uniform float uTime;
+    varying vec2 vUv;
+    varying float opacity;
+    void main() {
+      vUv = uv;
+      vec4 mvPos = modelViewMatrix * vec4(position, 1.0);
+      gl_Position = projectionMatrix * mvPos;
+      vec3 nNormal = normalize(normalMatrix * normal);
+      vec3 nView   = normalize(viewVector - mvPos.xyz);
+      opacity = dot(nNormal, nView);
+      opacity = 1.0 - abs(opacity * 1.3);
+    }
+  </script>
+  <script id="fragmentShader" type="x-shader/x-fragment">
+    uniform vec3 uColor;
+    uniform vec2 uResolution;
+    uniform float uTime;
+    varying vec2 vUv;
+    varying float opacity;
+    void main() {
+      vec2 d = gl_FragCoord.xy / uResolution;
+      vec3 fade = vec3(d.x, d.y, 1.0);
+      vec3 c = mix(vec3(0.0), fade * uColor, opacity);
+      gl_FragColor = vec4(c, 1.0);
+    }
+  </script>
+</head>
+<body>
+
+  <!-- 控制面板 HTML - Thick-to-Thin -->
+  <div id="thickToThinPanel" class="control-panel thick-to-thin-panel">
+    <div class="panel-title">由粗到細 線條控制</div>
+    <div class="control-group">
+      <label class="control-label">最粗粗度 (強度): <span id="ttStartStrengthValue" class="value-display"></span></label>
+      <input type="range" id="ttStartStrengthSlider" min="0" max="0.1" step="0.01">
+    </div>
+    <div class="control-group">
+      <label class="control-label">最細粗度 (強度): <span id="ttEndStrengthValue" class="value-display"></span></label>
+      <input type="range" id="ttEndStrengthSlider" min="0.0" max="0.1" step="0.01"> <!-- Allow 0 -->
+    </div>
+    <div class="control-group">
+      <label class="control-label">最短長度: <span id="ttMinLengthValue" class="value-display"></span></label>
+      <input type="range" id="ttMinLengthSlider" min="0.5" max="5.0" step="0.1">
+    </div>
+    <div class="control-group">
+      <label class="control-label">最長長度: <span id="ttMaxLengthValue" class="value-display"></span></label>
+      <input type="range" id="ttMaxLengthSlider" min="0.5" max="5.0" step="0.1">
+    </div>
+    <div class="control-group">
+      <label class="control-label">收縮速率 (冪): <span id="ttShrinkPowerValue" class="value-display"></span></label>
+      <input type="range" id="ttShrinkPowerSlider" min="0.1" max="5.0" step="0.05">
+    </div>
+    <div class="control-group">
+      <label class="control-label">線條數量: <span id="ttNumLinesValue" class="value-display"></span></label>
+      <input type="range" id="ttNumLinesSlider" min="0" max="10" step="1"> <!-- Allow 0 -->
+    </div>
+  </div>
+
+  <!-- 控制面板 HTML - Thin-to-Thick -->
+  <div id="thinToThickPanel" class="control-panel thin-to-thick-panel">
+      <div class="panel-title">由細到粗 線條控制</div>
+      <div class="control-group">
+          <label class="control-label">最細粗度 (強度): <span id="thStartStrengthValue" class="value-display"></span></label>
+          <input type="range" id="thStartStrengthSlider" min="0.0" max="0.1" step="0.01">
+      </div>
+      <div class="control-group">
+          <label class="control-label">最粗粗度 (強度): <span id="thEndStrengthValue" class="value-display"></span></label>
+          <input type="range" id="thEndStrengthSlider" min="0" max="0.1" step="0.01">
+      </div>
+      <div class="control-group">
+          <label class="control-label">最短長度: <span id="thMinLengthValue" class="value-display"></span></label>
+          <input type="range" id="thMinLengthSlider" min="0.5" max="5.0" step="0.1">
+      </div>
+      <div class="control-group">
+          <label class="control-label">最長長度: <span id="thMaxLengthValue" class="value-display"></span></label>
+          <input type="range" id="thMaxLengthSlider" min="0.5" max="5.0" step="0.1">
+      </div>
+      <div class="control-group">
+          <label class="control-label">膨脹速率 (冪): <span id="thShrinkPowerValue" class="value-display"></span></label> <!-- Label change -->
+          <input type="range" id="thShrinkPowerSlider" min="0.1" max="5.0" step="0.05">
+      </div>
+      <div class="control-group">
+          <label class="control-label">線條數量: <span id="thNumLinesValue" class="value-display"></span></label>
+          <input type="range" id="thNumLinesSlider" min="0" max="10" step="1">
+      </div>
+  </div>
+
+  <!-- 通用控制面板 HTML -->
+  <div id="commonPanel" class="control-panel common-panel">
+      <div class="panel-title">通用控制</div>
+       <div class="control-group">
+          <label class="control-label">MarchingCubes 解析度: <span id="resolutionValue" class="value-display"></span></label>
+          <input type="range" id="resolutionSlider" min="10" max="500" step="1">
+      </div>
+      <div class="control-group">
+          <label class="control-label">MarchingCubes Isolation: <span id="isolationValue" class="value-display"></span></label>
+          <input type="range" id="isolationSlider" min="10" max="300" step="10">
+      </div>
+      <button id="regenerateBtn">重新生成所有線條</button>
+      <button id="exportConfigBtn" style="margin-top: 5px;">匯出設定 (JSON)</button>
+      <button id="importConfigBtn" style="margin-top: 5px;">匯入設定 (JSON)</button>
+      <input type="file" id="importConfigFile" accept=".json" style="display: none;"> <!-- 隱藏的檔案選擇器 -->
+      <button id="exportGlbBtn" style="margin-top: 5px;">下載目前模型 (GLB)</button>
+  </div>
+
+  <script type="module">
+    import * as THREE from 'three';  
+    import { MarchingCubes } from 'three/addons/objects/MarchingCubes.js';
+    import { OrbitControls }  from 'three/addons/controls/OrbitControls.js';
+    import { GLTFExporter } from 'GLTFExporter';
+
+    // 場景、相機、Renderer
+    const scene    = new THREE.Scene();
+    scene.background = new THREE.Color(0xffffff); // 設置場景背景為白色
+    const camera   = new THREE.PerspectiveCamera(45, innerWidth/innerHeight, 0.1, 1000);
+    camera.position.set(0,0,30); // 拉得更遠以適應更大的縮放
+    camera.lookAt(scene.position);
+
+    const renderer = new THREE.WebGLRenderer({ antialias: true });
+    renderer.setSize(innerWidth, innerHeight);
+    document.body.appendChild(renderer.domElement);
+
+    // Controls
+    const controls = new OrbitControls(camera, renderer.domElement);
+    controls.enableDamping = true;
+
+    // Lights
+    scene.add(new THREE.AmbientLight(0xffffff, 0.5));
+    const dirLight = new THREE.DirectionalLight(0xffffff, 0.5);
+    dirLight.position.set(1,1,1);
+    scene.add(dirLight);
+
+    // generateMaterials
+    function generateMaterials() {
+      return {
+        basic: new THREE.MeshBasicMaterial({ color: 0x000000, wireframe: true }),
+        shader: new THREE.ShaderMaterial({
+          uniforms: {
+            uResolution: { value: new THREE.Vector2(innerWidth, innerHeight) },
+            uTime:       { value: 0 },
+            uColor:      { value: new THREE.Color(0x000000) },
+            viewVector:  { value: camera.position }
+          },
+          vertexShader:   document.getElementById('vertexShader').textContent,
+          fragmentShader: document.getElementById('fragmentShader').textContent,
+          transparent: true,
+          side: THREE.DoubleSide
+        })
+      };
+    }
+    const materials = generateMaterials();
+
+    // --- Parameters for Thick-to-Thin --- 
+    let ttStartStrength = 0.1;   
+    let ttEndStrength = 0.01; // 維持非零最小值
+    let ttMinWorldLength = 2.5;
+    let ttMaxWorldLength = 3.5;   
+    let ttShrinkPower = 0.25;     // 改為 0.8 (更平滑的衰減)
+    let ttNumLines = 3;        
+
+    // --- Parameters for Thin-to-Thick --- 
+    let thStartStrength = 0.01;  // 維持非零最小值
+    let thEndStrength = 0.1;     // End thicker
+    let thMinWorldLength = 2;
+    let thMaxWorldLength = 3;   
+    let thShrinkPower = 1.25;     // Linear thickening by default
+    let thNumLines = 3;        
+
+    // --- Shared Parameters --- 
+    let resolution = 150;    // 提高解析度
+    let isolation = 300;     // 降低 isolation 作為嘗試
+    let currentMaterial = 'shader'; 
+    const growthSpeed = 10.0; 
+    const growthEaseOutPower = 0.2; // 新增：生長速度緩和冪次 (0.5 = sqrt)
+    const numSegments = 50;   
+    const subtract = 20;      
+
+    // MarchingCubes setup (使用變數)
+    const effect = new MarchingCubes(resolution, materials[currentMaterial], true, true, 100000);
+    effect.isolation = isolation; 
+    effect.scale.set(8, 8, 8); 
+    effect.enableUvs    = false;
+    effect.enableColors = false;
+    scene.add(effect);
+
+    const clock = new THREE.Clock();
+    // 線條數據陣列
+    let lineStartTimes = []; 
+    let randomDirections = [];
+    let currentTargetLengths = [];
+    let lineTypes = []; // 'tt' or 'th'
+
+    // 初始化/重新生成線條函數
+    function regenerateLine() {
+        const currentTime = clock.getElapsedTime();
+        const totalLines = ttNumLines + thNumLines;
+
+        // 調整陣列大小
+        lineStartTimes.length = totalLines;
+        randomDirections.length = totalLines;
+        currentTargetLengths.length = totalLines;
+        lineTypes.length = totalLines;
+
+        // 更新 Marching Cubes 實例的 resolution 和 isolation
+        // 雖然可以在事件監聽器中做，但確保在重新生成時也是最新的
+        effect.init(resolution); 
+        effect.isolation = isolation;
+
+        let lineIndex = 0;
+
+        // 生成 Thick-to-Thin 線條
+        for(let i = 0; i < ttNumLines; i++) {
+            if (!randomDirections[lineIndex]) {
+                randomDirections[lineIndex] = new THREE.Vector3();
+            }
+            randomDirections[lineIndex].set(Math.random() * 2 - 1, Math.random() * 2 - 1, Math.random() * 2 - 1).normalize();
+            currentTargetLengths[lineIndex] = THREE.MathUtils.randFloat(ttMinWorldLength, ttMaxWorldLength);
+            lineTypes[lineIndex] = 'tt';
+            lineStartTimes[lineIndex] = currentTime; 
+            console.log(`Line ${lineIndex+1} (tt): TargetLength=${currentTargetLengths[lineIndex].toFixed(2)}`);
+            lineIndex++;
+        }
+
+        // 生成 Thin-to-Thick 線條
+        for(let i = 0; i < thNumLines; i++) {
+             if (!randomDirections[lineIndex]) {
+                randomDirections[lineIndex] = new THREE.Vector3();
+            }
+            randomDirections[lineIndex].set(Math.random() * 2 - 1, Math.random() * 2 - 1, Math.random() * 2 - 1).normalize();
+            currentTargetLengths[lineIndex] = THREE.MathUtils.randFloat(thMinWorldLength, thMaxWorldLength);
+            lineTypes[lineIndex] = 'th';
+            lineStartTimes[lineIndex] = currentTime; 
+            console.log(`Line ${lineIndex+1} (th): TargetLength=${currentTargetLengths[lineIndex].toFixed(2)}`);
+            lineIndex++;
+        }
+    }
+
+    // updateLineMetaball
+    function updateLineMetaball(obj) {
+        obj.reset(); 
+        const currentTime = clock.getElapsedTime();
+        const centerOffset = new THREE.Vector3(0.5, 0.5, 0.5); 
+        const totalLines = ttNumLines + thNumLines; // Get current total
+        
+        for (let lineIndex = 0; lineIndex < totalLines; lineIndex++) {
+            const timeSinceStart = currentTime - lineStartTimes[lineIndex];
+            const localMaxLength = currentTargetLengths[lineIndex] / obj.scale.x;
+            
+            // --- 修改長度計算以實現由快到慢 --- 
+            let localCurrentLength = 0;
+            if (localMaxLength > 0.001) { // 避免除以零
+                // 計算理論上達到最大長度所需的時間
+                const linearDuration = localMaxLength / (growthSpeed / obj.scale.x);
+                // 計算標準化時間 (0 to 1)，處理 linearDuration 可能為 0 的情況
+                const normalizedTime = linearDuration > 0 ? Math.min(timeSinceStart / linearDuration, 1.0) : 1.0;
+                // 應用 ease-out 函數 (使用參數)
+                const easedTime = Math.pow(normalizedTime, growthEaseOutPower);
+                // 計算當前長度
+                localCurrentLength = easedTime * localMaxLength;
+            } else {
+                localCurrentLength = 0; // 如果目標長度為0，則長度為0
+            }
+            // const localCurrentLength = Math.min(timeSinceStart * growthSpeed / obj.scale.x, localMaxLength); // 原始線性增長
+
+            if (localCurrentLength <= 0.01) continue; 
+
+            const currentDirection = randomDirections[lineIndex];
+            const currentLineType = lineTypes[lineIndex];
+            if (!currentDirection || !currentLineType) continue; 
+            
+            // 根據類型選擇參數
+            let lineStartStrength, lineEndStrength, lineShrinkPower;
+            if (currentLineType === 'tt') {
+                lineStartStrength = ttStartStrength;
+                lineEndStrength = ttEndStrength;
+                lineShrinkPower = ttShrinkPower;
+            } else { // 'th'
+                lineStartStrength = thStartStrength;
+                lineEndStrength = thEndStrength;
+                lineShrinkPower = thShrinkPower;
+            }
+            
+            for (let i = 0; i <= numSegments; i++) {
+                const segmentT = i / numSegments; // 0 to 1
+                
+                const strengthFactor = Math.pow(segmentT, lineShrinkPower);
+                const strength = THREE.MathUtils.lerp(lineStartStrength, lineEndStrength, strengthFactor);
+
+                const localPos = currentDirection.clone().multiplyScalar(localCurrentLength * segmentT);
+                const finalPos = localPos.add(centerOffset);
+
+                obj.addBall(finalPos.x, finalPos.y, finalPos.z, strength, subtract);
+            }
+        }
+      
+        obj.update(); 
+    }
+
+    // --- 匯出/匯入設定檔 --- 
+
+    function exportConfiguration() {
+        console.log("開始匯出設定...");
+        const serializableDirections = randomDirections.map(dir => dir ? { x: dir.x, y: dir.y, z: dir.z } : null);
+        const cameraPosition = { x: camera.position.x, y: camera.position.y, z: camera.position.z };
+        const cameraQuaternion = { _x: camera.quaternion.x, _y: camera.quaternion.y, _z: camera.quaternion.z, _w: camera.quaternion.w };
+
+        const config = {
+            ttStartStrength: ttStartStrength,
+            ttEndStrength: ttEndStrength,
+            ttMinWorldLength: ttMinWorldLength,
+            ttMaxWorldLength: ttMaxWorldLength,
+            ttShrinkPower: ttShrinkPower,
+            ttNumLines: ttNumLines,
+            thStartStrength: thStartStrength,
+            thEndStrength: thEndStrength,
+            thMinWorldLength: thMinWorldLength,
+            thMaxWorldLength: thMaxWorldLength,
+            thShrinkPower: thShrinkPower,
+            thNumLines: thNumLines,
+            resolution: resolution,
+            isolation: isolation,
+            currentMaterial: currentMaterial,
+            growthSpeed: growthSpeed,
+            growthEaseOutPower: growthEaseOutPower,
+            numSegments: numSegments,
+            subtract: subtract,
+            lineTypes: lineTypes,
+            randomDirections: serializableDirections,
+            currentTargetLengths: currentTargetLengths,
+            cameraPosition: cameraPosition,
+            cameraQuaternion: cameraQuaternion
+        };
+
+        try {
+            const configString = JSON.stringify(config, null, 2);
+            const blob = new Blob([configString], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'metaball_config.json';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+            console.log("設定已匯出為 metaball_config.json");
+        } catch (e) {
+            console.error("匯出設定失敗:", e);
+            alert("匯出設定失敗！");
+        }
+    }
+
+    function importConfiguration(event) {
+        console.log("開始匯入設定...");
+        const file = event.target.files[0];
+        if (!file) {
+            console.log("未選擇檔案。");
+            return;
+        }
+
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            try {
+                const config = JSON.parse(e.target.result);
+                console.log("讀取的設定:", config);
+
+                if (!config || typeof config !== 'object') throw new Error("無效的設定檔格式");
+                const requiredKeys = ['ttStartStrength', 'thStartStrength', 'resolution', 'isolation', 'lineTypes', 'randomDirections', 'currentTargetLengths', 'cameraPosition', 'cameraQuaternion'];
+                for (const key of requiredKeys) {
+                    if (!(key in config)) throw new Error(`缺少必要欄位: ${key}`);
+                }
+                const totalLines = config.ttNumLines + config.thNumLines;
+                if (!Array.isArray(config.lineTypes) || config.lineTypes.length !== totalLines ||
+                    !Array.isArray(config.randomDirections) || config.randomDirections.length !== totalLines ||
+                    !Array.isArray(config.currentTargetLengths) || config.currentTargetLengths.length !== totalLines) {
+                    throw new Error("線條數據數量與線條總數不符");
+                }
+
+                ttStartStrength = config.ttStartStrength;
+                ttEndStrength = config.ttEndStrength;
+                ttMinWorldLength = config.ttMinWorldLength;
+                ttMaxWorldLength = config.ttMaxWorldLength;
+                ttShrinkPower = config.ttShrinkPower;
+                ttNumLines = config.ttNumLines;
+                thStartStrength = config.thStartStrength;
+                thEndStrength = config.thEndStrength;
+                thMinWorldLength = config.thMinWorldLength;
+                thMaxWorldLength = config.thMaxWorldLength;
+                thShrinkPower = config.thShrinkPower;
+                thNumLines = config.thNumLines;
+                resolution = config.resolution;
+                isolation = config.isolation;
+                currentMaterial = config.currentMaterial || 'shader';
+
+                initControlValues();
+
+                effect.init(resolution);
+                effect.isolation = isolation;
+                effect.material = materials[currentMaterial];
+
+                if (config.cameraPosition) {
+                    camera.position.set(config.cameraPosition.x, config.cameraPosition.y, config.cameraPosition.z);
+                }
+                if (config.cameraQuaternion) {
+                    camera.quaternion.set(config.cameraQuaternion._x, config.cameraQuaternion._y, config.cameraQuaternion._z, config.cameraQuaternion._w);
+                }
+                controls.update();
+
+                const currentTime = clock.getElapsedTime();
+                lineStartTimes.length = totalLines;
+                randomDirections.length = totalLines;
+                currentTargetLengths.length = totalLines;
+                lineTypes.length = totalLines;
+
+                for (let i = 0; i < totalLines; i++) {
+                    lineTypes[i] = config.lineTypes[i];
+                    currentTargetLengths[i] = config.currentTargetLengths[i];
+                    if (config.randomDirections[i]) {
+                        randomDirections[i] = new THREE.Vector3(
+                            config.randomDirections[i].x,
+                            config.randomDirections[i].y,
+                            config.randomDirections[i].z
+                        );
+                    } else {
+                        randomDirections[i] = null;
+                    }
+                    lineStartTimes[i] = currentTime;
+                }
+                
+                effect.reset();
+                console.log("設定已成功匯入。");
+                alert("設定已載入！");
+
+            } catch (e) {
+                console.error("匯入設定失敗:", e);
+                alert(`匯入設定失敗！錯誤: ${e.message}`);
+            } finally {
+                document.getElementById('importConfigFile').value = null;
+            }
+        };
+        reader.onerror = function(e) {
+            console.error("讀取檔案錯誤:", e);
+            alert("讀取檔案時發生錯誤。");
+            document.getElementById('importConfigFile').value = null;
+        };
+        reader.readAsText(file);
+    }
+
+    // --- 恢復: 匯出 GLB --- 
+    function exportGLB() {
+        console.log("開始匯出 GLB (應用視角, 臨時提高解析度至 200)...");
+        const originalResolution = resolution; // 1. 儲存當前解析度
+        const originalEffectQuaternion = effect.quaternion.clone(); // << 新增: 儲存原始模型旋轉
+        const exporter = new GLTFExporter();
+
+        try {
+            // 2. 設定高解析度並重新初始化
+            console.log(`  - 原解析度: ${originalResolution}, 臨時設為: 200`);
+            resolution = 200;
+            effect.init(resolution);
+            
+            // 3. 強制重新計算模型幾何 (使用高解析度)
+            console.log("  - 重新計算高解析度模型...");
+            updateLineMetaball(effect); 
+            console.log("  - 高解析度模型計算完成.");
+
+            // << 新增: 應用反向攝影機旋轉到模型 >>
+            console.log("  - 應用反向攝影機旋轉...");
+            const cameraInverseQuaternion = camera.quaternion.clone().invert();
+            effect.quaternion.premultiply(cameraInverseQuaternion); // 將反向旋轉應用到模型
+            effect.updateMatrixWorld(); // 更新世界矩陣
+            console.log("  - 反向旋轉已應用.");
+            // << --- >>
+
+            // 4. 執行匯出
+            exporter.parse(
+                effect, 
+                function (result) { // 成功回呼
+                    if (result instanceof ArrayBuffer) {
+                        try {
+                            const blob = new Blob([result], { type: 'model/gltf-binary' });
+                            const url = URL.createObjectURL(blob);
+                            const a = document.createElement('a');
+                            a.href = url;
+                            a.download = 'metaball_model_view_res200.glb'; // 改名
+                            document.body.appendChild(a);
+                            a.click();
+                            document.body.removeChild(a);
+                            URL.revokeObjectURL(url);
+                            console.log("GLB 檔案已匯出: metaball_model_view_res200.glb");
+                            alert("高解析度 (含視角) GLB 模型已下載！");
+                        } catch (e) {
+                            console.error("建立或下載 GLB Blob 時出錯:", e);
+                            alert("下載 GLB 時發生錯誤！");
+                        }
+                    } else {
+                        console.error("匯出結果不是預期的 ArrayBuffer:", result);
+                        alert("匯出 GLB 失敗：格式錯誤。請檢查控制台。");
+                    }
+                    // 5. 恢復原始狀態 (成功時)
+                    console.log("  - (成功) 恢復原始模型旋轉和解析度...");
+                    effect.quaternion.copy(originalEffectQuaternion); // << 新增: 恢復模型旋轉
+                    effect.updateMatrixWorld();
+                    resolution = originalResolution;
+                    effect.init(resolution);
+                    console.log("  - 模型旋轉和解析度已恢復.");
+                },
+                function (error) { // 錯誤回呼
+                    console.error('匯出 GLB 時發生錯誤:', error);
+                    alert("匯出 GLB 時發生錯誤！請檢查控制台。");
+                    // 5. 恢復原始狀態 (錯誤時也要恢復)
+                    console.log("  - (錯誤) 恢復原始模型旋轉和解析度...");
+                    effect.quaternion.copy(originalEffectQuaternion); // << 新增: 恢復模型旋轉
+                    effect.updateMatrixWorld();
+                    resolution = originalResolution;
+                    effect.init(resolution);
+                    console.log("  - 模型旋轉和解析度已恢復.");
+                },
+                { binary: true } 
+            );
+        } catch (e) {
+             console.error("準備匯出或應用旋轉時出錯:", e);
+             alert("準備匯出高解析度模型時發生錯誤！");
+             // 確保即使在這裡出錯也恢復狀態
+             console.log("  - (Catch) 恢復原始模型旋轉和解析度...");
+             effect.quaternion.copy(originalEffectQuaternion); // << 新增: 恢復模型旋轉
+             effect.updateMatrixWorld();
+             if (resolution !== originalResolution) {
+                 resolution = originalResolution;
+                 effect.init(resolution);
+             }
+             console.log("  - 模型旋轉和解析度已恢復.");
+        }
+    }
+
+    // 初始化控制面板值
+    function initControlValues() {
+        // Thick-to-Thin Panel
+        document.getElementById('ttStartStrengthSlider').value = ttStartStrength;
+        document.getElementById('ttStartStrengthValue').textContent = ttStartStrength.toFixed(2);
+        document.getElementById('ttEndStrengthSlider').value = ttEndStrength;
+        document.getElementById('ttEndStrengthValue').textContent = ttEndStrength.toFixed(2);
+        document.getElementById('ttMinLengthSlider').value = ttMinWorldLength;
+        document.getElementById('ttMinLengthValue').textContent = ttMinWorldLength.toFixed(1);
+        document.getElementById('ttMaxLengthSlider').value = ttMaxWorldLength;
+        document.getElementById('ttMaxLengthValue').textContent = ttMaxWorldLength.toFixed(1);
+        document.getElementById('ttShrinkPowerSlider').value = ttShrinkPower;
+        document.getElementById('ttShrinkPowerValue').textContent = ttShrinkPower.toFixed(2);
+        document.getElementById('ttNumLinesSlider').value = ttNumLines;
+        document.getElementById('ttNumLinesValue').textContent = ttNumLines;
+
+        // Thin-to-Thick Panel
+        document.getElementById('thStartStrengthSlider').value = thStartStrength;
+        document.getElementById('thStartStrengthValue').textContent = thStartStrength.toFixed(2);
+        document.getElementById('thEndStrengthSlider').value = thEndStrength;
+        document.getElementById('thEndStrengthValue').textContent = thEndStrength.toFixed(2);
+        document.getElementById('thMinLengthSlider').value = thMinWorldLength;
+        document.getElementById('thMinLengthValue').textContent = thMinWorldLength.toFixed(1);
+        document.getElementById('thMaxLengthSlider').value = thMaxWorldLength;
+        document.getElementById('thMaxLengthValue').textContent = thMaxWorldLength.toFixed(1);
+        document.getElementById('thShrinkPowerSlider').value = thShrinkPower;
+        document.getElementById('thShrinkPowerValue').textContent = thShrinkPower.toFixed(2);
+        document.getElementById('thNumLinesSlider').value = thNumLines;
+        document.getElementById('thNumLinesValue').textContent = thNumLines;
+
+        // Common Panel
+        document.getElementById('resolutionSlider').value = resolution;
+        document.getElementById('resolutionValue').textContent = resolution;
+        document.getElementById('isolationSlider').value = isolation;
+        document.getElementById('isolationValue').textContent = isolation;
+    }
+
+    // 設置UI控件事件監聽
+    function setupControls() {
+        // --- Thick-to-Thin Controls --- 
+        const ttStartStrengthSlider = document.getElementById('ttStartStrengthSlider');
+        const ttStartStrengthValue = document.getElementById('ttStartStrengthValue');
+        const ttEndStrengthSlider = document.getElementById('ttEndStrengthSlider');
+        const ttEndStrengthValue = document.getElementById('ttEndStrengthValue');
+        const ttMinLengthSlider = document.getElementById('ttMinLengthSlider');
+        const ttMinLengthValue = document.getElementById('ttMinLengthValue');
+        const ttMaxLengthSlider = document.getElementById('ttMaxLengthSlider');
+        const ttMaxLengthValue = document.getElementById('ttMaxLengthValue');
+        const ttShrinkPowerSlider = document.getElementById('ttShrinkPowerSlider');
+        const ttShrinkPowerValue = document.getElementById('ttShrinkPowerValue');
+        const ttNumLinesSlider = document.getElementById('ttNumLinesSlider');
+        const ttNumLinesValue = document.getElementById('ttNumLinesValue');
+
+        // --- Thin-to-Thick Controls --- 
+        const thStartStrengthSlider = document.getElementById('thStartStrengthSlider');
+        const thStartStrengthValue = document.getElementById('thStartStrengthValue');
+        const thEndStrengthSlider = document.getElementById('thEndStrengthSlider');
+        const thEndStrengthValue = document.getElementById('thEndStrengthValue');
+        const thMinLengthSlider = document.getElementById('thMinLengthSlider');
+        const thMinLengthValue = document.getElementById('thMinLengthValue');
+        const thMaxLengthSlider = document.getElementById('thMaxLengthSlider');
+        const thMaxLengthValue = document.getElementById('thMaxLengthValue');
+        const thShrinkPowerSlider = document.getElementById('thShrinkPowerSlider');
+        const thShrinkPowerValue = document.getElementById('thShrinkPowerValue');
+        const thNumLinesSlider = document.getElementById('thNumLinesSlider');
+        const thNumLinesValue = document.getElementById('thNumLinesValue');
+
+        // --- Common Controls ---
+        const resolutionSlider = document.getElementById('resolutionSlider');
+        const resolutionValue = document.getElementById('resolutionValue');
+        const isolationSlider = document.getElementById('isolationSlider');
+        const isolationValue = document.getElementById('isolationValue');
+        const regenerateBtn = document.getElementById('regenerateBtn');
+        const exportConfigBtn = document.getElementById('exportConfigBtn');
+        const importConfigBtn = document.getElementById('importConfigBtn');
+        const importConfigFile = document.getElementById('importConfigFile');
+        const exportGlbBtn = document.getElementById('exportGlbBtn');
+
+        // --- Event Listeners for Thick-to-Thin --- 
+        ttStartStrengthSlider.addEventListener('input', function() {
+            ttStartStrength = parseFloat(this.value);
+            ttStartStrengthValue.textContent = ttStartStrength.toFixed(2);
+            if (ttStartStrength < ttEndStrength) { // tt: start >= end
+                ttEndStrength = ttStartStrength;
+                ttEndStrengthSlider.value = ttEndStrength;
+                ttEndStrengthValue.textContent = ttEndStrength.toFixed(2);
+            }
+        });
+        ttEndStrengthSlider.addEventListener('input', function() {
+            ttEndStrength = parseFloat(this.value);
+            ttEndStrengthValue.textContent = ttEndStrength.toFixed(2);
+            if (ttEndStrength > ttStartStrength) { // tt: start >= end
+                ttStartStrength = ttEndStrength;
+                ttStartStrengthSlider.value = ttStartStrength;
+                ttStartStrengthValue.textContent = ttStartStrength.toFixed(2);
+            }
+        });
+        ttMinLengthSlider.addEventListener('input', function() {
+            ttMinWorldLength = parseFloat(this.value);
+            ttMinLengthValue.textContent = ttMinWorldLength.toFixed(1);
+            if (ttMinWorldLength > ttMaxWorldLength) {
+                ttMaxWorldLength = ttMinWorldLength;
+                ttMaxLengthSlider.value = ttMaxWorldLength;
+                ttMaxLengthValue.textContent = ttMaxWorldLength.toFixed(1);
+            }
+        });
+        ttMaxLengthSlider.addEventListener('input', function() {
+            ttMaxWorldLength = parseFloat(this.value);
+            ttMaxLengthValue.textContent = ttMaxWorldLength.toFixed(1);
+             if (ttMaxWorldLength < ttMinWorldLength) {
+                ttMinWorldLength = ttMaxWorldLength;
+                ttMinLengthSlider.value = ttMinWorldLength;
+                ttMinLengthValue.textContent = ttMinWorldLength.toFixed(1);
+            }
+        });
+        ttShrinkPowerSlider.addEventListener('input', function() {
+            ttShrinkPower = parseFloat(this.value);
+            ttShrinkPowerValue.textContent = ttShrinkPower.toFixed(2);
+        });
+        ttNumLinesSlider.addEventListener('input', function() {
+            ttNumLines = parseInt(this.value);
+            ttNumLinesValue.textContent = ttNumLines;
+            regenerateLine(); 
+        });
+
+        // --- Event Listeners for Thin-to-Thick --- 
+        thStartStrengthSlider.addEventListener('input', function() {
+            thStartStrength = parseFloat(this.value);
+            thStartStrengthValue.textContent = thStartStrength.toFixed(2);
+             if (thStartStrength > thEndStrength) { // th: start <= end
+                thEndStrength = thStartStrength;
+                thEndStrengthSlider.value = thEndStrength;
+                thEndStrengthValue.textContent = thEndStrength.toFixed(2);
+            }
+        });
+        thEndStrengthSlider.addEventListener('input', function() {
+            thEndStrength = parseFloat(this.value);
+            thEndStrengthValue.textContent = thEndStrength.toFixed(2);
+             if (thEndStrength < thStartStrength) { // th: start <= end
+                thStartStrength = thEndStrength;
+                thStartStrengthSlider.value = thStartStrength;
+                thStartStrengthValue.textContent = thStartStrength.toFixed(2);
+            }
+        });
+         thMinLengthSlider.addEventListener('input', function() {
+            thMinWorldLength = parseFloat(this.value);
+            thMinLengthValue.textContent = thMinWorldLength.toFixed(1);
+            if (thMinWorldLength > thMaxWorldLength) {
+                thMaxWorldLength = thMinWorldLength;
+                thMaxLengthSlider.value = thMaxWorldLength;
+                thMaxLengthValue.textContent = thMaxWorldLength.toFixed(1);
+            }
+        });
+        thMaxLengthSlider.addEventListener('input', function() {
+            thMaxWorldLength = parseFloat(this.value);
+            thMaxLengthValue.textContent = thMaxWorldLength.toFixed(1);
+             if (thMaxWorldLength < thMinWorldLength) {
+                thMinWorldLength = thMaxWorldLength;
+                thMinLengthSlider.value = thMinWorldLength;
+                thMinLengthValue.textContent = thMinWorldLength.toFixed(1);
+            }
+        });
+        thShrinkPowerSlider.addEventListener('input', function() {
+            thShrinkPower = parseFloat(this.value);
+            thShrinkPowerValue.textContent = thShrinkPower.toFixed(2);
+        });
+        thNumLinesSlider.addEventListener('input', function() {
+            thNumLines = parseInt(this.value);
+            thNumLinesValue.textContent = thNumLines;
+            regenerateLine(); 
+        });
+
+        // --- Event Listeners for Common Controls --- 
+        resolutionSlider.addEventListener('input', function() {
+            resolution = parseInt(this.value);
+            resolutionValue.textContent = resolution;
+            effect.init(resolution);
+        });
+        isolationSlider.addEventListener('input', function() {
+            isolation = parseInt(this.value);
+            isolationValue.textContent = isolation;
+            effect.isolation = isolation;
+        });
+
+        // Shared regenerate button listener
+        regenerateBtn.addEventListener('click', regenerateLine);
+        
+        // Export/Import (File) listeners
+        exportConfigBtn.addEventListener('click', exportConfiguration);
+        importConfigBtn.addEventListener('click', () => {
+            importConfigFile.click();
+        });
+        importConfigFile.addEventListener('change', importConfiguration);
+        exportGlbBtn.addEventListener('click', exportGLB);
+    }
+
+    // animate loop
+    function animate() {
+      requestAnimationFrame(animate);
+      
+      effect.material = materials[currentMaterial]; 
+      if(currentMaterial === 'shader') {
+          const currentTime = clock.getElapsedTime();
+          effect.material.uniforms.uTime.value      = currentTime;
+          effect.material.uniforms.viewVector.value = camera.position;
+      }
+      
+      updateLineMetaball(effect);
+      
+      controls.update();
+      renderer.render(scene, camera);
+    }
+
+    // 初始化
+    initControlValues();
+    setupControls();
+    regenerateLine();
+    animate();
+
+    // resize
+    window.addEventListener('resize', () => {
+      camera.aspect = innerWidth/innerHeight;
+      camera.updateProjectionMatrix();
+      renderer.setSize(innerWidth, innerHeight);
+      materials.shader.uniforms.uResolution.value.set(innerWidth, innerHeight);
+    });
+  </script>
+</body>
+</html>
