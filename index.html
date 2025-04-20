@@ -2,7 +2,7 @@
 <html lang="zh-Hant">
 <head>
   <meta charset="UTF-8" />
-  <title>Three.js MarchingCubes - 線條生長</title>
+  <title>Splash Logo Generator</title>
   <style>
     body { 
         position: relative;
@@ -115,7 +115,12 @@
     "imports": {
       "three": "https://cdn.jsdelivr.net/npm/three@0.158.0/build/three.module.js",
       "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.158.0/examples/jsm/",
-      "GLTFExporter": "https://cdn.jsdelivr.net/npm/three@0.158.0/examples/jsm/exporters/GLTFExporter.js"
+      "GLTFExporter": "https://cdn.jsdelivr.net/npm/three@0.158.0/examples/jsm/exporters/GLTFExporter.js",
+      "EffectComposer": "https://cdn.jsdelivr.net/npm/three@0.158.0/examples/jsm/postprocessing/EffectComposer.js",
+      "RenderPass": "https://cdn.jsdelivr.net/npm/three@0.158.0/examples/jsm/postprocessing/RenderPass.js",
+      "ShaderPass": "https://cdn.jsdelivr.net/npm/three@0.158.0/examples/jsm/postprocessing/ShaderPass.js",
+      "FXAAShader": "https://cdn.jsdelivr.net/npm/three@0.158.0/examples/jsm/shaders/FXAAShader.js",
+      "EXRLoader": "https://cdn.jsdelivr.net/npm/three@0.158.0/examples/jsm/loaders/EXRLoader.js"
     }
   }
   </script>
@@ -227,6 +232,8 @@
       <button id="importConfigBtn" style="margin-top: 5px;">匯入設定 (JSON)</button>
       <input type="file" id="importConfigFile" accept=".json" style="display: none;"> <!-- 隱藏的檔案選擇器 -->
       <button id="exportGlbBtn" style="margin-top: 5px;">下載目前模型 (GLB)</button>
+      <button id="toggleMaterialBtn" style="margin-top: 5px;">切換為液體材質</button>
+      <button id="toggleFlowBtn" style="margin-top: 5px;">開始流動動畫</button>
   </div>
 
   <script type="module">
@@ -234,6 +241,11 @@
     import { MarchingCubes } from 'three/addons/objects/MarchingCubes.js';
     import { OrbitControls }  from 'three/addons/controls/OrbitControls.js';
     import { GLTFExporter } from 'GLTFExporter';
+    import { EffectComposer } from 'EffectComposer';
+    import { RenderPass } from 'RenderPass';
+    import { ShaderPass } from 'ShaderPass';
+    import { FXAAShader } from 'FXAAShader';
+    import { EXRLoader } from 'three/addons/loaders/EXRLoader.js';
 
     // 場景、相機、Renderer
     const scene    = new THREE.Scene();
@@ -244,6 +256,7 @@
 
     const renderer = new THREE.WebGLRenderer({ antialias: true });
     renderer.setSize(innerWidth, innerHeight);
+    renderer.setPixelRatio( Math.min(window.devicePixelRatio, 1.5) );
     document.body.appendChild(renderer.domElement);
 
     // Controls
@@ -251,55 +264,94 @@
     controls.enableDamping = true;
 
     // Lights
-    scene.add(new THREE.AmbientLight(0xffffff, 0.5));
+    scene.add(new THREE.AmbientLight(0xffffff, 0.3));
     const dirLight = new THREE.DirectionalLight(0xffffff, 0.5);
-    dirLight.position.set(1,1,1);
+    dirLight.position.set(5, 10, 7.5);
     scene.add(dirLight);
+
+    // PMREMGenerator
+    const pmremGenerator = new THREE.PMREMGenerator(renderer);
+    pmremGenerator.compileEquirectangularShader();
 
     // generateMaterials
     function generateMaterials() {
       return {
-        basic: new THREE.MeshBasicMaterial({ color: 0x000000, wireframe: true }),
         shader: new THREE.ShaderMaterial({
           uniforms: {
             uResolution: { value: new THREE.Vector2(innerWidth, innerHeight) },
             uTime:       { value: 0 },
-            uColor:      { value: new THREE.Color(0x000000) },
+            uColor:      { value: new THREE.Color(0x000000) }, 
             viewVector:  { value: camera.position }
           },
           vertexShader:   document.getElementById('vertexShader').textContent,
           fragmentShader: document.getElementById('fragmentShader').textContent,
           transparent: true,
           side: THREE.DoubleSide
+        }),
+        liquid: new THREE.MeshStandardMaterial({ 
+            color: 0xffffff, 
+            metalness: 0.9,  
+            roughness: 0, 
+            transparent: true, 
+            opacity: 0.25,      
+            side: THREE.DoubleSide, 
+            envMap: null
         })
       };
     }
     const materials = generateMaterials();
 
+    // 載入環境貼圖
+    new EXRLoader()
+        .setPath('./assets/hdr/')
+        .load('HDR_Light_Studio_Free_HDRI_Design_05.exr', function (texture) {
+
+            texture.mapping = THREE.EquirectangularReflectionMapping;
+
+            const envMap = pmremGenerator.fromEquirectangular(texture).texture;
+            pmremGenerator.dispose();
+            texture.dispose();
+
+            console.log("本地 EXR 環境貼圖已載入並處理完成。");
+            scene.environment = envMap;
+            materials.liquid.envMap = envMap;
+            materials.liquid.needsUpdate = true;
+        }, undefined, function (error) {
+            console.error('無法載入本地 EXR 環境貼圖:', error);
+            alert('無法載入 assets/studio_small_03_1k.exr，請檢查檔案是否存在或路徑是否正確。');
+        });
+
     // --- Parameters for Thick-to-Thin --- 
     let ttStartStrength = 0.1;   
     let ttEndStrength = 0.01; // 維持非零最小值
-    let ttMinWorldLength = 2.5;
-    let ttMaxWorldLength = 3.5;   
+    let ttMinWorldLength = 1.5;
+    let ttMaxWorldLength = 2.5;   
     let ttShrinkPower = 0.25;     // 改為 0.8 (更平滑的衰減)
-    let ttNumLines = 3;        
+    let ttNumLines = 4;        
 
     // --- Parameters for Thin-to-Thick --- 
     let thStartStrength = 0.01;  // 維持非零最小值
     let thEndStrength = 0.1;     // End thicker
-    let thMinWorldLength = 2;
-    let thMaxWorldLength = 3;   
+    let thMinWorldLength = 1;
+    let thMaxWorldLength = 2;   
     let thShrinkPower = 1.25;     // Linear thickening by default
     let thNumLines = 3;        
 
     // --- Shared Parameters --- 
-    let resolution = 150;    // 提高解析度
+    let resolution = 200;    // 提高解析度
     let isolation = 300;     // 降低 isolation 作為嘗試
     let currentMaterial = 'shader'; 
-    const growthSpeed = 10.0; 
-    const growthEaseOutPower = 0.2; // 新增：生長速度緩和冪次 (0.5 = sqrt)
+    const growthSpeed = 5.0; 
+    const growthEaseOutPower = 0.5; // 新增：生長速度緩和冪次 (0.5 = sqrt)
     const numSegments = 50;   
     const subtract = 20;      
+    let isFlowing = false; 
+    let savedLineState = null; // << 新增: 保存的線條狀態
+    let savedCameraState = null; // << 新增: 保存的相機狀態
+    const FLOW_GROWTH_SPEED_FACTOR = 0.2; // << 新增: 流動時生長速度因子 (0.2 = 20% 速度)
+    const FLOW_SHRINK_DURATION_FACTOR = 1.5; // << 新增: 流動時收縮時長因子 (1.5 = 1.5倍時間)
+    const MAX_INITIAL_FLOW_DELAY = 2.5; // << 新增: 開始流動時的最大初始延遲 (秒)
+    let isFirstFlowTrigger = true; // << 新增: 首次觸發流動動畫的標記
 
     // MarchingCubes setup (使用變數)
     const effect = new MarchingCubes(resolution, materials[currentMaterial], true, true, 100000);
@@ -314,7 +366,11 @@
     let lineStartTimes = []; 
     let randomDirections = [];
     let currentTargetLengths = [];
-    let lineTypes = []; // 'tt' or 'th'
+    let lineTypes = []; 
+    let lineFlowState = []; // 狀態: 'growing', 'pauseAtEnd', 'shrinking', 'pauseAtStart'
+    let lineShrinkStartTimes = []; 
+    let linePauseAtEndEndTime = []; // << 新增: 末端暫停結束時間
+    let linePauseAtStartEndTime = []; // << 新增: 起點暫停結束時間
 
     // 初始化/重新生成線條函數
     function regenerateLine() {
@@ -326,9 +382,12 @@
         randomDirections.length = totalLines;
         currentTargetLengths.length = totalLines;
         lineTypes.length = totalLines;
+        lineFlowState.length = totalLines; 
+        lineShrinkStartTimes.length = totalLines;
+        linePauseAtEndEndTime.length = totalLines; // << 新增
+        linePauseAtStartEndTime.length = totalLines; // << 新增
 
         // 更新 Marching Cubes 實例的 resolution 和 isolation
-        // 雖然可以在事件監聽器中做，但確保在重新生成時也是最新的
         effect.init(resolution); 
         effect.isolation = isolation;
 
@@ -343,7 +402,10 @@
             currentTargetLengths[lineIndex] = THREE.MathUtils.randFloat(ttMinWorldLength, ttMaxWorldLength);
             lineTypes[lineIndex] = 'tt';
             lineStartTimes[lineIndex] = currentTime; 
-            console.log(`Line ${lineIndex+1} (tt): TargetLength=${currentTargetLengths[lineIndex].toFixed(2)}`);
+            lineFlowState[lineIndex] = 'growing'; 
+            lineShrinkStartTimes[lineIndex] = undefined; 
+            linePauseAtEndEndTime[lineIndex] = undefined; // << 新增
+            linePauseAtStartEndTime[lineIndex] = undefined; // << 新增
             lineIndex++;
         }
 
@@ -356,9 +418,14 @@
             currentTargetLengths[lineIndex] = THREE.MathUtils.randFloat(thMinWorldLength, thMaxWorldLength);
             lineTypes[lineIndex] = 'th';
             lineStartTimes[lineIndex] = currentTime; 
-            console.log(`Line ${lineIndex+1} (th): TargetLength=${currentTargetLengths[lineIndex].toFixed(2)}`);
+            lineFlowState[lineIndex] = 'growing'; 
+            lineShrinkStartTimes[lineIndex] = undefined; 
+            linePauseAtEndEndTime[lineIndex] = undefined; // << 新增
+            linePauseAtStartEndTime[lineIndex] = undefined; // << 新增
             lineIndex++;
         }
+        effect.reset(); 
+        isFirstFlowTrigger = true; // << 新增: 全局重新生成後，重置首次觸發標記
     }
 
     // updateLineMetaball
@@ -366,29 +433,123 @@
         obj.reset(); 
         const currentTime = clock.getElapsedTime();
         const centerOffset = new THREE.Vector3(0.5, 0.5, 0.5); 
-        const totalLines = ttNumLines + thNumLines; // Get current total
+        const totalLines = ttNumLines + thNumLines; 
+        const BASE_SHRINK_DURATION = 1.0; 
+        const MAX_PAUSE_AT_END_DELAY = 10.0; // << 修改: 增加末端最大延遲時間
+        const MAX_PAUSE_AT_START_DELAY = 1.0; 
         
         for (let lineIndex = 0; lineIndex < totalLines; lineIndex++) {
-            const timeSinceStart = currentTime - lineStartTimes[lineIndex];
-            const localMaxLength = currentTargetLengths[lineIndex] / obj.scale.x;
             
-            // --- 修改長度計算以實現由快到慢 --- 
-            let localCurrentLength = 0;
-            if (localMaxLength > 0.001) { // 避免除以零
-                // 計算理論上達到最大長度所需的時間
-                const linearDuration = localMaxLength / (growthSpeed / obj.scale.x);
-                // 計算標準化時間 (0 to 1)，處理 linearDuration 可能為 0 的情況
-                const normalizedTime = linearDuration > 0 ? Math.min(timeSinceStart / linearDuration, 1.0) : 1.0;
-                // 應用 ease-out 函數 (使用參數)
-                const easedTime = Math.pow(normalizedTime, growthEaseOutPower);
-                // 計算當前長度
-                localCurrentLength = easedTime * localMaxLength;
-            } else {
-                localCurrentLength = 0; // 如果目標長度為0，則長度為0
+            // << 新增: 如果還沒到隨機開始時間，則跳過 >>
+            if (lineStartTimes[lineIndex] === undefined || currentTime < lineStartTimes[lineIndex]) {
+                continue;
             }
-            // const localCurrentLength = Math.min(timeSinceStart * growthSpeed / obj.scale.x, localMaxLength); // 原始線性增長
+            // << 結束檢查 >>
 
-            if (localCurrentLength <= 0.01) continue; 
+            if (currentTargetLengths[lineIndex] === undefined) continue; // 保持原檢查
+            const localMaxLength = currentTargetLengths[lineIndex] / obj.scale.x;
+            let localCurrentLength = 0;
+            let timeSinceStart = currentTime - lineStartTimes[lineIndex]; // timeSinceStart 會是負數或 0，直到真正開始
+            const currentFlowState = lineFlowState[lineIndex]; 
+
+            // --- 根據流動狀態計算長度 --- 
+            switch (currentFlowState) {
+                case 'growing':
+                    // --- 正在生長 --- 
+                    if (localMaxLength > 0.001) { 
+                        const currentGrowthSpeed = isFlowing ? growthSpeed * FLOW_GROWTH_SPEED_FACTOR : growthSpeed; 
+                        const linearDuration = localMaxLength / (currentGrowthSpeed / obj.scale.x); 
+                        const normalizedTime = linearDuration > 0 ? Math.min(timeSinceStart / linearDuration, 1.0) : 1.0;
+                        const easedTime = Math.pow(normalizedTime, growthEaseOutPower);
+                        localCurrentLength = easedTime * localMaxLength;
+                    } else {
+                        localCurrentLength = 0; 
+                    }
+                    // 如果正在流動且剛長到最大長度，切換到 pauseAtEnd 狀態
+                    if (isFlowing && localCurrentLength >= localMaxLength * 0.999) { 
+                        lineFlowState[lineIndex] = 'pauseAtEnd';
+                        const randomDelay = Math.random() * MAX_PAUSE_AT_END_DELAY;
+                        linePauseAtEndEndTime[lineIndex] = currentTime + randomDelay;
+                        localCurrentLength = localMaxLength; // 保持最大長度
+                    }
+                    break;
+                
+                case 'pauseAtEnd':
+                    // --- 在末端暫停 --- 
+                    if (currentTime >= (linePauseAtEndEndTime[lineIndex] || currentTime + 1)) { 
+                        // 延遲結束，開始收縮
+                        lineFlowState[lineIndex] = 'shrinking';
+                        lineShrinkStartTimes[lineIndex] = currentTime;
+                        linePauseAtEndEndTime[lineIndex] = undefined;
+                        localCurrentLength = localMaxLength; 
+                    } else {
+                        // 仍在延遲，保持最大長度
+                        localCurrentLength = localMaxLength;
+                    }
+                    break;
+
+                case 'shrinking':
+                    // --- 正在收縮 --- 
+                    const timeSinceShrinking = currentTime - (lineShrinkStartTimes[lineIndex] || currentTime); 
+                    const currentShrinkDuration = BASE_SHRINK_DURATION * FLOW_SHRINK_DURATION_FACTOR; 
+                    const shrinkFactor = Math.max(0, 1.0 - timeSinceShrinking / currentShrinkDuration);
+                    localCurrentLength = localMaxLength * shrinkFactor;
+
+                    if (shrinkFactor === 0) {
+                        // --- 收縮完成 --- 
+                        if (isFlowing) {
+                            // 若在流動，切換到 pauseAtStart
+                            lineFlowState[lineIndex] = 'pauseAtStart';
+                            const randomDelay = Math.random() * MAX_PAUSE_AT_START_DELAY;
+                            linePauseAtStartEndTime[lineIndex] = currentTime + randomDelay;
+                            lineShrinkStartTimes[lineIndex] = undefined; // 清除收縮開始時間
+                            localCurrentLength = 0.001; // 保持長度為 0
+                        } else {
+                            // 若不在流動，直接重置狀態 (會自然消失)
+                            lineFlowState[lineIndex] = 'growing'; // 或設為 idle
+                            lineShrinkStartTimes[lineIndex] = undefined;
+                            lineStartTimes[lineIndex] = undefined; // 讓它不再更新
+                            localCurrentLength = 0.001;
+                        }
+                    }
+                    break;
+
+                case 'pauseAtStart':
+                    // --- 在起點暫停 --- 
+                    if (currentTime >= (linePauseAtStartEndTime[lineIndex] || currentTime + 1)) { 
+                        // 延遲結束，重新生成並開始生長
+                        if (!randomDirections[lineIndex]) randomDirections[lineIndex] = new THREE.Vector3();
+                        randomDirections[lineIndex].set(Math.random() * 2 - 1, Math.random() * 2 - 1, Math.random() * 2 - 1).normalize();
+                        lineTypes[lineIndex] = (lineIndex < ttNumLines) ? 'tt' : 'th'; 
+                        const minL = (lineTypes[lineIndex] === 'tt') ? ttMinWorldLength : thMinWorldLength;
+                        const maxL = (lineTypes[lineIndex] === 'tt') ? ttMaxWorldLength : thMaxWorldLength;
+                        currentTargetLengths[lineIndex] = THREE.MathUtils.randFloat(minL, maxL);
+                        lineStartTimes[lineIndex] = currentTime;
+                        lineFlowState[lineIndex] = 'growing'; // 切換回生長
+                        linePauseAtStartEndTime[lineIndex] = undefined;
+                        localCurrentLength = 0.001; 
+                    } else {
+                         // 仍在延遲，保持長度為 0
+                         localCurrentLength = 0.001;
+                    }
+                    break;
+                
+                default: // 包括 isFlowing 為 false 的情況
+                     // --- 正常生長邏輯 --- 
+                     if (localMaxLength > 0.001 && lineStartTimes[lineIndex] !== undefined) { 
+                        const currentGrowthSpeed = growthSpeed; // 使用正常速度
+                        const linearDuration = localMaxLength / (currentGrowthSpeed / obj.scale.x); 
+                        const normalizedTime = linearDuration > 0 ? Math.min(timeSinceStart / linearDuration, 1.0) : 1.0;
+                        const easedTime = Math.pow(normalizedTime, growthEaseOutPower);
+                        localCurrentLength = easedTime * localMaxLength;
+                    } else {
+                        localCurrentLength = 0; 
+                    }
+                    break;
+            }
+            // --- 長度計算結束 --- 
+
+            if (localCurrentLength <= 0.001) continue; 
 
             const currentDirection = randomDirections[lineIndex];
             const currentLineType = lineTypes[lineIndex];
@@ -405,17 +566,29 @@
                 lineEndStrength = thEndStrength;
                 lineShrinkPower = thShrinkPower;
             }
-            
-            for (let i = 0; i <= numSegments; i++) {
-                const segmentT = i / numSegments; // 0 to 1
-                
-                const strengthFactor = Math.pow(segmentT, lineShrinkPower);
-                const strength = THREE.MathUtils.lerp(lineStartStrength, lineEndStrength, strengthFactor);
 
-                const localPos = currentDirection.clone().multiplyScalar(localCurrentLength * segmentT);
+            // 計算 Metaball 強度和位置
+            for (let i = 0; i <= numSegments; i++) {
+                const segmentT = i / numSegments; 
+                const strengthFactor = Math.pow(segmentT, lineShrinkPower);
+                const baseStrength = THREE.MathUtils.lerp(lineStartStrength, lineEndStrength, strengthFactor);
+
+                // << 恢復: 應用流動強度變化 >>
+                let dynamicStrength = baseStrength;
+                if (isFlowing) {
+                    const flowFrequency = 1.0; 
+                    const flowAmplitude = 0.15 * baseStrength; // 使用恢復的幅度
+                    const flowOffset = Math.sin(currentTime * flowFrequency - segmentT * Math.PI * 4) * flowAmplitude;
+                    dynamicStrength += flowOffset;
+                    dynamicStrength = Math.max(dynamicStrength, 0); 
+                }
+                // << 結束強度變化 >>
+
+                const localPos = currentDirection.clone().multiplyScalar(localCurrentLength * segmentT); 
                 const finalPos = localPos.add(centerOffset);
 
-                obj.addBall(finalPos.x, finalPos.y, finalPos.z, strength, subtract);
+                // << 修改: 使用 dynamicStrength >>
+                obj.addBall(finalPos.x, finalPos.y, finalPos.z, dynamicStrength, subtract); 
             }
         }
       
@@ -735,6 +908,8 @@
         const importConfigBtn = document.getElementById('importConfigBtn');
         const importConfigFile = document.getElementById('importConfigFile');
         const exportGlbBtn = document.getElementById('exportGlbBtn');
+        const toggleMaterialBtn = document.getElementById('toggleMaterialBtn');
+        const toggleFlowBtn = document.getElementById('toggleFlowBtn');
 
         // --- Event Listeners for Thick-to-Thin --- 
         ttStartStrengthSlider.addEventListener('input', function() {
@@ -852,6 +1027,123 @@
         });
         importConfigFile.addEventListener('change', importConfiguration);
         exportGlbBtn.addEventListener('click', exportGLB);
+        
+        // Toggle Material listener
+        toggleMaterialBtn.addEventListener('click', () => {
+            if (currentMaterial === 'shader') {
+                currentMaterial = 'liquid';
+                toggleMaterialBtn.textContent = '切換為描邊材質';
+                scene.background.set(0x111111); // << 新增: 切換為深色背景
+            } else {
+                currentMaterial = 'shader';
+                toggleMaterialBtn.textContent = '切換為液體材質';
+                scene.background.set(0xffffff); // << 新增: 切換回白色背景
+            }
+            effect.material = materials[currentMaterial]; 
+            console.log(`材質已切換為: ${currentMaterial}, 背景顏色已更新.`);
+        });
+
+        // Toggle Flow listener (修改)
+        toggleFlowBtn.addEventListener('click', () => {
+            if (isFlowing) {
+                // --- 停止流動 --- 
+                isFlowing = false;
+                toggleFlowBtn.textContent = '開始流動動畫';
+                console.log("流動動畫已停止，正在恢復狀態...");
+                // isFirstFlowTrigger = true; // << 可選: 如果希望停止後下次又是同時開始，取消此註解
+                if (savedLineState) {
+                    // 恢復線條數據
+                    ttNumLines = savedLineState.ttNumLines;
+                    thNumLines = savedLineState.thNumLines;
+                    lineTypes = [...savedLineState.lineTypes]; // 恢復數組 (淺拷貝足夠 for string)
+                    randomDirections = savedLineState.randomDirections.map(dir => dir ? new THREE.Vector3(dir.x, dir.y, dir.z) : null); // 恢復 Vector3
+                    currentTargetLengths = [...savedLineState.currentTargetLengths]; // 恢復數組
+                    lineStartTimes = [...savedLineState.lineStartTimes]; // 恢復開始時間
+                    
+                    // 恢復狀態和收縮時間 (設為 undefined 確保它們按恢復的 start time 正常生長)
+                    lineFlowState = lineTypes.map(() => 'growing');
+                    lineShrinkStartTimes = lineTypes.map(() => undefined);
+
+                    // 更新 UI
+                    document.getElementById('ttNumLinesSlider').value = ttNumLines;
+                    document.getElementById('ttNumLinesValue').textContent = ttNumLines;
+                    document.getElementById('thNumLinesSlider').value = thNumLines;
+                    document.getElementById('thNumLinesValue').textContent = thNumLines;
+
+                    console.log("線條狀態已恢復");
+                    savedLineState = null; // 清除保存的狀態
+                } else {
+                    console.warn("找不到保存的狀態來恢復。")
+                }
+
+                if (savedCameraState) {
+                     // 恢復相機狀態
+                    camera.position.copy(savedCameraState.position);
+                    camera.quaternion.copy(savedCameraState.quaternion);
+                    controls.update(); // 更新控制器
+                    console.log("相機狀態已恢復");
+                    savedCameraState = null;
+                } else {
+                     console.warn("找不到保存的相機狀態來恢復。")
+                }
+                
+                effect.reset(); // 清除當前 metaballs
+
+            } else {
+                // --- 開始流動 --- 
+                console.log("開始流動動畫，正在保存當前狀態並設置隨機延遲...");
+                // 保存當前狀態
+                savedLineState = {
+                    ttNumLines: ttNumLines,
+                    thNumLines: thNumLines,
+                    lineTypes: [...lineTypes],
+                    randomDirections: randomDirections.map(dir => dir ? { x: dir.x, y: dir.y, z: dir.z } : null), // 序列化 Vector3
+                    currentTargetLengths: [...currentTargetLengths],
+                    lineStartTimes: [...lineStartTimes]
+                };
+                savedCameraState = {
+                    position: camera.position.clone(),
+                    quaternion: camera.quaternion.clone()
+                };
+                console.log("狀態已保存。");
+
+                isFlowing = true;
+                toggleFlowBtn.textContent = '停止流動動畫';
+                
+                const startTime = clock.getElapsedTime();
+                const totalLines = ttNumLines + thNumLines;
+                lineFlowState.length = totalLines; // 確保數組大小正確
+                lineShrinkStartTimes.length = totalLines;
+                linePauseAtEndEndTime.length = totalLines;
+                linePauseAtStartEndTime.length = totalLines;
+
+                if (isFirstFlowTrigger) {
+                     // << 新增: 首次觸發，所有線條同時開始 >>
+                    console.log("首次觸發流動：所有線條同時開始。");
+                    for (let i = 0; i < totalLines; i++) {
+                        lineStartTimes[i] = startTime; // 同一個開始時間
+                        lineFlowState[i] = 'growing'; 
+                        lineShrinkStartTimes[i] = undefined;
+                        linePauseAtEndEndTime[i] = undefined;
+                        linePauseAtStartEndTime[i] = undefined;
+                    }
+                    isFirstFlowTrigger = false; // 標記為非首次
+                } else {
+                    // << 修改: 非首次觸發，使用隨機延遲 >>
+                    console.log(`非首次觸發流動：各線條將在 ${MAX_INITIAL_FLOW_DELAY.toFixed(1)} 秒內隨機開始。`);
+                    for (let i = 0; i < totalLines; i++) {
+                        const randomInitialDelay = Math.random() * MAX_INITIAL_FLOW_DELAY;
+                        lineStartTimes[i] = startTime + randomInitialDelay; // 不同的開始時間
+                        lineFlowState[i] = 'growing'; 
+                        lineShrinkStartTimes[i] = undefined;
+                        linePauseAtEndEndTime[i] = undefined;
+                        linePauseAtStartEndTime[i] = undefined;
+                    }
+                }
+                
+                effect.reset(); 
+            }
+        });
     }
 
     // animate loop
