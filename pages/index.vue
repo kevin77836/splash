@@ -78,25 +78,27 @@
         <button @click="exportGLB" style="margin-top: 5px;">下載目前模型 (GLB)</button>
         <button @click="toggleMaterial" style="margin-top: 5px;">{{ toggleMaterialButtonText }}</button>
         <button @click="toggleFlow" style="margin-top: 5px;">{{ toggleFlowButtonText }}</button>
+        <button @click="togglePixelation" style="margin-top: 5px;">{{ togglePixelationButtonText }}</button>
     </div>
   </div>
 </template>
 
-<script setup lang="ts">
+<script setup>
 import * as THREE from 'three';
 import { MarchingCubes } from 'three/examples/jsm/objects/MarchingCubes.js';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 import { GLTFExporter } from 'three/examples/jsm/exporters/GLTFExporter.js';
-// EffectComposer and passes are not used in the original script, excluding them for now.
-// import { EffectComposer } from 'three/examples/jsm/postprocessing/EffectComposer.js';
-// import { RenderPass } from 'three/examples/jsm/postprocessing/RenderPass.js';
+import { EffectComposer } from 'three/examples/jsm/postprocessing/EffectComposer.js';
+import { RenderPixelatedPass } from 'three/examples/jsm/postprocessing/RenderPixelatedPass.js';
+import { OutputPass } from 'three/examples/jsm/postprocessing/OutputPass.js';
+// import { RenderPass } from 'three/examples/jsm/postprocessing/RenderPass.js'; // RenderPass is implicitly handled by RenderPixelatedPass
 // import { ShaderPass } from 'three/examples/jsm/postprocessing/ShaderPass.js';
 // import { FXAAShader } from 'three/examples/jsm/shaders/FXAAShader.js';
 import { EXRLoader } from 'three/examples/jsm/loaders/EXRLoader.js';
 
 // --- Refs ---
-const canvasContainer = ref<HTMLDivElement | null>(null);
-const importConfigFileRef = ref<HTMLInputElement | null>(null);
+const canvasContainer = ref(null);
+const importConfigFileRef = ref(null);
 
 // --- State (Reactive Variables) ---
 
@@ -119,32 +121,35 @@ const thNumLines = ref(3);
 // Shared Parameters
 const resolution = ref(200);
 const isolation = ref(300);
-const currentMaterial = ref<'shader' | 'liquid'>('shader');
+const currentMaterial = ref('shader');
 const isFlowing = ref(false);
+const isPixelated = ref(false); // State for pixelation effect
 
 // Internal state (non-reactive or managed internally by Three.js objects)
-let scene: THREE.Scene;
-let camera: THREE.PerspectiveCamera;
-let renderer: THREE.WebGLRenderer;
-let controls: OrbitControls;
-let effect: MarchingCubes;
-let clock: THREE.Clock;
-let materials: { shader: THREE.ShaderMaterial; liquid: THREE.MeshStandardMaterial };
-let pmremGenerator: THREE.PMREMGenerator;
-let animationFrameId: number;
+let scene;
+let camera;
+let renderer;
+let controls;
+let effect;
+let clock;
+let materials;
+let pmremGenerator;
+let composer; // EffectComposer instance
+let pixelPass; // RenderPixelatedPass instance
+let animationFrameId;
 
 // Line Data (Using simple arrays, could be reactive if needed for UI binding beyond counts)
-let lineStartTimes: (number | undefined)[] = [];
-let randomDirections: (THREE.Vector3 | null)[] = [];
-let currentTargetLengths: number[] = [];
-let lineTypes: ('tt' | 'th')[] = [];
-let lineFlowState: ('growing' | 'pauseAtEnd' | 'shrinking' | 'pauseAtStart')[] = [];
-let lineShrinkStartTimes: (number | undefined)[] = [];
-let linePauseAtEndEndTime: (number | undefined)[] = [];
-let linePauseAtStartEndTime: (number | undefined)[] = [];
+let lineStartTimes = [];
+let randomDirections = [];
+let currentTargetLengths = [];
+let lineTypes = [];
+let lineFlowState = [];
+let lineShrinkStartTimes = [];
+let linePauseAtEndEndTime = [];
+let linePauseAtStartEndTime = [];
 
-let savedLineState: any = null;
-let savedCameraState: any = null;
+let savedLineState = null;
+let savedCameraState = null;
 let isFirstFlowTrigger = true;
 
 // Constants
@@ -166,6 +171,10 @@ const toggleMaterialButtonText = computed(() => {
 
 const toggleFlowButtonText = computed(() => {
   return isFlowing.value ? '停止流動動畫' : '開始流動動畫';
+});
+
+const togglePixelationButtonText = computed(() => {
+    return isPixelated.value ? '停用像素化' : '啟用像素化';
 });
 
 // --- Shaders ---
@@ -231,7 +240,7 @@ function generateMaterials() {
 function loadEnvironmentMap() {
   new EXRLoader()
       .setPath('/hdr/') // Use path relative to public directory
-      .load('HDR_Light_Studio_Free_HDRI_Design_05.exr', (texture: THREE.Texture) => {
+      .load('HDR_Light_Studio_Free_HDRI_Design_04.exr', (texture) => {
           texture.mapping = THREE.EquirectangularReflectionMapping;
           const envMap = pmremGenerator.fromEquirectangular(texture).texture;
           pmremGenerator.dispose();
@@ -243,7 +252,7 @@ function loadEnvironmentMap() {
               materials.liquid.envMap = envMap;
               materials.liquid.needsUpdate = true;
           }
-      }, undefined, (error: Error | ProgressEvent<EventTarget>) => {
+      }, undefined, (error) => {
           console.error('無法載入本地 EXR 環境貼圖:', error);
           alert('無法載入 assets/hdr/HDR_Light_Studio_Free_HDRI_Design_05.exr，請檢查檔案是否存在或路徑是否正確。');
       });
@@ -303,7 +312,7 @@ function regenerateLine() {
     isFirstFlowTrigger = true;
 }
 
-function updateLineMetaball(obj: MarchingCubes) {
+function updateLineMetaball(obj) {
     if (!clock) return;
     obj.reset();
     const currentTime = clock.getElapsedTime();
@@ -312,14 +321,14 @@ function updateLineMetaball(obj: MarchingCubes) {
 
     for (let lineIndex = 0; lineIndex < totalLines; lineIndex++) {
 
-        if (lineStartTimes[lineIndex] === undefined || currentTime < lineStartTimes[lineIndex]!) {
+        if (lineStartTimes[lineIndex] === undefined || currentTime < lineStartTimes[lineIndex]) {
             continue;
         }
 
         if (currentTargetLengths[lineIndex] === undefined) continue;
         const localMaxLength = currentTargetLengths[lineIndex] / obj.scale.x;
         let localCurrentLength = 0;
-        let timeSinceStart = currentTime - lineStartTimes[lineIndex]!;
+        let timeSinceStart = currentTime - lineStartTimes[lineIndex];
         const currentFlowState = lineFlowState[lineIndex];
 
         // --- Calculate length based on flow state ---
@@ -503,9 +512,9 @@ function triggerImport() {
     importConfigFileRef.value?.click();
 }
 
-function importConfiguration(event: Event) {
+function importConfiguration(event) {
     console.log("開始匯入設定...");
-    const file = (event.target as HTMLInputElement)?.files?.[0];
+    const file = (event.target)?.files?.[0];
     if (!file) {
         console.log("未選擇檔案。");
         return;
@@ -514,7 +523,7 @@ function importConfiguration(event: Event) {
     const reader = new FileReader();
     reader.onload = function(e) {
         try {
-            const config = JSON.parse(e.target?.result as string);
+            const config = JSON.parse(e.target?.result);
             console.log("讀取的設定:", config);
 
             if (!config || typeof config !== 'object') throw new Error("無效的設定檔格式");
@@ -554,7 +563,7 @@ function importConfiguration(event: Event) {
             if (effect) {
                 // effect.init(resolution.value); // updateMarchingCubesParams handles this via watcher
                 effect.isolation = isolation.value;
-                effect.material = materials[currentMaterial.value as keyof typeof materials];
+                effect.material = materials[currentMaterial.value];
             }
             if (camera && controls) {
                  if (config.cameraPosition) {
@@ -601,7 +610,7 @@ function importConfiguration(event: Event) {
             console.log("設定已成功匯入。");
             alert("設定已載入！");
 
-        } catch (e: any) {
+        } catch (e) {
             console.error("匯入設定失敗:", e);
             alert(`匯入設定失敗！錯誤: ${e.message}`);
         } finally {
@@ -645,7 +654,7 @@ function exportGLB() {
 
         exporter.parse(
             effect,
-            (result: ArrayBuffer) => { // result is ArrayBuffer or JSON object based on options
+            (result) => { // Removed type annotation
                 if (result instanceof ArrayBuffer) {
                     try {
                         const blob = new Blob([result], { type: 'model/gltf-binary' });
@@ -675,7 +684,7 @@ function exportGLB() {
                 effect.init(originalResolution); // Re-init with original resolution
                 console.log("  - 模型旋轉和解析度已恢復.");
             },
-            (error: Error | unknown) => { // Error callback type can vary
+            (error) => { // Removed type annotation
                 console.error('匯出 GLB 時發生錯誤:', error);
                 alert("匯出 GLB 時發生錯誤！請檢查控制台。");
                 // Restore original state (Error)
@@ -718,7 +727,7 @@ function toggleMaterial() {
              scene.background.set(0xffffff); // White background for shader
         }
     }
-    effect.material = materials[currentMaterial.value as keyof typeof materials];
+    effect.material = materials[currentMaterial.value];
     console.log(`材質已切換為: ${currentMaterial.value}, 背景顏色已更新.`);
 }
 
@@ -735,7 +744,7 @@ function toggleFlow() {
             ttNumLines.value = savedLineState.ttNumLines;
             thNumLines.value = savedLineState.thNumLines;
             lineTypes = [...savedLineState.lineTypes];
-            randomDirections = savedLineState.randomDirections.map((dir: any) => dir ? new THREE.Vector3(dir.x, dir.y, dir.z) : null);
+            randomDirections = savedLineState.randomDirections.map((dir) => dir ? new THREE.Vector3(dir.x, dir.y, dir.z) : null);
             currentTargetLengths = [...savedLineState.currentTargetLengths];
             lineStartTimes = [...savedLineState.lineStartTimes];
 
@@ -812,6 +821,13 @@ function toggleFlow() {
 
         effect.reset();
     }
+    effect.material = materials[currentMaterial.value];
+}
+
+function togglePixelation() {
+    if (!effect || !scene) return;
+    isPixelated.value = !isPixelated.value;
+    console.log(`像素化狀態已切換為: ${isPixelated.value}`);
 }
 
 // --- Input Handlers with Validation ---
@@ -875,17 +891,23 @@ function animate() {
 
   if (!effect || !materials || !camera || !renderer || !scene || !controls) return; // Guard
 
-  effect.material = materials[currentMaterial.value as keyof typeof materials];
-  if (currentMaterial.value === 'shader') {
+  // Update scene logic (always happens)
+  updateLineMetaball(effect);
+  controls.update();
+
+  // Update shader material uniforms if active
+  if (currentMaterial.value === 'shader' && !isPixelated.value) { // Only update if shader is active AND not pixelated (composer handles time otherwise? Check docs)
       const currentTime = clock.getElapsedTime();
-      effect.material.uniforms.uTime.value = currentTime;
-      effect.material.uniforms.viewVector.value = camera.position;
+      materials.shader.uniforms.uTime.value = currentTime;
+      materials.shader.uniforms.viewVector.value = camera.position;
   }
 
-  updateLineMetaball(effect);
-
-  controls.update();
-  renderer.render(scene, camera);
+  // Conditional rendering: composer or direct renderer
+  if (isPixelated.value && composer) {
+      composer.render();
+  } else {
+      renderer.render(scene, camera);
+  }
 }
 
 // --- Resize Handler ---
@@ -897,6 +919,13 @@ function handleResize() {
     camera.aspect = width / height;
     camera.updateProjectionMatrix();
     renderer.setSize(width, height);
+
+    // Update composer and passes size
+    if (composer) {
+        composer.setSize(width, height);
+    }
+    // Note: RenderPixelatedPass usually adapts automatically, but check if specific update needed
+
     if (materials.shader) {
         materials.shader.uniforms.uResolution.value.set(width, height);
     }
@@ -946,12 +975,22 @@ onMounted(() => {
   materials = generateMaterials(); // Generate materials after camera is defined
 
   // Marching Cubes
-  effect = new MarchingCubes(resolution.value, materials[currentMaterial.value as keyof typeof materials], true, true, 100000);
+  effect = new MarchingCubes(resolution.value, materials[currentMaterial.value], true, true, 100000);
   effect.isolation = isolation.value;
   effect.scale.set(8, 8, 8);
   effect.enableUvs = false;
   effect.enableColors = false;
   scene.add(effect);
+
+  // --- Post-processing Setup ---
+  composer = new EffectComposer(renderer);
+  // RenderPixelatedPass automatically adds a RenderPass internally
+  pixelPass = new RenderPixelatedPass(6, scene, camera);
+  composer.addPass(pixelPass);
+  // OutputPass ensures correct colorspace and encoding
+  const outputPass = new OutputPass();
+  composer.addPass(outputPass);
+  // --- End Post-processing Setup ---
 
   // Clock
   clock = new THREE.Clock();
@@ -992,13 +1031,13 @@ onUnmounted(() => {
   }
    if (scene) {
         // Dispose geometries, materials, textures in the scene
-        scene.traverse((object: THREE.Object3D) => {
+        scene.traverse((object) => {
             if (object instanceof THREE.Mesh) {
                 object.geometry?.dispose();
                 // Check if material is an array or single
-                const material = object.material as THREE.Material | THREE.Material[];
+                const material = object.material;
                 if (Array.isArray(material)) {
-                    material.forEach((mat: THREE.Material) => mat.dispose());
+                    material.forEach((mat) => mat.dispose());
                 } else if (material) {
                     material.dispose();
                 }
@@ -1006,6 +1045,12 @@ onUnmounted(() => {
         });
     }
     if(pmremGenerator) pmremGenerator.dispose(); // Dispose PMREMGenerator
+    // Dispose composer and passes (composer itself doesn't have dispose, relies on GC? Check docs - better dispose passes)
+    if (pixelPass) {
+        // Passes usually don't have a specific dispose method, rely on GC
+    }
+    // composer = null; // Help GC
+    // pixelPass = null;
 
   // Remove canvas
   if (canvasContainer.value && renderer) {

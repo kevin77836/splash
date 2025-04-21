@@ -42,8 +42,7 @@
 
 .common-panel {
   bottom: 20px; /* Increased bottom margin */
-  left: 50%;
-  transform: translateX(-50%);
+  right: 20px;
   height: auto;
   width: 350px;
   flex-direction: column;
