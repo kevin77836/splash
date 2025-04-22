@@ -63,22 +63,40 @@
     <!-- 通用控制面板 HTML -->
     <div id="commonPanel" class="control-panel common-panel">
         <div class="panel-title">通用控制</div>
-         <div class="control-group">
-            <label class="control-label">MarchingCubes 解析度: <span class="value-display">{{ resolution }}</span></label>
-            <input type="range" v-model.number="resolution" min="10" max="500" step="1" @input="updateMarchingCubesParams">
-        </div>
-        <div class="control-group">
-            <label class="control-label">MarchingCubes Isolation: <span class="value-display">{{ isolation }}</span></label>
-            <input type="range" v-model.number="isolation" min="10" max="300" step="10" @input="updateMarchingCubesParams">
-        </div>
         <button @click="regenerateLine">重新生成所有線條</button>
         <button @click="exportConfiguration" style="margin-top: 5px;">匯出設定 (JSON)</button>
         <button @click="triggerImport" style="margin-top: 5px;">匯入設定 (JSON)</button>
         <input type="file" ref="importConfigFileRef" @change="importConfiguration" accept=".json" style="display: none;">
         <button @click="exportGLB" style="margin-top: 5px;">下載目前模型 (GLB)</button>
-        <button @click="toggleMaterial" style="margin-top: 5px;">{{ toggleMaterialButtonText }}</button>
-        <button @click="toggleFlow" style="margin-top: 5px;">{{ toggleFlowButtonText }}</button>
-        <button @click="togglePixelation" style="margin-top: 5px;">{{ togglePixelationButtonText }}</button>
+    </div>
+
+    <!-- 新增左下角 Switch 控制面板 -->
+    <div id="switchPanel" class="control-panel switch-panel">
+        <div class="panel-title">快速切換</div>
+        
+        <div class="switch-control-group">
+            <label class="switch-label">{{ currentMaterial === 'shader' ? '描邊材質' : '液體材質' }}</label>
+            <label class="switch">
+                <input type="checkbox" :checked="currentMaterial === 'liquid'" @change="toggleMaterial">
+                <span class="slider round"></span>
+            </label>
+        </div>
+
+        <div class="switch-control-group">
+            <label class="switch-label">{{ isFlowing ? '流動中' : '靜止' }}</label>
+            <label class="switch">
+                <input type="checkbox" :checked="isFlowing" @change="toggleFlow">
+                <span class="slider round"></span>
+            </label>
+        </div>
+
+        <div class="switch-control-group">
+            <label class="switch-label">{{ isPixelated ? '像素化' : '正常' }}</label>
+            <label class="switch">
+                <input type="checkbox" :checked="isPixelated" @change="togglePixelation">
+                <span class="slider round"></span>
+            </label>
+        </div>
     </div>
   </div>
 </template>
@@ -91,9 +109,6 @@ import { GLTFExporter } from 'three/examples/jsm/exporters/GLTFExporter.js';
 import { EffectComposer } from 'three/examples/jsm/postprocessing/EffectComposer.js';
 import { RenderPixelatedPass } from 'three/examples/jsm/postprocessing/RenderPixelatedPass.js';
 import { OutputPass } from 'three/examples/jsm/postprocessing/OutputPass.js';
-// import { RenderPass } from 'three/examples/jsm/postprocessing/RenderPass.js'; // RenderPass is implicitly handled by RenderPixelatedPass
-// import { ShaderPass } from 'three/examples/jsm/postprocessing/ShaderPass.js';
-// import { FXAAShader } from 'three/examples/jsm/shaders/FXAAShader.js';
 import { EXRLoader } from 'three/examples/jsm/loaders/EXRLoader.js';
 
 // --- Refs ---
@@ -120,7 +135,6 @@ const thNumLines = ref(3);
 
 // Shared Parameters
 const resolution = ref(200);
-const isolation = ref(300);
 const currentMaterial = ref('shader');
 const isFlowing = ref(false);
 const isPixelated = ref(false); // State for pixelation effect
@@ -163,19 +177,6 @@ const MAX_INITIAL_FLOW_DELAY = 2.5;
 const BASE_SHRINK_DURATION = 1.0;
 const MAX_PAUSE_AT_END_DELAY = 10.0;
 const MAX_PAUSE_AT_START_DELAY = 1.0;
-
-// --- Computed Properties ---
-const toggleMaterialButtonText = computed(() => {
-  return currentMaterial.value === 'shader' ? '切換為液體材質' : '切換為描邊材質';
-});
-
-const toggleFlowButtonText = computed(() => {
-  return isFlowing.value ? '停止流動動畫' : '開始流動動畫';
-});
-
-const togglePixelationButtonText = computed(() => {
-    return isPixelated.value ? '停用像素化' : '啟用像素化';
-});
 
 // --- Shaders ---
 const vertexShader = `
@@ -480,7 +481,6 @@ function exportConfiguration() {
         thShrinkPower: thShrinkPower.value,
         thNumLines: thNumLines.value,
         resolution: resolution.value,
-        isolation: isolation.value,
         currentMaterial: currentMaterial.value,
         // growthSpeed, growthEaseOutPower, numSegments, subtract are constants, maybe don't need export?
         lineTypes: lineTypes,
@@ -527,7 +527,7 @@ function importConfiguration(event) {
             console.log("讀取的設定:", config);
 
             if (!config || typeof config !== 'object') throw new Error("無效的設定檔格式");
-            const requiredKeys = ['ttStartStrength', 'thStartStrength', 'resolution', 'isolation', 'lineTypes', 'randomDirections', 'currentTargetLengths', 'cameraPosition', 'cameraQuaternion'];
+            const requiredKeys = ['ttStartStrength', 'thStartStrength', 'resolution', 'lineTypes', 'randomDirections', 'currentTargetLengths', 'cameraPosition', 'cameraQuaternion'];
             for (const key of requiredKeys) {
                 if (!(key in config)) throw new Error(`缺少必要欄位: ${key}`);
             }
@@ -556,14 +556,12 @@ function importConfiguration(event) {
             thShrinkPower.value = config.thShrinkPower;
             thNumLines.value = config.thNumLines;
             resolution.value = config.resolution;
-            isolation.value = config.isolation;
             currentMaterial.value = config.currentMaterial || 'shader';
 
             // Update non-reactive Three.js state
             if (effect) {
-                // effect.init(resolution.value); // updateMarchingCubesParams handles this via watcher
-                effect.isolation = isolation.value;
                 effect.material = materials[currentMaterial.value];
+                updateMarchingCubesParams(); // 調用此函數計算 isolation 並更新效果
             }
             if (camera && controls) {
                  if (config.cameraPosition) {
@@ -631,20 +629,20 @@ function importConfiguration(event) {
 
 function exportGLB() {
     if (!effect || !camera) return;
-    console.log("開始匯出 GLB (應用視角, 臨時提高解析度至 200)...");
+    console.log("開始匯出 GLB (應用視角)...");
     const originalResolution = resolution.value;
     const originalEffectQuaternion = effect.quaternion.clone();
     const exporter = new GLTFExporter();
 
     try {
-        const exportResolution = 200; // Use fixed export resolution
-        console.log(`  - 原解析度: ${originalResolution}, 臨時設為: ${exportResolution}`);
-        // resolution.value = exportResolution; // Temporarily change - DON'T, use init directly
-        effect.init(exportResolution); // Re-init with higher resolution
+        // 直接使用原始解析度，無需臨時修改
+        console.log(`  - 使用目前解析度: ${originalResolution}`);
+        // Re-init with current resolution to ensure clean state
+        effect.init(originalResolution);
 
-        console.log("  - 重新計算高解析度模型...");
-        updateLineMetaball(effect); // Force recalculation at high res
-        console.log("  - 高解析度模型計算完成.");
+        console.log("  - 重新計算模型...");
+        updateLineMetaball(effect); // Force recalculation
+        console.log("  - 模型計算完成.");
 
         console.log("  - 應用反向攝影機旋轉...");
         const cameraInverseQuaternion = camera.quaternion.clone().invert();
@@ -661,13 +659,13 @@ function exportGLB() {
                         const url = URL.createObjectURL(blob);
                         const a = document.createElement('a');
                         a.href = url;
-                        a.download = `metaball_model_view_res${exportResolution}.glb`;
+                        a.download = `metaball_model_view_res${originalResolution}.glb`;
                         document.body.appendChild(a);
                         a.click();
                         document.body.removeChild(a);
                         URL.revokeObjectURL(url);
-                        console.log(`GLB 檔案已匯出: metaball_model_view_res${exportResolution}.glb`);
-                        alert(`高解析度 (含視角, res ${exportResolution}) GLB 模型已下載！`);
+                        console.log(`GLB 檔案已匯出: metaball_model_view_res${originalResolution}.glb`);
+                        alert(`模型 (含視角, res ${originalResolution}) GLB 已下載！`);
                     } catch (e) {
                         console.error("建立或下載 GLB Blob 時出錯:", e);
                         alert("下載 GLB 時發生錯誤！");
@@ -677,40 +675,31 @@ function exportGLB() {
                     alert("匯出 GLB 失敗：格式錯誤。請檢查控制台。");
                 }
                  // Restore original state (Success)
-                console.log("  - (成功) 恢復原始模型旋轉和解析度...");
+                console.log("  - (成功) 恢復原始模型旋轉...");
                 effect.quaternion.copy(originalEffectQuaternion);
                 effect.updateMatrixWorld(true);
-                // resolution.value = originalResolution; // Restore reactive ref
-                effect.init(originalResolution); // Re-init with original resolution
-                console.log("  - 模型旋轉和解析度已恢復.");
+                // 已經使用原始解析度，無需恢復
+                console.log("  - 模型旋轉已恢復.");
             },
             (error) => { // Removed type annotation
                 console.error('匯出 GLB 時發生錯誤:', error);
                 alert("匯出 GLB 時發生錯誤！請檢查控制台。");
                 // Restore original state (Error)
-                console.log("  - (錯誤) 恢復原始模型旋轉和解析度...");
+                console.log("  - (錯誤) 恢復原始模型旋轉...");
                 effect.quaternion.copy(originalEffectQuaternion);
                 effect.updateMatrixWorld(true);
-                // if (resolution.value !== originalResolution) {
-                //     resolution.value = originalResolution;
-                // }
-                effect.init(originalResolution); // Re-init with original resolution
-                console.log("  - 模型旋轉和解析度已恢復.");
+                console.log("  - 模型旋轉已恢復.");
             },
             { binary: true }
         );
     } catch (e) {
          console.error("準備匯出或應用旋轉時出錯:", e);
-         alert("準備匯出高解析度模型時發生錯誤！");
+         alert("準備匯出模型時發生錯誤！");
          // Restore original state (Catch)
-         console.log("  - (Catch) 恢復原始模型旋轉和解析度...");
+         console.log("  - (Catch) 恢復原始模型旋轉...");
          effect.quaternion.copy(originalEffectQuaternion);
          effect.updateMatrixWorld(true);
-         // if (resolution.value !== originalResolution) {
-         //     resolution.value = originalResolution;
-         // }
-         effect.init(originalResolution); // Re-init with original resolution
-         console.log("  - 模型旋轉和解析度已恢復.");
+         console.log("  - 模型旋轉已恢復.");
     }
 }
 
@@ -875,14 +864,14 @@ function handleThMaxLengthInput() {
 // --- Watchers ---
 function updateMarchingCubesParams() {
      if (effect) {
+        const derivedIsolation = resolution.value * 1.5;
         effect.init(resolution.value); // Reinitialize when resolution changes
-        effect.isolation = isolation.value;
-        console.log(`Marching Cubes params updated: resolution=${resolution.value}, isolation=${isolation.value}`);
+        effect.isolation = derivedIsolation;
+        console.log(`Marching Cubes params updated: resolution=${resolution.value}, derivedIsolation=${derivedIsolation}`);
     }
 }
-// Watch resolution and isolation to update MarchingCubes
+// Watch resolution to update MarchingCubes
 watch(resolution, updateMarchingCubesParams);
-watch(isolation, updateMarchingCubesParams);
 
 
 // --- Animation Loop ---
@@ -975,8 +964,9 @@ onMounted(() => {
   materials = generateMaterials(); // Generate materials after camera is defined
 
   // Marching Cubes
+  const derivedIsolation = resolution.value * 1.5;
   effect = new MarchingCubes(resolution.value, materials[currentMaterial.value], true, true, 100000);
-  effect.isolation = isolation.value;
+  effect.isolation = derivedIsolation;
   effect.scale.set(8, 8, 8);
   effect.enableUvs = false;
   effect.enableColors = false;
