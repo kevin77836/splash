@@ -1,11 +1,12 @@
 /* Basic container styles */
 .splash-container {
-  position: relative; /* Needed for absolute positioning of panels */
+  position: absolute; /* Needed for absolute positioning of panels */
+  top: 0;
+  left: 0;
   width: 100vw;
   height: 100vh;
   margin: 0;
   overflow: hidden;
-  background-color: #ffffff; /* Initial background, might be changed by JS */
 }
 
 .canvas-container {

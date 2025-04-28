@@ -1,18 +1,11 @@
 <template>
-    <div class="main-container">
-        <h1 class="company-name">
-            <div class="front-name">
-                Splash
-            </div>
-            <div class="back-name">
-                DigiLab
-            </div>
-        </h1>
-    </div>
     <div class="splash-container">
       <div ref="canvasContainer" class="canvas-container"></div>
-      <!-- <div id="switchPanel" class="control-panel switch-panel">
+  
+        <!-- 開關控制面板 -->
+      <div id="switchPanel" class="control-panel switch-panel">
             <div class="panel-title">效果切換</div>
+          
           <div class="switch-control-group">
               <label class="switch-label">{{ currentMaterial === 'shader' ? '描邊材質' : '液體材質' }}</label>
               <label class="switch">
@@ -44,7 +37,7 @@
                     <span class="slider round"></span>
                 </label>
             </div>
-      </div> -->
+      </div>
     </div>
   </template>
   
@@ -61,10 +54,10 @@
   const canvasContainer = ref(null);
   
   // --- State (Reactive Variables) ---
-  const currentMaterial = ref('liquid');
+  const currentMaterial = ref('shader');
   const isPixelated = ref(false);
-  const isAutoRotating = ref(true);
-  const isFlowing = ref(true);
+  const isAutoRotating = ref(false);
+  const isFlowing = ref(false);       // 控制線條是否處於流動動畫模式
   
   // Internal state (內部狀態變數)
   let scene;
@@ -185,21 +178,14 @@
         transparent: true,
         side: THREE.DoubleSide
       }),
-      liquid: new THREE.MeshPhysicalMaterial({
+      liquid: new THREE.MeshStandardMaterial({
           color: 0xffffff,
-          metalness: 0.1,
+          metalness: 1,
           roughness: 0,
           transparent: true,
-          opacity: 0.5,
-          transmission: 1, // 增加透光性，模擬玻璃效果
-        //   reflectivity: 1, // 反射率
-          ior: 1.33, // 折射率 (玻璃約為1.5，水約為1.33)
-          thickness: 1.0, // 材質厚度
-        //   clearcoat: 0.5, // 清漆層強度
-        //   clearcoatRoughness: 0.1, // 清漆層粗糙度
-          envMap: null,
-          envMapIntensity: 50.0,
-          side: THREE.DoubleSide
+          opacity: 0.25,
+          side: THREE.DoubleSide,
+          envMap: null
       })
     };
   }
@@ -401,12 +387,18 @@
       if (!effect || !scene) return;
       if (currentMaterial.value === 'shader') {
           currentMaterial.value = 'liquid';
+          if (scene.background instanceof THREE.Color) {
+               scene.background.set(0x111111); // 暗色背景配合液體材質
+          }
       } else {
           currentMaterial.value = 'shader';
+           if (scene.background instanceof THREE.Color) {
+               scene.background.set(0xffffff); // 白色背景配合描邊材質
+          }
       }
       effect.material = materials[currentMaterial.value];
       
-      console.log(`材質已切換為: ${currentMaterial.value}`);
+      console.log(`材質已切換為: ${currentMaterial.value}, 背景顏色已更新.`);
   }
   
   function togglePixelation() {
@@ -713,18 +705,15 @@
   
     // Scene
     scene = new THREE.Scene();
-    scene.background = null; // 將背景設為透明
+    scene.background = new THREE.Color(0xffffff);
   
     // Camera
     camera = new THREE.PerspectiveCamera(45, width / height, 0.1, 1000);
-    camera.position.set(0, 0, 25);
+    camera.position.set(0, 0, 30);
     camera.lookAt(scene.position);
   
     // Renderer
-    renderer = new THREE.WebGLRenderer({ 
-        antialias: true,
-        alpha: true  // 啟用透明背景
-     });
+    renderer = new THREE.WebGLRenderer({ antialias: true });
     renderer.setSize(width, height);
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.5));
     container.appendChild(renderer.domElement);
@@ -734,14 +723,6 @@
     controls.enableDamping = true;
     controls.autoRotate = isAutoRotating.value;
     controls.autoRotateSpeed = 5.0;
-    
-    // 限制控制 - 只允許繞z軸旋轉
-    controls.enablePan = false; // 禁止平移
-    controls.enableZoom = false; // 禁止縮放
-    controls.minPolarAngle = Math.PI / 2; // 固定垂直角度
-    controls.maxPolarAngle = Math.PI / 2; // 固定垂直角度
-    controls.minAzimuthAngle = -Infinity; // 允許360度水平旋轉
-    controls.maxAzimuthAngle = Infinity;
   
     // Lights
     scene.add(new THREE.AmbientLight(0xffffff, 0.3));
@@ -782,46 +763,6 @@
   
     // Start animation
     animate();
-    
-    // 自動啟動流動動畫（如果預設為開啟）
-    if (isFlowing.value) {
-      // 使用短暫延遲確保場景和資料已經初始化完成
-      setTimeout(() => {
-        // 直接初始化流動狀態，而非調用toggleFlow
-        console.log("初始化流動動畫狀態...");
-        const currentTime = clock.getElapsedTime();
-        
-        // 保存當前狀態
-        savedLineState = {
-          lineTypes: [...lineTypes],
-          randomDirections: randomDirections.map(dir => dir ? { x: dir.x, y: dir.y, z: dir.z } : null),
-          currentTargetLengths: [...currentTargetLengths],
-          lineStartTimes: [...lineStartTimes]
-        };
-        
-        savedCameraState = {
-          position: camera.position.clone(),
-          quaternion: camera.quaternion.clone()
-        };
-        
-        // 設置初始全局狀態
-        globalFlowState = 'growing';
-        growStartTime = currentTime;
-        
-        // 所有線條同時開始生長
-        const totalLines = lineTypes.length;
-        lineFlowState.length = totalLines;
-        
-        for (let i = 0; i < totalLines; i++) {
-          lineStartTimes[i] = currentTime;
-          lineFlowState[i] = 'growing';
-        }
-        
-        effect.reset();
-        effect.material = materials[currentMaterial.value];
-        console.log("流動動畫已初始化完成");
-      }, 1000);
-    }
   
     // Add resize listener
     window.addEventListener('resize', handleResize);
