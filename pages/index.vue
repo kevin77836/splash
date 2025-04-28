@@ -187,10 +187,10 @@
       }),
       liquid: new THREE.MeshPhysicalMaterial({
           color: 0xffffff,
-          metalness: 0.1,
+          metalness: 0,
           roughness: 0,
           transparent: true,
-          opacity: 0.5,
+          opacity: 0.75,
           transmission: 1, // 增加透光性，模擬玻璃效果
         //   reflectivity: 1, // 反射率
           ior: 1.33, // 折射率 (玻璃約為1.5，水約為1.33)
