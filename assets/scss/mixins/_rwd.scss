@@ -1,0 +1,61 @@
+@use '../abstracts/variables' as vars;
+
+@mixin max-xxl {
+    @media (max-width: calc(vars.$breakpoint-xxl - 1px)) {
+        @content;
+    }
+}
+
+@mixin max-xl {
+    @media (max-width: calc(vars.$breakpoint-xl - 1px)) {
+        @content;
+    }
+}
+
+@mixin max-lg {
+    @media (max-width: calc(vars.$breakpoint-lg - 1px)) {
+        @content;
+    }
+}
+
+@mixin max-md {
+    @media (max-width: calc(vars.$breakpoint-md - 1px)) {
+        @content;
+    }
+}
+
+@mixin max-sm {
+    @media (max-width: calc(vars.$breakpoint-sm - 1px)) {
+        @content;
+    }
+}
+
+@mixin min-xxl {
+    @media (min-width: vars.$breakpoint-xxl) {
+        @content;
+    }
+}
+
+@mixin min-xl {
+    @media (min-width: vars.$breakpoint-xl) {
+        @content;
+    }
+}
+
+@mixin min-lg {
+    @media (min-width: vars.$breakpoint-lg) {
+        @content;
+    }
+}
+
+@mixin min-md {
+    @media (min-width: vars.$breakpoint-md) {
+        @content;
+    }
+}
+
+@mixin min-sm {
+    @media (min-width: vars.$breakpoint-sm) {
+        @content;
+    }
+}

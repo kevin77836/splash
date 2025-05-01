@@ -6,6 +6,15 @@
         // -webkit-text-fill-color: white;
         // -webkit-text-stroke-width: 1.5px;
         // -webkit-text-stroke-color: black;
+        @include max-lg{
+            font-size: 4rem;
+        }
+        @include max-md{
+            font-size: 3rem;
+        }
+        @include max-sm{
+            font-size: 2rem;
+        }
         .front-name{
             position: absolute;
             top: 50%;

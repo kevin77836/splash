@@ -57,6 +57,7 @@ const sphereParams = reactive({
 // --- 流動動畫參數 ---
 const animParams = reactive({
   // 基本設定
+  mobileResolution: 100,
   resolution: 200,                // Marching Cubes 解析度
   numSegments: 50,                // 每條線分段數量
   subtract: 20,                   // Metaball 減法參數
@@ -718,6 +719,7 @@ function initializeScene() {
   // 禁止縮放和平移，只允許旋轉
   controls.enableZoom = false;     // 禁止縮放
   controls.enablePan = false;      // 禁止平移
+  controls.enableRotate = false;
   controls.minDistance = camera.position.length(); // 固定距離
   controls.maxDistance = camera.position.length(); // 固定距離
 
@@ -729,8 +731,17 @@ function initializeScene() {
   material = generateMaterial();
 
   // Marching Cubes
-  const derivedIsolation = animParams.resolution * 1.5;
-  effect = new MarchingCubes(animParams.resolution, material, true, true, 100000);
+  let resolution;
+  if (!isMobileDevice()){
+    controls.autoRotate = false;
+    resolution = animParams.resolution;
+  }else{
+    controls.autoRotate = true; // 永遠啟用自動旋轉
+    controls.autoRotateSpeed = 2.0;
+    resolution = animParams.mobileResolution;
+  }
+  const derivedIsolation = resolution * 1.5;
+  effect = new MarchingCubes(resolution, material, true, true, 100000);
   effect.isolation = derivedIsolation;
   effect.scale.set(8, 8, 8);
   effect.enableUvs = false;
@@ -742,15 +753,6 @@ function initializeScene() {
   
   // 初始化共用材質
   sphereMaterial = generateSphereMaterial();
-
-  if (!isMobileDevice()){
-    controls.enableRotate = false;
-    controls.autoRotate = false;
-  }else{
-    controls.enableRotate = true;
-    controls.autoRotate = true; // 永遠啟用自動旋轉
-    controls.autoRotateSpeed = 2.0;
-  }
   
   return true;
 }
