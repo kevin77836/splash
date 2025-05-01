@@ -367,7 +367,7 @@ function toggleFlow() {
              console.warn("找不到保存的相機狀態來恢復。")
         }
 
-    effect.reset();
+        effect.reset();
     } else {
           // --- 開始流動 ---
           console.log("開始流動動畫，正在保存當前狀態...");
@@ -495,35 +495,35 @@ function updateLineMetaball(obj) {
         // 使用全局狀態控制所有線條
         if (isFlowing.value) {
             switch (globalFlowState) {
-            case 'growing':
-                if (localMaxLength > 0.001) {
+                case 'growing':
+                    if (localMaxLength > 0.001) {
                                 const currentGrowthSpeed = flowParams.growth.speed * flowParams.growth.flowSpeedFactor;
-                    const linearDuration = localMaxLength / (currentGrowthSpeed / obj.scale.x);
-                    const normalizedTime = linearDuration > 0 ? Math.min(timeSinceStart / linearDuration, 1.0) : 1.0;
+                        const linearDuration = localMaxLength / (currentGrowthSpeed / obj.scale.x);
+                        const normalizedTime = linearDuration > 0 ? Math.min(timeSinceStart / linearDuration, 1.0) : 1.0;
                                 const easedTime = Math.pow(normalizedTime, flowParams.growth.easeOutPower);
-                    localCurrentLength = easedTime * localMaxLength;
-                } else {
-                    localCurrentLength = 0;
-                }
-                break;
-            case 'pauseAtEnd':
-                    localCurrentLength = localMaxLength;
-                break;
-            case 'shrinking':
+                        localCurrentLength = easedTime * localMaxLength;
+                    } else {
+                        localCurrentLength = 0;
+                    }
+                    break;
+                case 'pauseAtEnd':
+                        localCurrentLength = localMaxLength;
+                    break;
+                case 'shrinking':
                     // 計算收合進度（所有線條使用相同的開始和結束時間）
                     if (shrinkStartTime !== null && shrinkEndTime !== null) {
                         const shrinkDuration = shrinkEndTime - shrinkStartTime;
                         const timeSinceShrinking = currentTime - shrinkStartTime;
                         const shrinkProgress = Math.min(timeSinceShrinking / shrinkDuration, 1.0);
                         const shrinkFactor = Math.max(0, 1.0 - shrinkProgress);
-                localCurrentLength = localMaxLength * shrinkFactor;
+                        localCurrentLength = localMaxLength * shrinkFactor;
                     } else {
                         localCurrentLength = localMaxLength;
-                }
-                break;
-            case 'pauseAtStart':
+                    }
+                    break;
+                case 'pauseAtStart':
                     localCurrentLength = 0.001;
-                break;
+                    break;
                 default:
                     localCurrentLength = 0;
                     break;
@@ -536,10 +536,10 @@ function updateLineMetaball(obj) {
             if (localMaxLength > 0.001) {
                 const normalizedTime = Math.min(timeSinceStart / (localMaxLength / (flowParams.growth.speed / obj.scale.x)), 1.0);
                 const easedTime = Math.pow(normalizedTime, flowParams.growth.easeOutPower);
-                    localCurrentLength = easedTime * localMaxLength;
-                } else {
-                    localCurrentLength = 0;
-                }
+                localCurrentLength = easedTime * localMaxLength;
+            } else {
+                localCurrentLength = 0;
+            }
         }
 
         if (localCurrentLength <= 0.001) continue;
@@ -997,10 +997,10 @@ function handleResize() {
 
 // --- Lifecycle Hooks ---
 onMounted(() => {
-  if (!canvasContainer.value) {
-    console.error("Canvas container not found!");
-    return;
-  }
+    if (!canvasContainer.value) {
+        console.error("Canvas container not found!");
+        return;
+    }
     
     const { scene: newScene, camera: newCamera, renderer: newRenderer, controls: newControls } = utils.scene.initialize(canvasContainer.value);
     
@@ -1008,40 +1008,40 @@ onMounted(() => {
     camera = newCamera;
     renderer = newRenderer;
     controls = newControls;
-
-  // PMREMGenerator
-  pmremGenerator = new THREE.PMREMGenerator(renderer);
-  pmremGenerator.compileEquirectangularShader();
-
-  // Materials
+    
+    // PMREMGenerator
+    pmremGenerator = new THREE.PMREMGenerator(renderer);
+    pmremGenerator.compileEquirectangularShader();
+    
+    // Materials
     materials = utils.material.generateMaterials(camera, scene);
 
-  // Marching Cubes
+    // Marching Cubes
     effect = new MarchingCubes(200, materials[currentMaterial.value], true, true, 100000);
     effect.isolation = 300;
-  effect.scale.set(8, 8, 8);
-  effect.enableUvs = false;
-  effect.enableColors = false;
-  scene.add(effect);
+    effect.scale.set(8, 8, 8);
+    effect.enableUvs = false;
+    effect.enableColors = false;
+    scene.add(effect);
 
     // Post-processing Setup
-  composer = new EffectComposer(renderer);
+    composer = new EffectComposer(renderer);
     pixelPass = new RenderPixelatedPass(5, scene, camera);
-  composer.addPass(pixelPass);
-  const outputPass = new OutputPass();
-  composer.addPass(outputPass);
+    composer.addPass(pixelPass);
+    const outputPass = new OutputPass();
+    composer.addPass(outputPass);
 
-  // Clock
-  clock = new THREE.Clock();
+    // Clock
+    clock = new THREE.Clock();
 
-  // Load Env Map
-  loadEnvironmentMap();
+    // Load Env Map
+    loadEnvironmentMap();
 
     // 在場景初始化後創建球體
     createSpheres();
 
-  // Start animation
-  animate();
+    // Start animation
+    animate();
     
     // 自動啟動流動動畫（如果預設為開啟）
     if (isFlowing.value) {
@@ -1082,16 +1082,16 @@ onMounted(() => {
         loadModelJson();
     }
 
-  // Add resize listener
-  window.addEventListener('resize', handleResize);
+    // Add resize listener
+    window.addEventListener('resize', handleResize);
 });
 
 onUnmounted(() => {
-  cancelAnimationFrame(animationFrameId);
-  window.removeEventListener('resize', handleResize);
-
+    cancelAnimationFrame(animationFrameId);
+    window.removeEventListener('resize', handleResize);
+    
     utils.scene.cleanup(scene, renderer, materials, effect, pmremGenerator, canvasContainer.value);
-
-  console.log("Three.js scene cleaned up.");
+    
+    console.log("Three.js scene cleaned up.");
 });
 </script>

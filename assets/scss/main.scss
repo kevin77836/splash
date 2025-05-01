@@ -8,3 +8,18 @@ html, body{
     font-family: "Orbitron", sans-serif;
     font-style: normal;
 }
+
+.control-button{
+    position: absolute;
+    top: 1rem;
+    left: 1rem;
+    z-index: 1000000;
+}
+
+.button-group{
+    position: absolute;
+    top: 1rem;
+    left: 1rem;
+    z-index: 1000000;
+    display: flex;
+}
