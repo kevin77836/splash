@@ -1,14 +1,4 @@
 <template>
-    <div class="main-container">
-        <h1 class="company-name">
-            <div class="front-name">
-                Splash
-            </div>
-            <div class="back-name">
-                DigiLab
-            </div>
-        </h1>
-    </div>
     <div class="splash-container">
       <div ref="canvasContainer" class="canvas-container"></div>
       <!-- <div id="switchPanel" class="control-panel switch-panel">
