@@ -1,10 +1,10 @@
 <template>
   <div class="main-container">
-    <div v-if="loadComplete && !isStart" class="startButton" @click="startAutoPlay" ref="startButton">
+    <div v-if="loadComplete && !isStarted" class="startButton" @click="clickStart">
       Start
     </div>
     
-    <h1 :class="{'start': isStart}" class="company-name">
+    <h1 :class="{'start': isStarted}" class="company-name">
       <span class="front-name">
         Splash
       </span>
@@ -15,6 +15,7 @@
   </div>
   <Splash
     ref="splashRef" 
+    :isStarted="isStarted"
     @resourcesLoaded="handleResourcesLoaded"
     @stateChange="handleStateChange"
     @animationComplete="handleAnimationComplete"
@@ -34,39 +35,12 @@ const splashRef = ref(null);
 const loadComplete = ref(false);
 const currentState = ref('idle');
 const isAutoPlaying = ref(false);
-const isStart = ref(false);
+const isStarted = ref(false);
 let autoPlayTimer = null;
 const startButton = ref(null);
 
-const handleMouseMove = (event) => {
-  // 取得視窗中心點
-  const centerX = window.innerWidth / 2;
-  const centerY = window.innerHeight / 2;
-  
-  // 計算滑鼠與中心點的偏移，並加上減速因子使移動不那麼劇烈
-  const offsetX = (event.clientX - centerX) * 0.025;
-  const offsetY = (event.clientY - centerY) * 0.025;
-  
-  if (startButton.value) {
-    startButton.value.style.transform =
-      `translate(-50%, -50%) translate(${offsetX}px, ${offsetY}px)`;
-  }
-};
 
-function isMobileDevice() {
-  return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
-}
 
-// 監聽滑鼠移動
-onMounted(() => {
-  if (!isMobileDevice()){
-    window.addEventListener('mousemove', handleMouseMove);
-  }
-});
-
-onUnmounted(() => {
-  window.removeEventListener('mousemove', handleMouseMove);
-});
 
 // 基本動畫控制函數
 const growingFunction = () => {
@@ -110,10 +84,15 @@ const handleAnimationComplete = (animationType) => {
   }
 }
 
+const clickStart = () => {
+  isStarted.value = true;
+  startAutoPlay();
+  splashRef.value.addMouseControlEvents();
+}
+
 // 開始自動播放
 const startAutoPlay = () => {
   if (isAutoPlaying.value) return; // 如果已經在播放則不執行
-  isStart.value = true;
   isAutoPlaying.value = true;
   
   // 從生長動畫開始

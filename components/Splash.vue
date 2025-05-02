@@ -997,19 +997,26 @@ function onMouseMove(event) {
   // 如果是行動裝置，則直接返回不處理
   if (isMobileDevice()) return;
   
+  // 計算滑鼠與視窗中心的偏移
   const centerX = window.innerWidth / 2;
   const centerY = window.innerHeight / 2;
-
-  targetPositionX = (event.clientX - centerX) * 0.001;
-  targetPositionY = -(event.clientY - centerY) * 0.001;
-
-  // 更新目標旋轉角度 (滑鼠水平移動控制Y軸旋轉，垂直移動控制X軸旋轉)
-  targetRotationY = (event.clientX / window.innerWidth)  * 2 - 1;
-  targetRotationX = (event.clientY / window.innerHeight) * 2 - 1;
   
-  // 限制垂直旋轉範圍
-  targetRotationX = Math.max(-Math.PI/3, Math.min(Math.PI/3, targetRotationX));
-  targetRotationY = Math.max(-Math.PI/3, Math.min(Math.PI/3, targetRotationY));
+  // 計算偏移並加上減速因子使移動不那麼劇烈
+  const offsetX = (event.clientX - centerX) * 0.001;
+  const offsetY = (event.clientY - centerY) * 0.001;
+  
+  // 更新目標位置 (使偏移更小以獲得更細膩的移動)
+  targetPositionX = offsetX;
+  targetPositionY = -offsetY; // 負值使移動方向與滑鼠一致
+  
+  // 更新目標旋轉角度 (滑鼠水平移動控制Y軸旋轉，垂直移動控制X軸旋轉)
+  // 使用百分比計算以適應不同螢幕尺寸
+  targetRotationY = (event.clientX / window.innerWidth - 0.5) * Math.PI * 0.5;
+  targetRotationX = (event.clientY / window.innerHeight - 0.5) * Math.PI * 0.5;
+  
+  // 限制旋轉範圍
+  targetRotationX = Math.max(-Math.PI/4, Math.min(Math.PI/4, targetRotationX));
+  targetRotationY = Math.max(-Math.PI/4, Math.min(Math.PI/4, targetRotationY));
   
   // 更新滑鼠位置
   mouseX = event.clientX;
@@ -1039,9 +1046,6 @@ onMounted(() => {
 
   // 監聽視窗大小變化
   window.addEventListener('resize', handleResize);
-
-  // 添加滑鼠控制事件
-  addMouseControlEvents();
 });
 
 onUnmounted(() => {
@@ -1055,5 +1059,6 @@ onUnmounted(() => {
 defineExpose({
   startGrowingAnimation,
   startShrinkingAnimation,
+  addMouseControlEvents
 });
 </script>
