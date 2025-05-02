@@ -134,7 +134,7 @@ function generateMaterial() {
     transmission: 1,   // 增加透光性
     ior: 1.5,          // 折射率
     thickness: 1.0,    // 材質厚度
-    envMapIntensity: 100.0,
+    envMapIntensity: 10.0,
     side: THREE.DoubleSide
   });
 }
@@ -152,7 +152,7 @@ function generateSphereMaterial() {
     transmission: 1,
     ior: 1.5,
     thickness: 0,
-    envMapIntensity: 20.0,
+    envMapIntensity: 10.0,
     side: THREE.DoubleSide
   });
 }
