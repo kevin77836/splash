@@ -1,6 +1,10 @@
 <template>
   <div class="main-container">
-    <h1 class="company-name">
+    <div v-if="loadComplete && !isStart" class="startButton" @click="startAutoPlay" ref="startButton">
+      Start
+    </div>
+    
+    <h1 :class="{'start': isStart}" class="company-name">
       <span class="front-name">
         Splash
       </span>
@@ -30,7 +34,39 @@ const splashRef = ref(null);
 const loadComplete = ref(false);
 const currentState = ref('idle');
 const isAutoPlaying = ref(false);
+const isStart = ref(false);
 let autoPlayTimer = null;
+const startButton = ref(null);
+
+const handleMouseMove = (event) => {
+  // 取得視窗中心點
+  const centerX = window.innerWidth / 2;
+  const centerY = window.innerHeight / 2;
+  
+  // 計算滑鼠與中心點的偏移，並加上減速因子使移動不那麼劇烈
+  const offsetX = (event.clientX - centerX) * 0.025;
+  const offsetY = (event.clientY - centerY) * 0.025;
+  
+  if (startButton.value) {
+    startButton.value.style.transform =
+      `translate(-50%, -50%) translate(${offsetX}px, ${offsetY}px)`;
+  }
+};
+
+function isMobileDevice() {
+  return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+}
+
+// 監聽滑鼠移動
+onMounted(() => {
+  if (!isMobileDevice()){
+    window.addEventListener('mousemove', handleMouseMove);
+  }
+});
+
+onUnmounted(() => {
+  window.removeEventListener('mousemove', handleMouseMove);
+});
 
 // 基本動畫控制函數
 const growingFunction = () => {
@@ -48,8 +84,8 @@ const shrinkingFunction = () => {
 // 處理資源載入完成事件
 const handleResourcesLoaded = () => {
   loadComplete.value = true;
-  console.log('資源載入完成，開始自動播放');
-  startAutoPlay();
+  // console.log('資源載入完成，開始自動播放');
+  // startAutoPlay();
 }
 
 // 處理狀態變化
@@ -77,7 +113,7 @@ const handleAnimationComplete = (animationType) => {
 // 開始自動播放
 const startAutoPlay = () => {
   if (isAutoPlaying.value) return; // 如果已經在播放則不執行
-  
+  isStart.value = true;
   isAutoPlaying.value = true;
   
   // 從生長動畫開始
@@ -106,35 +142,3 @@ onUnmounted(() => {
   isAutoPlaying.value = false;
 });
 </script>
-
-<style scoped>
-
-.button-group {
-  position: absolute;
-  top: 20px;
-  left: 20px;
-  z-index: 10;
-}
-
-.status {
-  margin-top: 8px;
-  color: white;
-  background-color: rgba(0, 0, 0, 0.6);
-  padding: 5px 10px;
-  border-radius: 4px;
-}
-
-button {
-  margin-right: 8px;
-  padding: 8px 12px;
-  border: none;
-  border-radius: 4px;
-  background-color: rgba(0, 0, 0, 0.6);
-  color: white;
-  cursor: pointer;
-}
-
-button:hover {
-  background-color: rgba(40, 40, 40, 0.8);
-}
-</style>

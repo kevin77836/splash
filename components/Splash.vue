@@ -66,7 +66,7 @@ const animParams = reactive({
   growSpeed: 0.1,                 // 生長速度 (值越大生長越快)
   growthEaseOutPower: 0.15,       // 生長緩動指數 (值越小結尾越平滑)
   shrinkSpeed: 1,               // 收縮速度 (值越大收縮越快)
-  shrinkEaseInPower: 3,         // 收縮緩動指數 (值越大開頭越快)
+  shrinkEaseInPower: 2.5,         // 收縮緩動指數 (值越大開頭越快)
   
   // 波浪效果設定
   flowWaveFrequency: 1.0,         // 波浪頻率
@@ -130,7 +130,7 @@ function generateMaterial() {
     metalness: 0,
     roughness: 0,
     transparent: true,
-    opacity: 1,
+    opacity: 0.75,
     transmission: 1,   // 增加透光性
     ior: 1.5,          // 折射率
     thickness: 1.0,    // 材質厚度
@@ -148,7 +148,7 @@ function generateSphereMaterial() {
     metalness: 0,
     roughness: 0,
     transparent: true,
-    opacity: 1,
+    opacity: 0.75,
     transmission: 1,
     ior: 1.5,
     thickness: 0.1,
@@ -997,12 +997,11 @@ function onMouseMove(event) {
   // 如果是行動裝置，則直接返回不處理
   if (isMobileDevice()) return;
   
-  // 計算滑鼠移動距離
-  // const deltaX = event.clientX - mouseX;
-  // const deltaY = event.clientY - mouseY;
+  const centerX = window.innerWidth / 2;
+  const centerY = window.innerHeight / 2;
 
-  targetPositionX = (event.clientX / window.innerWidth)  * 2 - 1;
-  targetPositionY = -(event.clientY / window.innerHeight) * 2 + 1;
+  targetPositionX = (event.clientX - centerX) * 0.001;
+  targetPositionY = -(event.clientY - centerY) * 0.001;
 
   // 更新目標旋轉角度 (滑鼠水平移動控制Y軸旋轉，垂直移動控制X軸旋轉)
   targetRotationY = (event.clientX / window.innerWidth)  * 2 - 1;

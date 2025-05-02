@@ -1,56 +1,92 @@
 .main-container{
+    .startButton{
+        z-index: 10;
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        width: 200px;
+        height: 200px;
+        cursor: pointer;
+        background-color: transparent;
+        border-radius: 50%;
+    }
     .company-name{
-        font-size: 4rem;
+        font-size: 5rem;
         font-weight: bold;
         color: black;
         @include max-xl{
-            font-size: 3rem;
+            font-size: 4rem;
         }
         @include max-lg{
-            font-size: 3rem;
+            font-size: 4rem;
         }
         @include max-md{
             font-size: 3rem;
         }
         @include max-sm{
-            font-size: 2rem;
+            font-size: 2.5rem;
         }
+        opacity: 0;
+        transition-duration: 3s;
+        transition-property: opacity;
+        transition-timing-function: cubic-bezier(0,0,.15,1);
+        
+        &.start{
+            opacity: 1;
+            .front-name{
+                transform: translate(calc(-100% - 3rem), -50%);
+                @include max-xl{
+                    transform: translate(calc(-100% - 2rem), -50%);
+                }
+                @include max-lg{
+                    transform: translate(calc(-100% - 2rem), -50%);
+                }
+                @include max-md{
+                    transform: translate(calc(-100% - 1.5rem), -50%);
+                }
+                @include max-sm{
+                    transform: translate(calc(-100% - 1.25rem), -50%);
+                }
+            }
+            .back-name{
+                transform: translate(calc(0% + 3rem), -50%);
+                @include max-xl{
+                    transform: translate(calc(0% + 2rem), -50%);
+                }
+                @include max-lg{
+                    transform: translate(calc(0% + 2rem), -50%);
+                }
+                @include max-md{
+                    transform: translate(calc(0% + 1.5rem), -50%);
+                }
+                @include max-sm{
+                    transform: translate(calc(0% + 1.25rem), -50%);
+                }
+            }
+        }
+        
         .front-name{
             position: absolute;
             top: 50%;
             left: 50%;
-            transform: translate(calc(-100% - 2.5rem), calc(-50% - 1.5rem));
-            @include max-xl{
-                transform: translate(calc(-100% - 2rem), calc(-50% - 1.5rem));
-            }
-            @include max-lg{
-                transform: translate(calc(-100% - 2rem), calc(-50% - 1.5rem));
-            }
-            @include max-md{
-                transform: translate(calc(-100% - 1.5rem), calc(-50% - 1.25rem));
-            }
-            @include max-sm{
-                transform: translate(calc(-100% - 1rem), calc(-50% - 1rem));
-            }
-            
+            transform: translate(-100%, -50%);
+            transition-duration: 3s;
+            transition-property: transform;
+            transition-timing-function: cubic-bezier(0,0,.15,1);
         }
+        
         .back-name{
             position: absolute;
             top: 50%;
             left: 50%;
-            transform: translate(calc(0% + 2.5rem), calc(-50% + 1.5rem));
-            @include max-xl{
-                transform: translate(calc(0% + 2rem), calc(-50% + 1.5rem));
-            }
-            @include max-lg{
-                transform: translate(calc(0% + 2rem), calc(-50% + 1.5rem));
-            }
-            @include max-md{
-                transform: translate(calc(0% + 1.5rem), calc(-50% + 1.25rem));
-            }
-            @include max-sm{
-                transform: translate(calc(0% + 1rem), calc(-50% + 1rem));
-            }
+            transform: translate(0%, -50%);
+            transition-duration: 3s;
+            transition-property: transform;
+            transition-timing-function: cubic-bezier(0,0,.15,1);
         }
     }
 }

@@ -26,3 +26,14 @@ html, body{
     z-index: 1000000;
     display: flex;
 }
+
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 1s ease, transform 1s ease;
+}
+
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
+  transform: scale(0.9);
+}
