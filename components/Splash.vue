@@ -130,7 +130,7 @@ function generateMaterial() {
     metalness: 0,
     roughness: 0,
     transparent: true,
-    opacity: 0.75,
+    opacity: 1,
     transmission: 1,   // 增加透光性
     ior: 1.5,          // 折射率
     thickness: 1.0,    // 材質厚度
@@ -148,11 +148,11 @@ function generateSphereMaterial() {
     metalness: 0,
     roughness: 0,
     transparent: true,
-    opacity: 0.2,
+    opacity: 1,
     transmission: 1,
     ior: 1.5,
-    thickness: 1,
-    envMapIntensity: 200.0,
+    thickness: 0,
+    envMapIntensity: 20.0,
     side: THREE.DoubleSide
   });
 }
@@ -172,10 +172,20 @@ function loadEnvironmentMap() {
 
         console.log("環境貼圖已載入");
         scene.environment = envMap;
+        
+        // 更新主材質的環境貼圖
         if (material) {
           material.envMap = envMap;
           material.needsUpdate = true;
         }
+        
+        // 更新球體材質的環境貼圖
+        if (sphereMaterial) {
+          sphereMaterial.envMap = envMap;
+          sphereMaterial.needsUpdate = true;
+          console.log("球體材質已套用環境貼圖");
+        }
+        
         resolve(envMap);
       }, undefined, (error) => {
         console.error('無法載入環境貼圖:', error);
