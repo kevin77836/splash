@@ -70,7 +70,7 @@ const handleAnimationComplete = (animationType) => {
     // 收縮動畫完成，等待1秒後開始生長
     autoPlayTimer = setTimeout(() => {
       growingFunction();
-    }, 1000);
+    }, 2000);
   }
 }
 

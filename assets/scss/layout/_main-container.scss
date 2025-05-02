@@ -1,13 +1,13 @@
 .main-container{
     .company-name{
-        font-size: 5rem;
+        font-size: 4rem;
         font-weight: bold;
         color: black;
-        // -webkit-text-fill-color: white;
-        // -webkit-text-stroke-width: 1.5px;
-        // -webkit-text-stroke-color: black;
+        @include max-xl{
+            font-size: 3rem;
+        }
         @include max-lg{
-            font-size: 4rem;
+            font-size: 3rem;
         }
         @include max-md{
             font-size: 3rem;
@@ -19,13 +19,38 @@
             position: absolute;
             top: 50%;
             left: 50%;
-            transform: translate(calc(-100% - 2.5rem), -50%);
+            transform: translate(calc(-100% - 2.5rem), calc(-50% - 1.5rem));
+            @include max-xl{
+                transform: translate(calc(-100% - 2rem), calc(-50% - 1.5rem));
+            }
+            @include max-lg{
+                transform: translate(calc(-100% - 2rem), calc(-50% - 1.5rem));
+            }
+            @include max-md{
+                transform: translate(calc(-100% - 1.5rem), calc(-50% - 1.25rem));
+            }
+            @include max-sm{
+                transform: translate(calc(-100% - 1rem), calc(-50% - 1rem));
+            }
+            
         }
         .back-name{
             position: absolute;
             top: 50%;
             left: 50%;
-            transform: translate(calc(0% + 2.5rem), -50%);
+            transform: translate(calc(0% + 2.5rem), calc(-50% + 1.5rem));
+            @include max-xl{
+                transform: translate(calc(0% + 2rem), calc(-50% + 1.5rem));
+            }
+            @include max-lg{
+                transform: translate(calc(0% + 2rem), calc(-50% + 1.5rem));
+            }
+            @include max-md{
+                transform: translate(calc(0% + 1.5rem), calc(-50% + 1.25rem));
+            }
+            @include max-sm{
+                transform: translate(calc(0% + 1rem), calc(-50% + 1rem));
+            }
         }
     }
 }

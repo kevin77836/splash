@@ -58,7 +58,7 @@ const sphereParams = reactive({
 const animParams = reactive({
   // 基本設定
   mobileResolution: 100,
-  resolution: 200,                // Marching Cubes 解析度
+  resolution: 100,                // Marching Cubes 解析度
   numSegments: 50,                // 每條線分段數量
   subtract: 20,                   // Metaball 減法參數
   
@@ -95,6 +95,8 @@ let mouseX = 0;
 let mouseY = 0;
 let targetRotationX = 0;
 let targetRotationY = 0;
+let targetPositionX = 0;
+let targetPositionY = 0;
 let modelRotationX = 0;
 let modelRotationY = 0;
 
@@ -659,6 +661,8 @@ function animate() {
   // 應用旋轉到場景
   scene.rotation.x = modelRotationX;
   scene.rotation.y = modelRotationY;
+  scene.position.x = targetPositionX;
+  scene.position.y = targetPositionY;
   
   // 確保控制器始終更新 - 保持自動旋轉
   controls.update();
@@ -737,7 +741,7 @@ function initializeScene() {
     resolution = animParams.resolution;
   }else{
     controls.autoRotate = true; // 永遠啟用自動旋轉
-    controls.autoRotateSpeed = 2.0;
+    controls.autoRotateSpeed = 1.0;
     resolution = animParams.mobileResolution;
   }
   const derivedIsolation = resolution * 1.5;
@@ -989,7 +993,10 @@ function onMouseMove(event) {
   // 計算滑鼠移動距離
   const deltaX = event.clientX - mouseX;
   const deltaY = event.clientY - mouseY;
-  
+
+  targetPositionX = (event.clientX / window.innerWidth)  * 2 - 1;
+  targetPositionY = -(event.clientY / window.innerHeight) * 2 + 1;
+
   // 更新目標旋轉角度 (滑鼠水平移動控制Y軸旋轉，垂直移動控制X軸旋轉)
   targetRotationY += deltaX * 0.01;
   targetRotationX += deltaY * 0.01;
