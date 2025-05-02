@@ -173,17 +173,14 @@ function loadEnvironmentMap() {
         console.log("環境貼圖已載入");
         scene.environment = envMap;
         
-        // 更新主材質的環境貼圖
+        // 更新主材質
         if (material) {
           material.envMap = envMap;
           material.needsUpdate = true;
         }
-        
-        // 更新球體材質的環境貼圖
         if (sphereMaterial) {
           sphereMaterial.envMap = envMap;
           sphereMaterial.needsUpdate = true;
-          console.log("球體材質已套用環境貼圖");
         }
         
         resolve(envMap);
