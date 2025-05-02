@@ -658,7 +658,7 @@ function animate() {
   
   // 應用旋轉到場景
   scene.rotation.x = modelRotationX;
-  scene.rotation.z = -modelRotationY;
+  scene.rotation.y = modelRotationY;
   
   // 確保控制器始終更新 - 保持自動旋轉
   controls.update();
@@ -703,7 +703,7 @@ function initializeScene() {
 
   // 相機
   camera = new THREE.PerspectiveCamera(45, width / height, 0.1, 1000);
-  camera.position.set(0, 30, 0);
+  camera.position.set(0, 0, 30);
   camera.lookAt(scene.position);
 
   // 渲染器
