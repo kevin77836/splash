@@ -1,6 +1,6 @@
 /* Basic container styles */
 .splash-container {
-  position: absolute; /* Needed for absolute positioning of panels */
+  position: fixed;
   top: 0;
   left: 0;
   width: 100vw;

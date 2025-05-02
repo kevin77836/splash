@@ -151,7 +151,7 @@ function generateSphereMaterial() {
     opacity: 1,
     transmission: 1,
     ior: 1.5,
-    thickness: 0,
+    thickness: 0.1,
     envMapIntensity: 10.0,
     side: THREE.DoubleSide
   });
@@ -998,15 +998,15 @@ function onMouseMove(event) {
   if (isMobileDevice()) return;
   
   // 計算滑鼠移動距離
-  const deltaX = event.clientX - mouseX;
-  const deltaY = event.clientY - mouseY;
+  // const deltaX = event.clientX - mouseX;
+  // const deltaY = event.clientY - mouseY;
 
   targetPositionX = (event.clientX / window.innerWidth)  * 2 - 1;
   targetPositionY = -(event.clientY / window.innerHeight) * 2 + 1;
 
   // 更新目標旋轉角度 (滑鼠水平移動控制Y軸旋轉，垂直移動控制X軸旋轉)
-  targetRotationY += deltaX * 0.01;
-  targetRotationX += deltaY * 0.01;
+  targetRotationY = (event.clientX / window.innerWidth)  * 2 - 1;
+  targetRotationX = (event.clientY / window.innerHeight) * 2 - 1;
   
   // 限制垂直旋轉範圍
   targetRotationX = Math.max(-Math.PI/3, Math.min(Math.PI/3, targetRotationX));
