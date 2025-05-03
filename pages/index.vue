@@ -107,23 +107,23 @@
                         endTrigger: '.section5',
                         end: 'bottom 80%',
                         markers: false,
-                        scrub: 1,
+                        scrub: 2,
                         onEnter: () => stopAutoPlay(),
                         onLeaveBack: () => startAutoPlay(),
                         onUpdate: (self) => {
-                            updatePositionFromScroll(0, 0, 0, -5, self.progress);
+                            updatePositionFromScroll(0, 0, 0, 0, -5, 0, self.progress);
                         }
                     },
                     {
                         trigger: '.section6',
-                        start: 'center center',
+                        start: 'center 80%',
                         end: 'bottom top',
                         markers: true,
-                        scrub: 1,
+                        scrub: 2,
                         onEnter: () => growingFunction(),
                         onLeaveBack: () => shrinkingFunction(),
                         onUpdate: (self) => {
-                            updatePositionFromScroll(0, -5, 0, 0, self.progress);
+                            updatePositionFromScroll(0, -5, 0, 20, 0, -30, self.progress);
                         }
                     },
                     {
@@ -176,32 +176,19 @@
                 
                 // 為每個配置創建相應的 ScrollTrigger
                 sectionConfigs.forEach(config => {
-                    if (config.scrub) {
-                        // 如果有 scrub 屬性，使用 gsap.timeline
-                        gsap.timeline({
-                            scrollTrigger: {
-                                trigger: config.trigger,
-                                start: config.start,
-                                end: config.end,
-                                endTrigger: config.endTrigger,
-                                scrub: config.scrub,
-                                markers: config.markers,
-                                onEnter: config.onEnter,
-                                onLeaveBack: config.onLeaveBack,
-                                onUpdate: config.onUpdate
-                            }
-                        });
-                    } else {
-                        // 否則使用 ScrollTrigger.create
-                        ScrollTrigger.create({
+                    gsap.timeline({
+                        scrollTrigger: {
                             trigger: config.trigger,
                             start: config.start,
                             end: config.end,
+                            endTrigger: config.endTrigger,
+                            scrub: config.scrub,
                             markers: config.markers,
                             onEnter: config.onEnter,
-                            onLeaveBack: config.onLeaveBack
-                        });
-                    }
+                            onLeaveBack: config.onLeaveBack,
+                            onUpdate: config.onUpdate
+                        }
+                    });
                 });
             });
         
@@ -209,13 +196,15 @@
 
     };
 
-    const updatePositionFromScroll = (fromX, fromY, toX, toY, progress) => {
+    const updatePositionFromScroll = (fromX, fromY, fromZ, toX, toY, toZ, progress) => {
         if (splashRef.value) {
             const x = (toX - fromX) * progress;
             const y = (toY - fromY) * progress;
+            const z = (toZ - fromZ) * progress;
             const offsetX = fromX + x;
             const offsetY = fromY + y;
-            splashRef.value.updatePositionFromScroll(offsetX, offsetY);
+            const offsetZ = fromZ + z;
+            splashRef.value.updatePositionFromScroll(offsetX, offsetY, offsetZ);
         }
     }
     

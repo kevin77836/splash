@@ -103,6 +103,7 @@ let modelRotationY = 0;
 // --- 滾動位移控制變量 ---
 let targetScrollOffsetX = 0;
 let targetScrollOffsetY = 0;
+let targetScrollOffsetZ = 0;
 
 // --- 線條數據 ---
 let lineStartTimes = [];      // 每條線的開始時間
@@ -676,6 +677,7 @@ function animate() {
   // 結合滑鼠控制和滾動位移的最終位置
   scene.position.x = targetPositionX + targetScrollOffsetX;
   scene.position.y = targetPositionY + targetScrollOffsetY;
+  scene.position.z = targetScrollOffsetZ;
   
   // 確保控制器始終更新 - 保持自動旋轉
   controls.update();
@@ -774,6 +776,7 @@ function initializeScene() {
   // 初始化滾動位移變量
   targetScrollOffsetX = 0;
   targetScrollOffsetY = 0;
+  targetScrollOffsetZ = 0;
   
   return true;
 }
@@ -791,6 +794,7 @@ function cleanupScene() {
   // 重置滾動位移變量
   targetScrollOffsetX = 0;
   targetScrollOffsetY = 0;
+  targetScrollOffsetZ = 0;
 
   // 清理球體
   clearSpheres();
@@ -1080,13 +1084,14 @@ defineExpose({
 /**
  * 根據滾動位置更新模型位置
  */
-function updatePositionFromScroll(xOffset, yOffset) {
+function updatePositionFromScroll(xOffset, yOffset, zOffset) {
   if (!scene) return;
   
   // 設置目標滾動位移，animate 函數會平滑過渡到這些值
   targetScrollOffsetX = xOffset;
-  targetScrollOffsetY = -yOffset; // 負值使得向下滾動時模型向上移動
+  targetScrollOffsetY = -yOffset;
+  targetScrollOffsetZ = zOffset;
   
-  console.log(`更新滾動位移: x=${xOffset}, y=${yOffset}`);
+  console.log(`更新滾動位移: x=${xOffset}, y=${yOffset}, z=${zOffset}`);
 }
 </script>
