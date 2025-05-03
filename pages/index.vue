@@ -82,7 +82,9 @@
     import { ScrollTrigger } from 'gsap/ScrollTrigger';
     
     // 註冊 ScrollTrigger 插件
-    gsap.registerPlugin(ScrollTrigger);
+    if (process.client) {
+        gsap.registerPlugin(ScrollTrigger);
+    }
     
     const splashRef = ref(null);
     const loadComplete = ref(false);
@@ -90,6 +92,132 @@
     const isAutoPlaying = ref(false);
     const isStarted = ref(false);
     let autoPlayTimer = null;
+    
+    
+    // 設置 ScrollTrigger 動畫
+    const setupScrollAnimations = () => {
+        // 確保所有區塊已經渲染
+        if (process.client) {
+            nextTick(() => {
+                // 定義所有區塊的配置
+                const sectionConfigs = [
+                    {
+                        trigger: '.section2',
+                        start: 'top 80%',
+                        endTrigger: '.section5',
+                        end: 'bottom 80%',
+                        markers: false,
+                        scrub: 1,
+                        onEnter: () => stopAutoPlay(),
+                        onLeaveBack: () => startAutoPlay(),
+                        onUpdate: (self) => {
+                            updatePositionFromScroll(0, 0, 0, -5, self.progress);
+                        }
+                    },
+                    {
+                        trigger: '.section6',
+                        start: 'center center',
+                        end: 'bottom top',
+                        markers: true,
+                        scrub: 1,
+                        onEnter: () => growingFunction(),
+                        onLeaveBack: () => shrinkingFunction(),
+                        onUpdate: (self) => {
+                            updatePositionFromScroll(0, -5, 0, 0, self.progress);
+                        }
+                    },
+                    {
+                        trigger: '.section10',
+                        start: 'center center',
+                        markers: false,
+                        onEnter: () => shrinkingFunction(),
+                        onLeaveBack: () => growingFunction()
+                    },
+                    {
+                        trigger: '.section11',
+                        start: 'center center',
+                        markers: false,
+                        onEnter: () => growingFunction(),
+                        onLeaveBack: () => shrinkingFunction()
+                    },
+                    {
+                        trigger: '.section12',
+                        start: 'center center',
+                        markers: false,
+                        onEnter: () => shrinkingFunction(),
+                        onLeaveBack: () => growingFunction()
+                    },
+                    {
+                        trigger: '.section13',
+                        start: 'center center',
+                        end: 'bottom top',
+                        scrub: 1,
+                        markers: false,
+                        onEnter: () => growingFunction(),
+                        onLeaveBack: () => shrinkingFunction(),
+                    },
+                    {
+                        trigger: '.section14',
+                        start: 'center center',
+                        end: 'bottom top',
+                        scrub: 1,
+                        markers: false,
+                        onEnter: () => shrinkingFunction(),
+                        onLeaveBack: () => growingFunction(),
+                    },
+                    {
+                        trigger: '.section15',
+                        start: 'center center',
+                        markers: false,
+                        onEnter: () => growingFunction(),
+                        onLeaveBack: () => shrinkingFunction()
+                    }
+                ];
+                
+                // 為每個配置創建相應的 ScrollTrigger
+                sectionConfigs.forEach(config => {
+                    if (config.scrub) {
+                        // 如果有 scrub 屬性，使用 gsap.timeline
+                        gsap.timeline({
+                            scrollTrigger: {
+                                trigger: config.trigger,
+                                start: config.start,
+                                end: config.end,
+                                endTrigger: config.endTrigger,
+                                scrub: config.scrub,
+                                markers: config.markers,
+                                onEnter: config.onEnter,
+                                onLeaveBack: config.onLeaveBack,
+                                onUpdate: config.onUpdate
+                            }
+                        });
+                    } else {
+                        // 否則使用 ScrollTrigger.create
+                        ScrollTrigger.create({
+                            trigger: config.trigger,
+                            start: config.start,
+                            end: config.end,
+                            markers: config.markers,
+                            onEnter: config.onEnter,
+                            onLeaveBack: config.onLeaveBack
+                        });
+                    }
+                });
+            });
+        
+        }
+
+    };
+
+    const updatePositionFromScroll = (fromX, fromY, toX, toY, progress) => {
+        if (splashRef.value) {
+            const x = (toX - fromX) * progress;
+            const y = (toY - fromY) * progress;
+            const offsetX = fromX + x;
+            const offsetY = fromY + y;
+            splashRef.value.updatePositionFromScroll(offsetX, offsetY);
+        }
+    }
     
     // 基本動畫控制函數
     const growingFunction = () => {
