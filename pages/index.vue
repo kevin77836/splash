@@ -91,103 +91,6 @@
     const isStarted = ref(false);
     let autoPlayTimer = null;
     
-    // 設置 ScrollTrigger 動畫
-    const setupScrollAnimations = () => {
-        // 確保所有區塊已經渲染
-        nextTick(() => {
-            // 設置 Splash 組件的視差效果
-            // 讓 3D 模型根據滾動位置做微小的移動
-            ScrollTrigger.create({
-                trigger: '.section2',
-                start: 'top 80%',
-                markers: true,
-                onEnter() {
-                    stopAutoPlay();
-                },
-                onLeaveBack() {
-                    startAutoPlay();
-                }
-            });
-            ScrollTrigger.create({
-                trigger: '.section6',
-                start: 'center center',
-                markers: true,
-                onEnter() {
-                    growingFunction();
-                },
-                onLeaveBack() {
-                    shrinkingFunction();
-                }
-            });
-            ScrollTrigger.create({
-                trigger: '.section10',
-                start: 'center center',
-                markers: true,
-                onEnter() {
-                    shrinkingFunction();
-                },
-                onLeaveBack() {
-                    growingFunction();
-                }
-            });
-            ScrollTrigger.create({
-                trigger: '.section11',
-                start: 'center center',
-                markers: true,
-                onEnter() {
-                    growingFunction();
-                },
-                onLeaveBack() {
-                    shrinkingFunction();
-                }
-            });
-            ScrollTrigger.create({
-                trigger: '.section12',
-                start: 'center center',
-                markers: true,
-                onEnter() {
-                    shrinkingFunction();
-                },
-                onLeaveBack() {
-                    growingFunction();
-                }
-            });
-            ScrollTrigger.create({
-                trigger: '.section13',
-                start: 'center center',
-                markers: true,
-                onEnter() {
-                    growingFunction();
-                },
-                onLeaveBack() {
-                    shrinkingFunction();
-                }
-            });
-            ScrollTrigger.create({
-                trigger: '.section14',
-                start: 'center center',
-                markers: true,
-                onEnter() {
-                    shrinkingFunction();
-                },
-                onLeaveBack() {
-                    growingFunction();
-                }
-            });
-            ScrollTrigger.create({
-                trigger: '.section15',
-                start: 'center center',
-                markers: true,
-                onEnter() {
-                    growingFunction();
-                },
-                onLeaveBack() {
-                    shrinkingFunction();
-                }
-            });
-        });
-    };
-    
     // 基本動畫控制函數
     const growingFunction = () => {
         if (splashRef.value) {
@@ -269,7 +172,7 @@
     // 組件卸載時清理
     onUnmounted(() => {
         if (autoPlayTimer) {
-        clearTimeout(autoPlayTimer);
+            clearTimeout(autoPlayTimer);
         }
         isAutoPlaying.value = false;
         
