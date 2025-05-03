@@ -1059,6 +1059,24 @@ onUnmounted(() => {
 defineExpose({
   startGrowingAnimation,
   startShrinkingAnimation,
-  addMouseControlEvents
+  addMouseControlEvents,
+  updatePositionFromScroll
 });
+
+/**
+ * 根據滾動位置更新模型位置
+ * @param {number} xOffset - X軸偏移量
+ * @param {number} yOffset - Y軸偏移量
+ */
+function updatePositionFromScroll(xOffset, yOffset) {
+  if (!scene) return;
+  
+  // 基於滾動位置應用偏移
+  scene.position.x = xOffset;
+  scene.position.y = -yOffset; // 負值使得向下滾動時模型向上移動
+
+  // 如果需要，也可以添加旋轉效果
+  scene.rotation.x = yOffset * 0.2;
+  scene.rotation.y = xOffset * 0.2;
+}
 </script>
