@@ -673,6 +673,9 @@ function animate() {
   // 應用旋轉到場景
   scene.rotation.x = modelRotationX;
   scene.rotation.y = modelRotationY;
+  if(isMobileDevice()){
+    effect.rotation.y += 0.0025;
+  }
   
   // 結合滑鼠控制和滾動位移的最終位置
   scene.position.x = targetPositionX + targetScrollOffsetX;
@@ -752,11 +755,8 @@ function initializeScene() {
   // Marching Cubes
   let resolution;
   if (!isMobileDevice()){
-    controls.autoRotate = false;
     resolution = animParams.resolution;
   }else{
-    controls.autoRotate = true; // 永遠啟用自動旋轉
-    controls.autoRotateSpeed = 1.0;
     resolution = animParams.mobileResolution;
   }
   const derivedIsolation = resolution * 1.5;
@@ -1078,13 +1078,13 @@ defineExpose({
   startGrowingAnimation,
   startShrinkingAnimation,
   addMouseControlEvents,
-  updatePositionFromScroll
+  updatePosition
 });
 
 /**
  * 根據滾動位置更新模型位置
  */
-function updatePositionFromScroll(xOffset, yOffset, zOffset) {
+function updatePosition(xOffset, yOffset, zOffset) {
   if (!scene) return;
   
   // 設置目標滾動位移，animate 函數會平滑過渡到這些值

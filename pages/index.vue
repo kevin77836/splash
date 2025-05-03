@@ -80,6 +80,8 @@
 <script setup>
     import gsap from 'gsap';
     import { ScrollTrigger } from 'gsap/ScrollTrigger';
+    import { useWindowSize } from '@vueuse/core'
+    const { width, height } = useWindowSize();
     
     // 註冊 ScrollTrigger 插件
     if (process.client) {
@@ -118,7 +120,7 @@
                         onEnter: () => stopAutoPlay(),
                         onLeaveBack: () => startAutoPlay(),
                         onUpdate: (self) => {
-                            updatePositionFromScroll(0, 0, 0, 0, -5, 0, self.progress);
+                            updatePosition(0, 0, 0, 0, -5, 0, self.progress);
                         }
                     },
                     {
@@ -130,7 +132,11 @@
                         onEnter: () => growingFunction(),
                         onLeaveBack: () => shrinkingFunction(),
                         onUpdate: (self) => {
-                            updatePositionFromScroll(0, -5, 0, 20, 0, -30, self.progress);
+                            if(width.value > 768){
+                                updatePosition(0, -5, 0, 20, 0, -30, self.progress);
+                            }else{
+                                updatePosition(0, -5, 0, 0, 0, -30, self.progress);
+                            }
                         }
                     },
                     {
@@ -203,7 +209,7 @@
 
     };
 
-    const updatePositionFromScroll = (fromX, fromY, fromZ, toX, toY, toZ, progress) => {
+    const updatePosition = (fromX, fromY, fromZ, toX, toY, toZ, progress) => {
         if (splashRef.value) {
             const x = (toX - fromX) * progress;
             const y = (toY - fromY) * progress;
@@ -211,7 +217,7 @@
             const offsetX = fromX + x;
             const offsetY = fromY + y;
             const offsetZ = fromZ + z;
-            splashRef.value.updatePositionFromScroll(offsetX, offsetY, offsetZ);
+            splashRef.value.updatePosition(offsetX, offsetY, offsetZ);
         }
     }
     
@@ -243,15 +249,15 @@
         if (!isAutoPlaying.value) return;
         
         if (animationType === 'growing') {
-        // 生長動畫完成，等待1秒後開始收縮
-        autoPlayTimer = setTimeout(() => {
-            shrinkingFunction();
-        }, 1000);
+            // 生長動畫完成，等待1秒後開始收縮
+            autoPlayTimer = setTimeout(() => {
+                shrinkingFunction();
+            }, 1000);
         } else if (animationType === 'shrinking') {
-        // 收縮動畫完成，等待2秒後開始生長
-        autoPlayTimer = setTimeout(() => {
-            growingFunction();
-        }, 2000);
+            // 收縮動畫完成，等待2秒後開始生長
+            autoPlayTimer = setTimeout(() => {
+                growingFunction();
+            }, 2000);
         }
     }
     
