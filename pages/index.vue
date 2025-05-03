@@ -113,7 +113,7 @@
                         start: 'top 80%',
                         endTrigger: '.section5',
                         end: 'bottom 80%',
-                        markers: true,
+                        markers: false,
                         scrub: 2,
                         onEnter: () => stopAutoPlay(),
                         onLeaveBack: () => startAutoPlay(),
