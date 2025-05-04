@@ -51,6 +51,13 @@
     @stateChange="handleStateChange"
     @animationComplete="handleAnimationComplete"
     />
+    <div :class="{'active': isStarted}" class="l-footer">
+        <div class="footer-saparator"></div>
+        <div class="footer-link">
+            Let's Make a Splash
+        </div>
+        <div class="footer-saparator"></div>
+    </div>
     <div :class="{'active': isStarted}" class="l-header">
         <div class="desktop-group">
             <div class="header-link">
@@ -68,7 +75,7 @@
 
         <!-- 漢堡選單按鈕 -->
         <div class="mobile-group">
-            <div>Splash DigiLab</div>
+            <div class="header-link logoType">Splash DigiLab</div>
             <div class="header-saparator"></div>
             <div class="hamburger-menu" @click="toggleMenu">
                 <div :class="{'open': isMenuOpen}" class="hamburger-icon">
@@ -90,15 +97,6 @@
                 Contact Us
             </div>
         </div>
-    </div>
-    
-
-    <div :class="{'active': isStarted}" class="l-footer">
-        <div class="footer-saparator"></div>
-        <div class="footer-link">
-            Let's Make a Splash
-        </div>
-        <div class="footer-saparator"></div>
     </div>
         <!-- <div class="button-group">
         <button @click="growingFunction">開始生長</button>

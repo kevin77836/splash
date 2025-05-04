@@ -1,7 +1,6 @@
 .l-header{
     position: fixed;
     top: 4rem;
-    z-index: 100;
     transition-duration: 1s;
     transition-timing-function: cubic-bezier(0,0,.015,1);
     opacity: 0;
@@ -31,6 +30,9 @@
         font-weight: normal;
         @include max-xxl{
             font-size: 1rem;
+        }
+        &.logoType{
+            // font-weight: bold;
         }
     }
     .header-saparator{
@@ -66,10 +68,8 @@
             justify-content: space-between;
             align-items: center;
         }
-        & > *{
-            z-index: 101;
-        }
         .hamburger-menu {
+            z-index: 101;
             cursor: pointer;
             .hamburger-icon {
                 position: relative;
