@@ -5,7 +5,7 @@
                 Start
             </div>
       
-            <h1 :class="{'start': isStarted}" class="company-name">
+            <h1 :class="{'hidden': isHidden}" class="company-name">
             <span class="front-name">
             Splash
             </span>
@@ -15,58 +15,91 @@
             </h1>
         </div>
         <div v-if="isStarted" class="section section2">
-            <h2>section2</h2>
         </div>
         <div v-if="isStarted" class="section section3">
-            <h2>section3</h2>
         </div>
         <div v-if="isStarted" class="section section4">
-            <h2>section4</h2>
         </div>
         <div v-if="isStarted" class="section section5">
-            <h2>section5</h2>
         </div>
         <div v-if="isStarted" class="section section6">
-            <h2>section6</h2>
         </div>
         <div v-if="isStarted" class="section section7">
-            <h2>section7</h2>
         </div>
         <div v-if="isStarted" class="section section8">
-            <h2>section8</h2>
         </div>
         <div v-if="isStarted" class="section section9">
-            <h2>section9</h2>
         </div>
         <div v-if="isStarted" class="section section10">
-            <h2>section10</h2>
         </div>
         <div v-if="isStarted" class="section section11">
-            <h2>section11</h2>
         </div>
         <div v-if="isStarted" class="section section12">
-            <h2>section12</h2>
         </div>
         <div v-if="isStarted" class="section section13">
-            <h2>section13</h2>
         </div>
         <div v-if="isStarted" class="section section14">
-            <h2>section14</h2>
         </div>
         <div v-if="isStarted" class="section section15">
-            <h2>section15</h2>
         </div>
         <div v-if="isStarted" class="section section16">
-            <h2>section16</h2>
         </div>
     </div>
     <Splash
     ref="splashRef" 
-    :isStarted="isStarted"
     @resourcesLoaded="handleResourcesLoaded"
     @stateChange="handleStateChange"
     @animationComplete="handleAnimationComplete"
     />
+    <div :class="{'active': isStarted}" class="l-header">
+        <div class="desktop-group">
+            <div class="header-link">
+                About Us
+            </div>
+            <div class="header-saparator"></div>
+            <div class="header-link">
+                Our Works
+            </div>
+            <div class="header-saparator"></div>
+            <div class="header-link">
+                Contact Us
+            </div>
+        </div>
+
+        <!-- 漢堡選單按鈕 -->
+        <div class="mobile-group">
+            <div>Splash DigiLab</div>
+            <div class="header-saparator"></div>
+            <div class="hamburger-menu" @click="toggleMenu">
+                <div :class="{'open': isMenuOpen}" class="hamburger-icon">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </div>
+            </div>
+        </div>
+        <!-- 行動裝置選單 -->
+        <div :class="{'active': isMenuOpen}" class="mobile-menu">
+            <div class="menu-item" @click="toggleMenu">
+                About Us
+            </div>
+            <div class="menu-item" @click="toggleMenu">
+                Our Works
+            </div>
+            <div class="menu-item" @click="toggleMenu">
+                Contact Us
+            </div>
+        </div>
+    </div>
+    
+
+    <div :class="{'active': isStarted}" class="l-footer">
+        <div class="footer-saparator"></div>
+        <div class="footer-link">
+            Let's Make a Splash
+        </div>
+        <div class="footer-saparator"></div>
+    </div>
         <!-- <div class="button-group">
         <button @click="growingFunction">開始生長</button>
         <button @click="shrinkingFunction">開始收合</button>
@@ -93,6 +126,8 @@
     const currentState = ref('idle');
     const isAutoPlaying = ref(false);
     const isStarted = ref(false);
+    const isHidden = ref(true);
+    const isMenuOpen = ref(false);
     let autoPlayTimer = null;
     
     
@@ -107,37 +142,33 @@
                         trigger: '.section2',
                         start: 'top 80%',
                         markers: false,
-                        onEnter: () => stopAutoPlay(),
-                        onLeaveBack: () => startAutoPlay(),
+                        onEnter: () => {
+                            stopAutoPlay();
+                            isHidden.value = true;
+                        },
+                        onLeaveBack: () => {
+                            startAutoPlay();
+                            isHidden.value = false;
+                        },
                     },
                     {
-                        trigger: '.section2',
-                        start: 'top 80%',
-                        endTrigger: '.section5',
-                        end: 'bottom 80%',
+                        trigger: '.section3',
+                        start: 'center center',
+                        endTrigger: '.section6',
+                        end: 'center center',
                         markers: false,
                         scrub: 2,
-                        onEnter: () => stopAutoPlay(),
-                        onLeaveBack: () => startAutoPlay(),
                         onUpdate: (self) => {
                             updatePosition(0, 0, 0, 0, -5, 0, self.progress);
                         }
                     },
                     {
                         trigger: '.section6',
-                        start: 'center 80%',
-                        end: 'bottom top',
+                        start: 'center center',
+                        end: 'center center',
                         markers: false,
-                        scrub: 2,
                         onEnter: () => growingFunction(),
                         onLeaveBack: () => shrinkingFunction(),
-                        onUpdate: (self) => {
-                            if(width.value > 768){
-                                updatePosition(0, -5, 0, 20, 0, -30, self.progress);
-                            }else{
-                                updatePosition(0, -5, 0, 0, 0, -30, self.progress);
-                            }
-                        }
                     },
                     {
                         trigger: '.section10',
@@ -263,6 +294,7 @@
     
     const clickStart = () => {
         isStarted.value = true;
+        isHidden.value = false;
         startAutoPlay();
         splashRef.value.addMouseControlEvents();
         
@@ -294,6 +326,20 @@
         
         // 執行收合動畫，使其回到起點
         shrinkingFunction();
+    }
+    
+    // 切換漢堡選單
+    const toggleMenu = () => {
+        isMenuOpen.value = !isMenuOpen.value;
+        // 當選單打開時禁止滾動
+        if (isMenuOpen.value) {
+            document.body.style.overflow = 'hidden';
+        } else {
+            // 如果已經開始，則恢復滾動
+            if (isStarted.value) {
+                document.body.style.overflow = 'auto';
+            }
+        }
     }
     
     onMounted(() => {

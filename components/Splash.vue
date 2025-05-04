@@ -145,24 +145,6 @@ function generateMaterial() {
 }
 
 /**
- * 生成球體材質 - 與主材質相似但更透明
- */
-function generateSphereMaterial() {
-  return new THREE.MeshPhysicalMaterial({
-    color: 0xffffff,
-    metalness: 0,
-    roughness: 0,
-    transparent: true,
-    opacity: 0.75,
-    transmission: 1,
-    ior: 1.5,
-    thickness: 0.1,
-    envMapIntensity: 10.0,
-    side: THREE.DoubleSide
-  });
-}
-
-/**
  * 載入環境貼圖
  */
 function loadEnvironmentMap() {
@@ -446,7 +428,7 @@ function createSphere(direction, size) {
   
   // 使用共用材質
   if (!sphereMaterial) {
-    sphereMaterial = generateSphereMaterial();
+    sphereMaterial = generateMaterial();
   }
   
   const sphere = new THREE.Mesh(geometry, sphereMaterial);
@@ -660,6 +642,7 @@ function animate() {
 
   if (!effect || !material || !camera || !renderer || !scene || !controls) return;
 
+  console.log('spheres', spheres)
   // 更新場景邏輯
   updateLineMetaball(effect);
   
@@ -675,6 +658,9 @@ function animate() {
   scene.rotation.y = modelRotationY;
   if(isMobileDevice()){
     effect.rotation.y += 0.0025;
+    for(let i=0;i<spheres.length;i++){
+      spheres[i].mesh.rotation.y += 0.0025;
+    }
   }
   
   // 結合滑鼠控制和滾動位移的最終位置
@@ -771,7 +757,7 @@ function initializeScene() {
   clock = new THREE.Clock();
   
   // 初始化共用材質
-  sphereMaterial = generateSphereMaterial();
+  sphereMaterial = generateMaterial();
   
   // 初始化滾動位移變量
   targetScrollOffsetX = 0;
@@ -1029,12 +1015,12 @@ function onMouseMove(event) {
   
   // 更新目標旋轉角度 (滑鼠水平移動控制Y軸旋轉，垂直移動控制X軸旋轉)
   // 使用百分比計算以適應不同螢幕尺寸
-  targetRotationY = (event.clientX / window.innerWidth - 0.5) * Math.PI * 0.5;
-  targetRotationX = (event.clientY / window.innerHeight - 0.5) * Math.PI * 0.5;
+  targetRotationY = (event.clientX / window.innerWidth - 0.5) * Math.PI * 2;
+  targetRotationX = (event.clientY / window.innerHeight - 0.5) * Math.PI * 2;
   
   // 限制旋轉範圍
-  targetRotationX = Math.max(-Math.PI/4, Math.min(Math.PI/4, targetRotationX));
-  targetRotationY = Math.max(-Math.PI/4, Math.min(Math.PI/4, targetRotationY));
+  targetRotationX = Math.max(-Math.PI, Math.min(Math.PI, targetRotationX));
+  targetRotationY = Math.max(-Math.PI, Math.min(Math.PI, targetRotationY));
   
   // 更新滑鼠位置
   mouseX = event.clientX;
