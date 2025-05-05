@@ -29,17 +29,16 @@
         font-size: 1.5rem;
         font-weight: normal;
         cursor: pointer;
-        @include max-xxl{
-            font-size: 1rem;
-        }
-        &.logoType{
-            // font-weight: bold;
-        }
         opacity: 1;
-        transition: .25s ease-in-out;
+        transition-duration: 1s;
+        transition-timing-function: ease-in;
+        transition-timing-function: cubic-bezier(0,0,.015,1);
         max-width: 100%;
         white-space:nowrap;
         padding: 0 0.75rem;
+        @include max-xxl{
+            font-size: 1rem;
+        }
         @include max-md{
             padding: 0 0.5rem;
         }
@@ -47,13 +46,16 @@
             opacity: 0;
             max-width: 0;
             padding: 0;
+            transition-timing-function: cubic-bezier(.25,0,0,1);
         }
     }
     .header-saparator{
         flex-grow: 1;
         opacity: 1;
-        transition: .25s ease-in-out;
-        width: auto;
+        transition-duration: 1s;
+        transition-timing-function: ease-in;
+        transition-timing-function: cubic-bezier(0,0,.015,1);
+        max-width: 100%;
         padding: 0 0.75rem;
         @include max-md{
             padding: 0 0.5rem;
@@ -65,8 +67,9 @@
         &.hidden{
             flex-grow: 0;
             opacity: 0;
-            width: 0;
+            max-width: 0;
             padding: 0;
+            transition-timing-function: cubic-bezier(.25,0,0,1);
         }
     }
     .desktop-group {
@@ -79,7 +82,6 @@
             margin: 0 -0.5rem;
         }
     }
-    
     .mobile-group {
         display: none;
         @include max-md {
@@ -141,7 +143,6 @@
             }
         }
     }
-    // 行動裝置選單
     .mobile-menu {
         position: fixed;
         top: 0;
@@ -175,6 +176,5 @@
             }
         }
     }
-
 }
 

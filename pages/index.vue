@@ -302,12 +302,12 @@
             // 生長動畫完成，等待1秒後開始收縮
             autoPlayTimer = setTimeout(() => {
                 shrinkingFunction();
-            }, 1000);
+            }, 0);
         } else if (animationType === 'shrinking') {
             // 收縮動畫完成，等待2秒後開始生長
             autoPlayTimer = setTimeout(() => {
                 growingFunction();
-            }, 2000);
+            }, 1000);
         }
     }
     
