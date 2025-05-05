@@ -28,36 +28,55 @@
     .header-link{
         font-size: 1.5rem;
         font-weight: normal;
+        cursor: pointer;
         @include max-xxl{
             font-size: 1rem;
         }
         &.logoType{
             // font-weight: bold;
         }
+        opacity: 1;
+        transition: .25s ease-in-out;
+        max-width: 100%;
+        white-space:nowrap;
+        padding: 0 0.75rem;
+        @include max-md{
+            padding: 0 0.5rem;
+        }
+        &.hidden{
+            opacity: 0;
+            max-width: 0;
+            padding: 0;
+        }
     }
     .header-saparator{
         flex-grow: 1;
-        background-color: black;
-        border-top: 1px solid #000;
-        margin: 0 1.5rem;
+        opacity: 1;
+        transition: .25s ease-in-out;
+        width: auto;
+        padding: 0 0.75rem;
         @include max-md{
-            margin: 0 1rem;
+            padding: 0 0.5rem;
         }
-        &:first-child{
-            margin-left: 0;
+        .header-saparator-line{
+            border-top: 1px solid black;
+            width: 100%;
         }
-        &:last-child{
-            margin-right: 0;
+        &.hidden{
+            flex-grow: 0;
+            opacity: 0;
+            width: 0;
+            padding: 0;
         }
     }
-    
-    // 桌面和行動裝置檢視控制
     .desktop-group {
         display: flex;
         justify-content: space-between;
         align-items: center;
+        margin: 0 -0.75rem;
         @include max-md {
             display: none;
+            margin: 0 -0.5rem;
         }
     }
     
@@ -71,6 +90,10 @@
         .hamburger-menu {
             z-index: 101;
             cursor: pointer;
+            padding: 0 0.75rem;
+            @include max-md{
+                padding: 0 0.5rem;
+            }
             .hamburger-icon {
                 position: relative;
                 width: 1.5rem;
@@ -78,7 +101,7 @@
                 span {
                     display: block;
                     position: absolute;
-                    height: 1px;
+                    height: 1.5px;
                     width: 100%;
                     background: black;
                     opacity: 1;
@@ -90,7 +113,7 @@
                     }
                     
                     &:nth-child(2) {
-                        top: calc(1.5rem / 2 - 1px);
+                        top: calc(1.5rem / 2 - 0.75px);
                     }
                     
                     &:nth-child(3) {

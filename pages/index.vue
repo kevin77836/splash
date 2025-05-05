@@ -22,6 +22,8 @@
         </div>
         <div v-if="isStarted" class="section section5">
         </div>
+        <div v-if="isStarted" class="section aboutUsSection">
+        </div>
         <div v-if="isStarted" class="section section6">
         </div>
         <div v-if="isStarted" class="section section7">
@@ -29,6 +31,8 @@
         <div v-if="isStarted" class="section section8">
         </div>
         <div v-if="isStarted" class="section section9">
+        </div>
+        <div v-if="isStarted" class="section ourWorksSection">
         </div>
         <div v-if="isStarted" class="section section10">
         </div>
@@ -43,6 +47,8 @@
         <div v-if="isStarted" class="section section15">
         </div>
         <div v-if="isStarted" class="section section16">
+        </div>
+        <div v-if="isStarted" class="section contactUsSection">
         </div>
     </div>
     <Splash
@@ -60,23 +66,35 @@
     </div>
     <div :class="{'active': isStarted}" class="l-header">
         <div class="desktop-group">
-            <div class="header-link">
+            <div class="header-link" :class="{'hidden': isLandingPage}">
+                Splash DigiLab
+            </div>
+            <div class="header-saparator" :class="{'hidden': isLandingPage}">
+                <div class="header-saparator-line"></div>
+            </div>
+            <div class="header-link" @click="scrollToSection('aboutUsSection')">
                 About Us
             </div>
-            <div class="header-saparator"></div>
-            <div class="header-link">
+            <div class="header-saparator" :class="{'hidden': !isLandingPage}">
+                <div class="header-saparator-line"></div>
+            </div>
+            <div class="header-link" @click="scrollToSection('ourWorksSection')">
                 Our Works
             </div>
-            <div class="header-saparator"></div>
-            <div class="header-link">
+            <div class="header-saparator" :class="{'hidden': !isLandingPage}">
+                <div class="header-saparator-line"></div>
+            </div>
+            <div class="header-link" @click="scrollToSection('contactUsSection')">
                 Contact Us
             </div>
         </div>
 
         <!-- 漢堡選單按鈕 -->
         <div class="mobile-group">
-            <div class="header-link logoType">Splash DigiLab</div>
-            <div class="header-saparator"></div>
+            <div class="header-link" :class="{'hidden': isLandingPage}">Splash DigiLab</div>
+            <div class="header-saparator">
+                <div class="header-saparator-line"></div>
+            </div>
             <div class="hamburger-menu" @click="toggleMenu">
                 <div :class="{'open': isMenuOpen}" class="hamburger-icon">
                     <span></span>
@@ -87,13 +105,13 @@
         </div>
         <!-- 行動裝置選單 -->
         <div :class="{'active': isMenuOpen}" class="mobile-menu">
-            <div class="menu-item" @click="toggleMenu">
+            <div class="menu-item" @click="scrollToSection('aboutUsSection', true)">
                 About Us
             </div>
-            <div class="menu-item" @click="toggleMenu">
+            <div class="menu-item" @click="scrollToSection('ourWorksSection', true)">
                 Our Works
             </div>
-            <div class="menu-item" @click="toggleMenu">
+            <div class="menu-item" @click="scrollToSection('contactUsSection', true)">
                 Contact Us
             </div>
         </div>
@@ -126,6 +144,7 @@
     const isStarted = ref(false);
     const isHidden = ref(true);
     const isMenuOpen = ref(false);
+    const isLandingPage = ref(true);
     let autoPlayTimer = null;
     
     
@@ -143,10 +162,12 @@
                         onEnter: () => {
                             stopAutoPlay();
                             isHidden.value = true;
+                            isLandingPage.value = false;
                         },
                         onLeaveBack: () => {
                             startAutoPlay();
                             isHidden.value = false;
+                            isLandingPage.value = true;
                         },
                     },
                     {
@@ -338,6 +359,26 @@
                 document.body.style.overflow = 'auto';
             }
         }
+    }
+    
+    // 滾動到指定區塊
+    const scrollToSection = (sectionClass, isFromMobile = false) => {
+        // 如果從行動版選單點擊，先關閉選單
+        if (isFromMobile) {
+            toggleMenu();
+        }
+        
+        // 使用 setTimeout 確保 DOM 已更新
+        setTimeout(() => {
+            const section = document.querySelector(`.${sectionClass}`);
+            if (section) {
+                // 使用平滑滾動
+                window.scrollTo({
+                    top: section.offsetTop,
+                    behavior: 'smooth'
+                });
+            }
+        }, 100);
     }
     
     onMounted(() => {
