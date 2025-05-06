@@ -31,8 +31,7 @@
         cursor: pointer;
         opacity: 1;
         transition-duration: 1s;
-        transition-timing-function: ease-in;
-        transition-timing-function: cubic-bezier(0,0,.015,1);
+        transition-timing-function: ease;
         max-width: 100%;
         white-space:nowrap;
         padding: 0 0.75rem;
@@ -46,15 +45,13 @@
             opacity: 0;
             max-width: 0;
             padding: 0;
-            transition-timing-function: cubic-bezier(.25,0,0,1);
         }
     }
     .header-saparator{
         flex-grow: 1;
         opacity: 1;
         transition-duration: 1s;
-        transition-timing-function: ease-in;
-        transition-timing-function: cubic-bezier(0,0,.015,1);
+        transition-timing-function: ease;
         max-width: 100%;
         padding: 0 0.75rem;
         @include max-md{
@@ -69,7 +66,6 @@
             opacity: 0;
             max-width: 0;
             padding: 0;
-            transition-timing-function: cubic-bezier(.25,0,0,1);
         }
     }
     .desktop-group {

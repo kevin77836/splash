@@ -1,9 +1,9 @@
 {
-  "_hash": "voiV4jPSbvPB5keMgX_8p8jEIYBbhQi_Mq6ZyfSel8k",
+  "_hash": "F2gkWSR-8xKOkZl2Pl5EY3xweRTTpsOZ4izmACwydAs",
   "project": {
     "rootDir": "/Users/kevin/Documents/Github/splash"
   },
   "versions": {
-    "nuxt": "3.16.2"
+    "nuxt": "3.17.2"
   }
 }

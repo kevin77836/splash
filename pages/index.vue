@@ -5,7 +5,7 @@
                 Start
             </div>
       
-            <h1 :class="{'hidden': isHidden}" class="company-name">
+            <h1 :class="{'hidden': !isLandingPage || (isLandingPage && !isStarted)}" class="company-name">
             <span class="front-name">
             Splash
             </span>
@@ -57,12 +57,18 @@
     @stateChange="handleStateChange"
     @animationComplete="handleAnimationComplete"
     />
-    <div :class="{'active': isStarted}" class="l-footer">
-        <div class="footer-saparator"></div>
-        <div class="footer-link">
-            Let's Make a Splash
-        </div>
-        <div class="footer-saparator"></div>
+    <div :class="{'active': isStarted && isLandingPage}" class="l-footer">
+        <div class="desktop-group">
+            <div class="footer-saparator">
+                <div class="footer-saparator-line"></div>
+            </div>
+            <div class="footer-link">
+                Let's Make a Splash
+            </div>
+            <div class="footer-saparator">
+                <div class="footer-saparator-line"></div>
+            </div>
+        </div>        
     </div>
     <div :class="{'active': isStarted}" class="l-header">
         <div class="desktop-group">
@@ -142,7 +148,6 @@
     const currentState = ref('idle');
     const isAutoPlaying = ref(false);
     const isStarted = ref(false);
-    const isHidden = ref(true);
     const isMenuOpen = ref(false);
     const isLandingPage = ref(true);
     let autoPlayTimer = null;
@@ -161,12 +166,10 @@
                         markers: false,
                         onEnter: () => {
                             stopAutoPlay();
-                            isHidden.value = true;
                             isLandingPage.value = false;
                         },
                         onLeaveBack: () => {
                             startAutoPlay();
-                            isHidden.value = false;
                             isLandingPage.value = true;
                         },
                     },
@@ -313,7 +316,6 @@
     
     const clickStart = () => {
         isStarted.value = true;
-        isHidden.value = false;
         startAutoPlay();
         splashRef.value.addMouseControlEvents();
         
