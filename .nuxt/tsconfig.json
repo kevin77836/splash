@@ -105,7 +105,7 @@
         "./imports"
       ],
       "#app-manifest": [
-        "./manifest/meta/dev"
+        "./manifest/meta/0b75ad94-0bc4-4dbf-b03d-d7e80bee48f3.json"
       ],
       "#components": [
         "./components"
