@@ -6,23 +6,48 @@
             </div>
       
             <h1 :class="{'hidden': !isLandingPage || (isLandingPage && !isStarted)}" class="company-name">
-            <span class="front-name">
+            <!-- <span class="front-name">
             Splash
             </span>
             <span class="back-name">
             DigiLab
-                </span>
+                </span> -->
             </h1>
         </div>
-        <div v-if="isStarted" class="section section2">
+        <div v-if="isStarted" class="section gap-section"></div>
+        <div v-if="isStarted" class="section aboutUs-section">
+            <div class="aboutUs-marquee">
+                <div class="aboutUs-marquee-content-group">
+                    <span class="aboutUs-marquee-content-group-item">Splash DigiLab</span>
+                    <span class="aboutUs-marquee-content-group-item">斯巴拉系數位互動</span>
+                    <span class="aboutUs-marquee-content-group-item">素晴らしいデジタルインタラクション</span>
+                </div>
+                <div class="aboutUs-marquee-content-group2">
+                    <span class="aboutUs-marquee-content-group-item">Splash DigiLab</span>
+                    <span class="aboutUs-marquee-content-group-item">斯巴拉系數位互動</span>
+                    <span class="aboutUs-marquee-content-group-item">素晴らしいデジタルインタラクション</span>
+                </div>
+            </div>
+            <div class="aboutUs-content-group">
+                <div class="aboutUs-section-content aboutUs-section-content-1">
+                    <span class="aboutUs-section-content-1-1">123</span>
+                    <span class="aboutUs-section-content-1-2">456</span>
+                </div>
+                <div class="aboutUs-section-content aboutUs-section-content-2">
+                    <span class="aboutUs-section-content-2-1">789</span>
+                    <span class="aboutUs-section-content-2-2">012</span>
+                </div>
+                <div class="aboutUs-section-content aboutUs-section-content-3">
+                    <span class="aboutUs-section-content-3-1">345</span>
+                    <span class="aboutUs-section-content-3-2">678</span>
+                </div>
+            </div>
         </div>
         <div v-if="isStarted" class="section section3">
         </div>
         <div v-if="isStarted" class="section section4">
         </div>
         <div v-if="isStarted" class="section section5">
-        </div>
-        <div v-if="isStarted" class="section aboutUsSection">
         </div>
         <div v-if="isStarted" class="section section6">
         </div>
@@ -78,7 +103,7 @@
             <div class="header-saparator" :class="{'hidden': isLandingPage}">
                 <div class="header-saparator-line"></div>
             </div>
-            <div class="header-link" @click="scrollToSection('aboutUsSection')">
+            <div class="header-link" @click="scrollToSection('aboutUs-section')">
                 About Us
             </div>
             <div class="header-saparator" :class="{'hidden': !isLandingPage}">
@@ -111,7 +136,7 @@
         </div>
         <!-- 行動裝置選單 -->
         <div :class="{'active': isMenuOpen}" class="mobile-menu">
-            <div class="menu-item" @click="scrollToSection('aboutUsSection', true)">
+            <div class="menu-item" @click="scrollToSection('aboutUs-section', true)">
                 About Us
             </div>
             <div class="menu-item" @click="scrollToSection('ourWorksSection', true)">
@@ -122,7 +147,7 @@
             </div>
         </div>
     </div>
-        <!-- <div class="button-group">
+        <!-- <div class="button-group" style="top: 1rem; position: fixed;">
         <button @click="growingFunction">開始生長</button>
         <button @click="shrinkingFunction">開始收合</button>
         <button @click="startAutoPlay">開始自動播放</button>
@@ -161,83 +186,85 @@
                 // 定義所有區塊的配置
                 const sectionConfigs = [
                     {
-                        trigger: '.section2',
+                        trigger: '.gap-section',
                         start: 'top 80%',
                         markers: false,
                         onEnter: () => {
                             stopAutoPlay();
+                            animateTextToOrigin();
                             isLandingPage.value = false;
                         },
                         onLeaveBack: () => {
                             startAutoPlay();
+                            animateTextToTargetPosition();
                             isLandingPage.value = true;
                         },
                     },
-                    {
-                        trigger: '.section3',
-                        start: 'center center',
-                        endTrigger: '.section6',
-                        end: 'center center',
-                        markers: false,
-                        scrub: 2,
-                        onUpdate: (self) => {
-                            updatePosition(0, 0, 0, 0, -5, 0, self.progress);
-                        }
-                    },
-                    {
-                        trigger: '.section6',
-                        start: 'center center',
-                        end: 'center center',
-                        markers: false,
-                        onEnter: () => growingFunction(),
-                        onLeaveBack: () => shrinkingFunction(),
-                    },
-                    {
-                        trigger: '.section10',
-                        start: 'center center',
-                        markers: false,
-                        onEnter: () => shrinkingFunction(),
-                        onLeaveBack: () => growingFunction()
-                    },
-                    {
-                        trigger: '.section11',
-                        start: 'center center',
-                        markers: false,
-                        onEnter: () => growingFunction(),
-                        onLeaveBack: () => shrinkingFunction()
-                    },
-                    {
-                        trigger: '.section12',
-                        start: 'center center',
-                        markers: false,
-                        onEnter: () => shrinkingFunction(),
-                        onLeaveBack: () => growingFunction()
-                    },
-                    {
-                        trigger: '.section13',
-                        start: 'center center',
-                        end: 'bottom top',
-                        scrub: 1,
-                        markers: false,
-                        onEnter: () => growingFunction(),
-                        onLeaveBack: () => shrinkingFunction(),
-                    },
-                    {
-                        trigger: '.section14',
-                        start: 'center center',
-                        end: 'bottom top',
-                        scrub: 1,
-                        markers: false,
-                        onEnter: () => shrinkingFunction(),
-                        onLeaveBack: () => growingFunction(),
-                    },
-                    {
-                        trigger: '.section15',
-                        start: 'center center',
-                        markers: false,
-                        onEnter: () => growingFunction(),
-                        onLeaveBack: () => shrinkingFunction()
-                    }
+                    // {
+                    //     trigger: '.section3',
+                    //     start: 'center center',
+                    //     endTrigger: '.section6',
+                    //     end: 'center center',
+                    //     markers: false,
+                    //     scrub: 2,
+                    //     onUpdate: (self) => {
+                    //         updatePosition(0, 0, 0, 0, -5, 0, self.progress);
+                    //     }
+                    // },
+                    // {
+                    //     trigger: '.section6',
+                    //     start: 'center center',
+                    //     end: 'center center',
+                    //     markers: false,
+                    //     onEnter: () => growingFunction(),
+                    //     onLeaveBack: () => shrinkingFunction(),
+                    // },
+                    // {
+                    //     trigger: '.section10',
+                    //     start: 'center center',
+                    //     markers: false,
+                    //     onEnter: () => shrinkingFunction(),
+                    //     onLeaveBack: () => growingFunction()
+                    // },
+                    // {
+                    //     trigger: '.section11',
+                    //     start: 'center center',
+                    //     markers: false,
+                    //     onEnter: () => growingFunction(),
+                    //     onLeaveBack: () => shrinkingFunction()
+                    // },
+                    // {
+                    //     trigger: '.section12',
+                    //     start: 'center center',
+                    //     markers: false,
+                    //     onEnter: () => shrinkingFunction(),
+                    //     onLeaveBack: () => growingFunction()
+                    // },
+                    // {
+                    //     trigger: '.section13',
+                    //     start: 'center center',
+                    //     end: 'bottom top',
+                    //     scrub: 1,
+                    //     markers: false,
+                    //     onEnter: () => growingFunction(),
+                    //     onLeaveBack: () => shrinkingFunction(),
+                    // },
+                    // {
+                    //     trigger: '.section14',
+                    //     start: 'center center',
+                    //     end: 'bottom top',
+                    //     scrub: 1,
+                    //     markers: false,
+                    //     onEnter: () => shrinkingFunction(),
+                    //     onLeaveBack: () => growingFunction(),
+                    // },
+                    // {
+                    //     trigger: '.section15',
+                    //     start: 'center center',
+                    //     markers: false,
+                    //     onEnter: () => growingFunction(),
+                    //     onLeaveBack: () => shrinkingFunction()
+                    // }
                 ];
                 
                 // 為每個配置創建相應的 ScrollTrigger
@@ -255,6 +282,86 @@
                             onUpdate: config.onUpdate
                         }
                     });
+                });
+
+                gsap.to('.aboutUs-section-content-1-1', {
+                    scrollTrigger: {
+                      trigger: '.aboutUs-section',   // 以整個 aboutUs-section 為觸發區
+                      start: '5% 80%',              // 滾動到 section 頂部到視口 80% 時開始
+                      end: '10% 80%',             // 滾動到 section 底部到視口 20% 時結束
+                      scrub: 2,                   // 跟隨滾動進度               // 方便調試，完成後可設為 false
+                    },
+                    opacity: 1,                      // 漸變到完全不透明
+                    filter: 'blur(0px)',             // 漸變到清晰
+                    ease: 'none'                     // 線性變化
+                });
+                gsap.to('.aboutUs-section-content-1-2', {
+                    scrollTrigger: {
+                      trigger: '.aboutUs-section',   // 以整個 aboutUs-section 為觸發區
+                      start: '15% 80%',              // 滾動到 section 頂部到視口 80% 時開始
+                      end: '20% 80%',             // 滾動到 section 底部到視口 20% 時結束
+                      scrub: 2,                   // 跟隨滾動進度
+                    },
+                    opacity: 1,                      // 漸變到完全不透明
+                    filter: 'blur(0px)',             // 漸變到清晰
+                    ease: 'none'                     // 線性變化
+                });
+                gsap.to('.aboutUs-section-content-2-1', {
+                    scrollTrigger: {
+                      trigger: '.aboutUs-section',   // 以整個 aboutUs-section 為觸發區
+                      start: '25% 80%',              // 滾動到 section 頂部到視口 80% 時開始
+                      end: '30% 80%',             // 滾動到 section 底部到視口 20% 時結束
+                      scrub: 2,                   // 跟隨滾動進度
+                    },
+                    opacity: 1,                      // 漸變到完全不透明
+                    filter: 'blur(0px)',             // 漸變到清晰
+                    ease: 'none'                     // 線性變化
+                });
+                gsap.to('.aboutUs-section-content-2-2', {
+                    scrollTrigger: {
+                      trigger: '.aboutUs-section',   // 以整個 aboutUs-section 為觸發區
+                      start: '35% 80%',              // 滾動到 section 頂部到視口 80% 時開始
+                      end: '40% 80%',             // 滾動到 section 底部到視口 20% 時結束
+                      scrub: 2,                   // 跟隨滾動進度
+                    },
+                    opacity: 1,                      // 漸變到完全不透明
+                    filter: 'blur(0px)',             // 漸變到清晰
+                    ease: 'none'                     // 線性變化
+                });
+                gsap.to('.aboutUs-section-content-3-1', {
+                    scrollTrigger: {
+                      trigger: '.aboutUs-section',   // 以整個 aboutUs-section 為觸發區
+                      start: '45% 80%',              // 滾動到 section 頂部到視口 80% 時開始
+                      end: '50% 80%',             // 滾動到 section 底部到視口 20% 時結束
+                      scrub: 2,                   // 跟隨滾動進度
+                    },
+                    opacity: 1,                      // 漸變到完全不透明
+                    filter: 'blur(0px)',             // 漸變到清晰
+                    ease: 'none'                     // 線性變化
+                });
+                gsap.to('.aboutUs-section-content-3-2', {
+                    scrollTrigger: {
+                      trigger: '.aboutUs-section',   // 以整個 aboutUs-section 為觸發區
+                      start: '55% 80%',              // 滾動到 section 頂部到視口 80% 時開始
+                      end: '60% 80%',             // 滾動到 section 底部到視口 20% 時結束
+                      scrub: 2,                   // 跟隨滾動進度
+                    },
+                    opacity: 1,                      // 漸變到完全不透明
+                    filter: 'blur(0px)',             // 漸變到清晰
+                    ease: 'none'                     // 線性變化
+                });
+                gsap.to('.aboutUs-content-group', {
+                    scrollTrigger: {
+                      trigger: '.aboutUs-section',   // 以整個 aboutUs-section 為觸發區
+                      start: '80% 80%',              // 滾動到 section 頂部到視口 80% 時開始
+                      end: 'bottom bottom',             // 滾動到 section 底部到視口 20% 時結束
+                      scrub: 0,                   // 跟隨滾動進度
+                      markers: false,
+                    },
+                    transform: 'scale(100)',
+                    '--before-blur': '0px',
+                    opacity: 0,
+                    ease: 'none'                     // 線性變化
                 });
             });
         
@@ -277,13 +384,25 @@
     // 基本動畫控制函數
     const growingFunction = () => {
         if (splashRef.value) {
-        splashRef.value.startGrowingAnimation();
+            splashRef.value.startGrowingAnimation();
         }
     }
     
     const shrinkingFunction = () => {
         if (splashRef.value) {
-        splashRef.value.startShrinkingAnimation();
+            splashRef.value.startShrinkingAnimation();
+        }
+    }
+
+    const animateTextToTargetPosition = () => {
+        if (splashRef.value) {
+            splashRef.value.animateTextToTargetPosition();
+        }
+    }
+
+    const animateTextToOrigin = () => {
+        if (splashRef.value) {
+            splashRef.value.animateTextToOrigin();
         }
     }
     
@@ -317,6 +436,7 @@
     const clickStart = () => {
         isStarted.value = true;
         startAutoPlay();
+        animateTextToTargetPosition();
         splashRef.value.addMouseControlEvents();
         
         // 設置滾動動畫

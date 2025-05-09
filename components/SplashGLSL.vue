@@ -9,9 +9,6 @@ import * as THREE from 'three';
 import { MarchingCubes } from 'three/examples/jsm/objects/MarchingCubes.js';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 import { EXRLoader } from 'three/examples/jsm/loaders/EXRLoader.js';
-import { FontLoader } from 'three/examples/jsm/loaders/FontLoader.js';
-import { TTFLoader } from 'three/examples/jsm/loaders/TTFLoader.js';
-import gsap from 'gsap';
 
 // 父組件事件
 const emit = defineEmits([
@@ -65,16 +62,16 @@ const animParams = reactive({
   numSegments: 50,                // 每條線分段數量
   subtract: 20,                   // Metaball 減法參數
   
-  // 統一動畫控制參數（現在代表秒數）
-  growSpeed: 3,                 // 生長動畫持續時間（秒）
+  // 統一動畫控制參數
+  growSpeed: 0.1,                 // 生長速度 (值越大生長越快)
   growthEaseOutPower: 0.15,       // 生長緩動指數 (值越小結尾越平滑)
-  shrinkSpeed: 1,               // 收縮動畫持續時間（秒）
+  shrinkSpeed: 1,               // 收縮速度 (值越大收縮越快)
   shrinkEaseInPower: 2.5,         // 收縮緩動指數 (值越大開頭越快)
   
   // 波浪效果設定
   flowWaveFrequency: 1.0,         // 波浪頻率
-  flowWaveAmplitudeFactor: 0.15,  // 波浪振幅因子
-  flowWaveAmplitudeFactorAtStart: 0.5, // 原點狀態下的波浪振幅因子
+  flowWaveAmplitudeFactor: 0.3,  // 波浪振幅因子
+  flowWaveAmplitudeFactorAtStart: 1.5, // 原點狀態下的波浪振幅因子
   flowWavePhaseFactor: Math.PI * 4, // 波浪相位因子
 });
 
@@ -92,8 +89,10 @@ let clock = null;
 let material = null;
 let pmremGenerator = null;
 let animationFrameId = null;
-let sphereGroup = null; // 新增球體群組物件
 
+// --- 滑鼠控制變量 ---
+let mouseX = 0;
+let mouseY = 0;
 let targetRotationX = 0;
 let targetRotationY = 0;
 let targetPositionX = 0;
@@ -122,16 +121,7 @@ let shrinkStartTime = null;   // 收合開始時間
 let shrinkEndTime = null;     // 收合結束時間
 let growStartTime = null;     // 生長開始時間
 let globalFlowState = 'idle'; // 全局流動狀態
-let delayedStateUpdateId = null; // 用於跟踪狀態更新的延遲回調ID
 
-// --- 文字物件 ---
-let textMesh1 = null;
-let textMesh2 = null;
-let font = null;
-let textTargetPosition1 = null; // 儲存文字1的目標位置
-let textTargetPosition2 = null; // 儲存文字2的目標位置
-let textOriginPosition1 = null; // 儲存文字1的原點位置
-let textOriginPosition2 = null; // 儲存文字2的原點位置
 // =========================================
 // 3. 材質和環境設定
 // =========================================
@@ -145,13 +135,12 @@ function generateMaterial() {
     metalness: 0,
     roughness: 0,
     transparent: true,
-    opacity: 0.5,
+    opacity: 0.75,
     transmission: 1,   // 增加透光性
     ior: 1.5,          // 折射率
-    thickness: 1,    // 材質厚度
+    thickness: 1.0,    // 材質厚度
     envMapIntensity: 10.0,
-    side: THREE.DoubleSide,
-    dispersion: 2,
+    side: THREE.DoubleSide
   });
 }
 
@@ -189,171 +178,9 @@ function loadEnvironmentMap() {
   });
 }
 
-/**
- * 載入字體並創建文字
- */
-function loadFontAndCreateText() {
-  const ttfLoader = new TTFLoader();
-  const fontLoader = new FontLoader();
-
-  ttfLoader.load('/fonts/Orbitron-Regular.ttf', (json) => {
-    font = fontLoader.parse(json);
-    
-    // 儲存目標位置
-    textTargetPosition1 = new THREE.Vector3(-4, 0, -5);
-    textTargetPosition2 = new THREE.Vector3(4, 0, -5);
-    
-    // 創建第一個文字 - 初始位置為原點
-    textMesh1 = createText('Splash', new THREE.Vector3(1, 0, -5),'left', 1);
-    scene.add(textMesh1);
-    
-    // 創建第二個文字 - 初始位置為原點
-    textMesh2 = createText('DigiLab', new THREE.Vector3(-1, 0, -5),'right', 1);
-    scene.add(textMesh2);
-  });
-}
-
-/**
- * 創建文字物件
- */
-function createText(text, position, align, size = 0.5) {
-  const shapes = font.generateShapes(text, size);
-  const geometry = new THREE.ShapeGeometry(shapes);
-  geometry.computeBoundingBox();
-
-  // 使用物理材質替代基本材質，以便能夠被折射
-  const material = new THREE.MeshPhysicalMaterial({
-    color: 0x000000,
-    transparent: true,
-    opacity: 0,
-    transmission: 1,  // 輕微的透射性
-  });
-
-  const mesh = new THREE.Mesh(geometry, material);
-  const textWidth = geometry.boundingBox.max.x - geometry.boundingBox.min.x;
-  if(align === 'left'){
-    mesh.position.set(position.x - textWidth, position.y, position.z);
-    textOriginPosition1 = new THREE.Vector3(position.x - textWidth, position.y, position.z);
-  }else if(align === 'right'){
-    mesh.position.set(position.x , position.y, position.z);
-    textOriginPosition2 = new THREE.Vector3(position.x , position.y, position.z);
-  }
-  
-  // 提高文字的渲染優先順序，確保被正確渲染和折射
-  mesh.renderOrder = 1;
-  
-  return mesh;
-}
-
-/**
- * 文字從原點到目標位置的動畫
- */
-function animateTextToTargetPosition() {
-  if (!textMesh1 || !textMesh2 || !textTargetPosition1 || !textTargetPosition2) return;
-  
-  // 停止當前可能正在執行的動畫
-  gsap.killTweensOf(textMesh1.position);
-  gsap.killTweensOf(textMesh2.position);
-  gsap.killTweensOf(textMesh1.material);
-  gsap.killTweensOf(textMesh2.material);
-  
-  // 計算文字1的目標位置（考慮文字寬度）
-  const text1Width = textMesh1.geometry.boundingBox.max.x - textMesh1.geometry.boundingBox.min.x;
-  const targetPos1 = textTargetPosition1.clone();
-  targetPos1.x -= text1Width / 2;
-  
-  // 計算文字2的目標位置（考慮文字寬度）
-  const text2Width = textMesh2.geometry.boundingBox.max.x - textMesh2.geometry.boundingBox.min.x;
-  const targetPos2 = textTargetPosition2.clone();
-  targetPos2.x -= text2Width / 2;
-  
-  // 設置動畫參數
-  const duration = animParams.growSpeed;
-  
-  // 確保文字一開始是透明的
-  textMesh1.material.opacity = 0;
-  textMesh2.material.opacity = 0;
-  
-  // 文字1位置動畫
-  gsap.to(textMesh1.position, {
-    x: targetPos1.x,
-    y: targetPos1.y,
-    z: targetPos1.z,
-    duration: duration,
-    ease: "customGrowEase" // 使用已註冊的自定義緩動函數
-  });
-  
-  // 文字1透明度動畫
-  gsap.to(textMesh1.material, {
-    opacity: 1,
-    duration: duration, // 透明度變化稍快於位移，提前達到完全不透明
-    ease: "customGrowEase"
-  });
-  
-  // 文字2位置動畫
-  gsap.to(textMesh2.position, {
-    x: targetPos2.x,
-    y: targetPos2.y,
-    z: targetPos2.z,
-    duration: duration,
-    ease: "customGrowEase" // 使用已註冊的自定義緩動函數
-  });
-  
-  // 文字2透明度動畫
-  gsap.to(textMesh2.material, {
-    opacity: 1,
-    duration: duration, // 透明度變化稍快於位移，提前達到完全不透明
-    ease: "customGrowEase"
-  });
-}
-
-/**
- * 文字從目標位置回到原點的動畫
- */
-function animateTextToOrigin() {
-  if (!textMesh1 || !textMesh2) return;
-  
-  // 停止當前可能正在執行的動畫
-  gsap.killTweensOf(textMesh1.position);
-  gsap.killTweensOf(textMesh2.position);
-  gsap.killTweensOf(textMesh1.material);
-  gsap.killTweensOf(textMesh2.material);
-  
-  // 設置動畫參數
-  const duration = animParams.shrinkSpeed;
-  
-  // 文字1位置動畫
-  gsap.to(textMesh1.position, {
-    x: textOriginPosition1.x,
-    y: textOriginPosition1.y,
-    z: textOriginPosition1.z,
-    duration: duration,
-    ease: "customShrinkEase" // 使用已註冊的自定義緩動函數
-  });
-  
-  // 文字1透明度動畫
-  gsap.to(textMesh1.material, {
-    opacity: 0,
-    duration: duration, // 透明度變化稍快，提前完全透明
-    ease: "customShrinkEase"
-  });
-  
-  // 文字2位置動畫
-  gsap.to(textMesh2.position, {
-    x: textOriginPosition2.x,
-    y: textOriginPosition2.y,
-    z: textOriginPosition2.z,
-    duration: duration,
-    ease: "customShrinkEase" // 使用已註冊的自定義緩動函數
-  });
-  
-  // 文字2透明度動畫
-  gsap.to(textMesh2.material, {
-    opacity: 0,
-    duration: duration, // 透明度變化稍快，提前完全透明
-    ease: "customShrinkEase"
-  });
-}
+// =========================================
+// 4. 線條和動畫控制
+// =========================================
 
 /**
  * 重新生成所有線條
@@ -424,6 +251,9 @@ function updateLineMetaball(obj) {
   const centerOffset = new THREE.Vector3(0.5, 0.5, 0.5);
   const totalLines = ttParams.numLines + thParams.numLines;
 
+  // 更新全局流動狀態
+  updateGlobalFlowState(currentTime);
+
   // 處理每條線的metaball效果
   for (let lineIndex = 0; lineIndex < totalLines; lineIndex++) {
     if (lineStartTimes[lineIndex] === undefined || currentTime < lineStartTimes[lineIndex]) {
@@ -438,23 +268,23 @@ function updateLineMetaball(obj) {
     // 計算當前線條長度
     if (globalFlowState === 'pauseAtStart') {
       // 在收合完成狀態下，線條仍可見但保持最短
-      localCurrentLength = 0.01; // 調大一點以確保可見流動效果
+      localCurrentLength = 0.05; // 調大一點以確保可見流動效果
     } else if (globalFlowState === 'pauseAtEnd') {
       // 在生長完成狀態下，線條保持最長
       localCurrentLength = localMaxLength;
     } else if (globalFlowState === 'growing') {
-      // 生長狀態 - 使用 GSAP 控制的進度
+      // 生長狀態
       if (localMaxLength > 0.001) {
-        const duration = animParams.growSpeed;
-        const progress = Math.min(timeSinceStart / duration, 1.0);
-        // 使用 GSAP 風格的 ease out
-        const easedTime = Math.pow(progress, animParams.growthEaseOutPower);
+        const currentGrowthSpeed = animParams.growSpeed;
+        const linearDuration = localMaxLength / currentGrowthSpeed;
+        const normalizedTime = linearDuration > 0 ? Math.min(timeSinceStart / linearDuration, 1.0) : 1.0;
+        const easedTime = Math.pow(normalizedTime, animParams.growthEaseOutPower);
         localCurrentLength = easedTime * localMaxLength;
       } else {
         localCurrentLength = 0;
       }
     } else if (globalFlowState === 'shrinking') {
-      // 收縮狀態 - 使用 GSAP 控制的進度
+      // 收縮狀態
       if (shrinkStartTime !== null && shrinkEndTime !== null) {
         const shrinkDuration = shrinkEndTime - shrinkStartTime;
         const timeSinceShrinking = currentTime - shrinkStartTime;
@@ -463,11 +293,12 @@ function updateLineMetaball(obj) {
         const shrinkProgress = Math.pow(linearShrinkProgress, animParams.shrinkEaseInPower);
         const shrinkFactor = Math.max(0, 1.0 - shrinkProgress);
         
-        // 當開始收縮時，我們需要從當前長度開始收縮
-        const duration = animParams.growSpeed;
-        const growProgress = Math.min(timeSinceStart / duration, 1.0);
-        const easedGrowTime = Math.pow(growProgress, animParams.growthEaseOutPower);
-        const lengthBeforeShrinking = easedGrowTime * localMaxLength;
+        // 當按下return開始收縮時，我們需要從當前長度開始收縮
+        const currentGrowthSpeed = animParams.growSpeed;
+        const linearDuration = localMaxLength / currentGrowthSpeed;
+        const normalizedTime = linearDuration > 0 ? Math.min(timeSinceStart / linearDuration, 1.0) : 1.0;
+        const easedTime = Math.pow(normalizedTime, animParams.growthEaseOutPower);
+        const lengthBeforeShrinking = easedTime * localMaxLength;
         
         // 從當前長度開始按比例收縮
         localCurrentLength = lengthBeforeShrinking * shrinkFactor;
@@ -477,9 +308,8 @@ function updateLineMetaball(obj) {
     } else {
       // 默認狀態 - 靜態展示
       if (localMaxLength > 0.001) {
-        const duration = animParams.growSpeed;
-        const progress = Math.min(timeSinceStart / duration, 1.0);
-        const easedTime = Math.pow(progress, animParams.growthEaseOutPower);
+        const normalizedTime = Math.min(timeSinceStart / (localMaxLength / animParams.growSpeed), 1.0);
+        const easedTime = Math.pow(normalizedTime, animParams.growthEaseOutPower);
         localCurrentLength = easedTime * localMaxLength;
       } else {
         localCurrentLength = 0;
@@ -546,65 +376,47 @@ function updateLineMetaball(obj) {
   obj.update();
 }
 
-/**
- * 初始化所有球體
- */
-function initSpheres() {
-  // 清理現有球體
-  clearSpheres();
-  
-  // 建立球體群組
-  if (!sphereGroup) {
-    sphereGroup = new THREE.Group();
-    scene.add(sphereGroup);
-  }
-  
-  // 創建新球體
-  for (let i = 0; i < sphereParams.count; i++) {
-    // 隨機方向
-    const direction = new THREE.Vector3(
-      Math.random() * 2 - 1,
-      Math.random() * 2 - 1,
-      Math.random() * 2 - 1
-    ).normalize();
-    
-    // 隨機大小
-    const size = sphereParams.minRadius + Math.random() * (sphereParams.maxRadius - sphereParams.minRadius);
-    
-    // 創建球體
-    const sphere = createSphere(direction, size);
-    
-    // 設置目標長度 (與線條相似的範圍)
-    sphere.targetLength = THREE.MathUtils.randFloat(sphereParams.minLength, sphereParams.maxLength);
-  }
-}
+// =========================================
+// 5. 流動狀態控制
+// =========================================
 
 /**
- * 清理所有球體
+ * 更新全局流動狀態
  */
-function clearSpheres() {
-  // 從場景中移除所有球體並釋放資源
-  for (let i = 0; i < spheres.length; i++) {
-    const sphere = spheres[i];
+function updateGlobalFlowState(currentTime) {
+  if (!clock) return;
+  
+  // 檢查當前時間和設定的時間節點
+  if (globalFlowState === 'growing' && growStartTime !== null) {
+    // 計算所有線條的平均生長完成度
+    const totalLines = ttParams.numLines + thParams.numLines;
+    let totalGrowthProgress = 0;
+    let activeLines = 0;
     
-    if (sphere.mesh) {
-      if (sphereGroup) {
-        sphereGroup.remove(sphere.mesh);
-      } else {
-        scene.remove(sphere.mesh);
-      }
-      sphere.mesh.geometry.dispose();
+    for (let i = 0; i < totalLines; i++) {
+      if (lineStartTimes[i] === undefined || currentTargetLengths[i] === undefined) continue;
+      
+      activeLines++;
+      const localMaxLength = currentTargetLengths[i] / (effect?.scale.x || 1);
+      const timeSinceStart = currentTime - (lineStartTimes[i] || currentTime);
+      const currentGrowthSpeed = animParams.growSpeed;
+      const linearDuration = localMaxLength / currentGrowthSpeed;
+      const growthProgress = linearDuration > 0 ? Math.min(timeSinceStart / linearDuration, 1.0) : 1.0;
+      
+      totalGrowthProgress += growthProgress;
     }
-  }
-  
-  // 清空陣列
-  spheres = [];
-  
-  // 清空群組
-  if (sphereGroup) {
-    scene.remove(sphereGroup);
-    sphereGroup = new THREE.Group();
-    scene.add(sphereGroup);
+    
+    const averageProgress = activeLines > 0 ? totalGrowthProgress / activeLines : 0;
+    
+    // 當平均生長進度達到99%以上，切換到暫停狀態
+    if (averageProgress >= 0.99) {
+      updateFlowState('pauseAtEnd');
+    }
+  } else if (globalFlowState === 'shrinking' && shrinkStartTime !== null && shrinkEndTime !== null) {
+    // 檢查是否達到收合結束時間
+    if (currentTime >= shrinkEndTime) {
+      updateFlowState('pauseAtStart');
+    }
   }
 }
 
@@ -638,34 +450,175 @@ function createSphere(direction, size) {
     transitionStartPos: 0             // 轉換開始位置
   };
   
-  // 添加到球體群組和球體陣列
-  sphereGroup.add(sphere);
+  // 添加到場景和球體陣列
+  scene.add(sphere);
   spheres.push(sphereData);
   
   return sphereData;
 }
 
 /**
+ * 初始化所有球體
+ */
+function initSpheres() {
+  // 清理現有球體
+  clearSpheres();
+  
+  // 創建新球體
+  for (let i = 0; i < sphereParams.count; i++) {
+    // 隨機方向
+    const direction = new THREE.Vector3(
+      Math.random() * 2 - 1,
+      Math.random() * 2 - 1,
+      Math.random() * 2 - 1
+    ).normalize();
+    
+    // 隨機大小
+    const size = sphereParams.minRadius + Math.random() * (sphereParams.maxRadius - sphereParams.minRadius);
+    
+    // 創建球體
+    const sphere = createSphere(direction, size);
+    
+    // 設置目標長度 (與線條相似的範圍)
+    sphere.targetLength = THREE.MathUtils.randFloat(sphereParams.minLength, sphereParams.maxLength);
+  }
+}
+
+/**
+ * 清理所有球體
+ */
+function clearSpheres() {
+  // 從場景中移除所有球體並釋放資源
+  for (let i = 0; i < spheres.length; i++) {
+    const sphere = spheres[i];
+    
+    if (sphere.mesh) {
+      scene.remove(sphere.mesh);
+      sphere.mesh.geometry.dispose();
+    }
+  }
+  
+  // 清空陣列
+  spheres = [];
+}
+
+/**
  * 更新球體位置和狀態
+ * 支持從任何位置開始收合/生長
  */
 function updateSpheres() {
   if (!clock) return;
   
-  // 更新每個球體的可視屬性
+  const currentTime = clock.getElapsedTime();
+  
+  // 計算線條的平均生長進度，用於同步球體
+  let linesAverageProgress = 1.0;
+  
+  if (globalFlowState === 'growing' && growStartTime !== null) {
+    // 只有在生長狀態時才需要計算線條進度
+    const totalLines = ttParams.numLines + thParams.numLines;
+    let totalGrowthProgress = 0;
+    let activeLines = 0;
+    
+    for (let i = 0; i < totalLines; i++) {
+      if (lineStartTimes[i] === undefined || currentTargetLengths[i] === undefined) continue;
+      
+      activeLines++;
+      const localMaxLength = currentTargetLengths[i] / (effect?.scale.x || 1);
+      const timeSinceStart = currentTime - (lineStartTimes[i] || currentTime);
+      const currentGrowthSpeed = animParams.growSpeed;
+      const linearDuration = localMaxLength / currentGrowthSpeed;
+      const growthProgress = linearDuration > 0 ? Math.min(timeSinceStart / linearDuration, 1.0) : 1.0;
+      
+      totalGrowthProgress += growthProgress;
+    }
+    
+    linesAverageProgress = activeLines > 0 ? totalGrowthProgress / activeLines : 1.0;
+  }
+  
+  // 更新每個球體
   for (let i = 0; i < spheres.length; i++) {
     const sphere = spheres[i];
     if (!sphere.active || !sphere.mesh) continue;
     
-    // 計算球體在其本地座標系中的位置
-    const spherePosition = sphere.direction.clone().multiplyScalar(sphere.currentPosition);
-    sphere.mesh.position.copy(spherePosition);
+    let currentPosition = 0;
     
-    // 更新進度比例 (0-1)
-    sphere.progress = sphere.targetLength > 0 ? sphere.currentPosition / sphere.targetLength : 0;
+    // 根據全局流動狀態更新球體位置
+    if (globalFlowState === 'pauseAtStart') {
+      // 原點狀態
+      currentPosition = 0;
+    } else if (globalFlowState === 'pauseAtEnd') {
+      // 完全展開狀態
+      currentPosition = sphere.targetLength;
+    } else if (globalFlowState === 'growing') {
+      // 生長狀態 - 與線條同步
+      if (growStartTime !== null) {
+        // 記錄起始位置（僅在狀態變化時）
+        if (sphere.transitionStartTime !== growStartTime) {
+          sphere.transitionStartTime = growStartTime;
+          sphere.transitionStartPos = sphere.currentPosition;
+        }
+        
+        // 使用與線條相同的平均進度，確保同步
+        const totalProgress = Math.pow(linesAverageProgress, animParams.growthEaseOutPower);
+        
+        // 計算應該增長的距離比例
+        const targetGrowthDist = sphere.targetLength - sphere.transitionStartPos;
+        const growthDistance = targetGrowthDist * totalProgress;
+        
+        // 新位置是起始位置加上生長的距離
+        currentPosition = sphere.transitionStartPos + growthDistance;
+        
+        // 當線條接近完成時，確保球體也完全到位
+        if (linesAverageProgress >= 0.99) {
+          currentPosition = sphere.targetLength;
+        }
+      }
+    } else if (globalFlowState === 'shrinking') {
+      // 收縮狀態 - 從當前位置開始收縮
+      if (shrinkStartTime !== null && shrinkEndTime !== null) {
+        // 如果這是狀態轉換的開始，記錄起始位置
+        if (sphere.transitionStartTime !== shrinkStartTime) {
+          sphere.transitionStartTime = shrinkStartTime;
+          sphere.transitionStartPos = sphere.currentPosition;
+        }
+        
+        const shrinkDuration = shrinkEndTime - shrinkStartTime;
+        const timeSinceShrink = currentTime - shrinkStartTime;
+        // 使用收縮緩動參數計算進度
+        const linearShrinkProgress = Math.min(timeSinceShrink / shrinkDuration, 1.0);
+        const shrinkProgress = Math.pow(linearShrinkProgress, animParams.shrinkEaseInPower);
+        
+        // 計算應該收縮的距離比例
+        const targetShrinkDist = sphere.transitionStartPos;
+        const shrinkDistance = targetShrinkDist * shrinkProgress;
+        
+        // 新位置是起始位置減去收縮的距離
+        currentPosition = sphere.transitionStartPos - shrinkDistance;
+        
+        // 當收縮接近完成時，確保球體完全歸零
+        if (shrinkProgress >= 0.99) {
+          currentPosition = 0;
+        }
+      }
+    }
+    
+    // 確保位置在有效範圍內
+    currentPosition = Math.max(0, Math.min(currentPosition, sphere.targetLength));
+    
+    // 更新球體當前位置
+    sphere.currentPosition = currentPosition;
+    
+    // 計算球體進度比例 (0-1)
+    sphere.progress = sphere.targetLength > 0 ? currentPosition / sphere.targetLength : 0;
+    
+    // 根據進度計算位置
+    const spherePosition = sphere.direction.clone().multiplyScalar(currentPosition);
+    sphere.mesh.position.copy(spherePosition);
     
     // 根據進度計算大小
     let scale;
-    if (sphere.currentPosition < 0.01) {
+    if (currentPosition < 0.01) {
       scale = sphereParams.minScale; // 保持最小可見大小
     } else {
       // 根據距離計算大小，確保球體大小與位置成比例
@@ -676,6 +629,10 @@ function updateSpheres() {
     sphere.mesh.scale.set(scale, scale, scale);
   }
 }
+
+// =========================================
+// 6. 動畫和渲染
+// =========================================
 
 /**
  * 動畫主循環
@@ -696,29 +653,18 @@ function animate() {
   modelRotationY += (targetRotationY - modelRotationY) * 0.05;
   
   // 應用旋轉到場景
-  effect.rotation.x = modelRotationX;
-  effect.rotation.y = modelRotationY;
+  scene.rotation.x = modelRotationX;
+  scene.rotation.y = modelRotationY;
   if(isMobileDevice()){
     effect.rotation.y += 0.0025;
-    if (sphereGroup) {
-      sphereGroup.rotation.y += 0.0025;
+    for(let i=0;i<spheres.length;i++){
+      spheres[i].mesh.rotation.y += 0.0025;
     }
   }
   
-  // 更新 effect 和球體群組位置
-  effect.position.x = targetPositionX;
-  effect.position.y = targetPositionY;
-  
-  if (sphereGroup) {
-    sphereGroup.rotation.x = modelRotationX;
-    sphereGroup.rotation.y = modelRotationY;
-    sphereGroup.position.x = targetPositionX;
-    sphereGroup.position.y = targetPositionY;
-  }
-  
   // 結合滑鼠控制和滾動位移的最終位置
-  scene.position.x = targetScrollOffsetX;
-  scene.position.y = targetScrollOffsetY;
+  scene.position.x = targetPositionX + targetScrollOffsetX;
+  scene.position.y = targetPositionY + targetScrollOffsetY;
   scene.position.z = targetScrollOffsetZ;
   
   // 確保控制器始終更新 - 保持自動旋轉
@@ -804,17 +750,7 @@ function initializeScene() {
   effect.scale.set(8, 8, 8);
   effect.enableUvs = false;
   effect.enableColors = false;
-  
-  // 設置線條的渲染順序，確保可以對文字進行折射
-  effect.renderOrder = 2;
-  
   scene.add(effect);
-  
-  // 創建球體群組
-  sphereGroup = new THREE.Group();
-  // 設置球體群組的渲染順序
-  sphereGroup.renderOrder = 2;
-  scene.add(sphereGroup);
 
   // 時鐘
   clock = new THREE.Clock();
@@ -826,19 +762,6 @@ function initializeScene() {
   targetScrollOffsetX = 0;
   targetScrollOffsetY = 0;
   targetScrollOffsetZ = 0;
-  
-  // 載入字體並創建文字
-  loadFontAndCreateText();
-
-  // 註冊自定義緩動函數（只註冊一次）
-  gsap.registerEase("customGrowEase", function(x) {
-    return Math.pow(x, animParams.growthEaseOutPower);
-  });
-  
-  // 自定義緩動函數，完全匹配線條使用的 Math.pow(x, shrinkEaseInPower)
-  gsap.registerEase("customShrinkEase", function(x) {
-    return Math.pow(x, animParams.shrinkEaseInPower);
-  });
   
   return true;
 }
@@ -873,18 +796,6 @@ function cleanupScene() {
     scene?.remove(effect);
   }
   
-  // 清理球體群組
-  if (sphereGroup) {
-    scene?.remove(sphereGroup);
-    sphereGroup = null;
-  }
-  
-  // 清理文字相關資源
-  textTargetPosition1 = null;
-  textTargetPosition2 = null;
-  textOriginPosition1 = null;
-  textOriginPosition2 = null;
-  
   if (scene) {
     // 清理場景中的物件
     scene.traverse((object) => {
@@ -912,18 +823,6 @@ function cleanupScene() {
     sphereMaterial.dispose();
   }
 
-  // 清理文字物件
-  if (textMesh1) {
-    scene.remove(textMesh1);
-    textMesh1.geometry.dispose();
-    textMesh1.material.dispose();
-  }
-  if (textMesh2) {
-    scene.remove(textMesh2);
-    textMesh2.geometry.dispose();
-    textMesh2.material.dispose();
-  }
-
   console.log("Three.js場景已清理");
 }
 
@@ -938,28 +837,26 @@ function isMobileDevice() {
   return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
 }
 
-//開始生長動畫
+/**
+ * 開始生長動畫
+ */
 function startGrowingAnimation() {
-  if(globalFlowState=='growing' || globalFlowState=='pauseAtEnd') return;
-  if (delayedStateUpdateId !== null) {
-    gsap.killTweensOf(delayedStateUpdateId);
-    delayedStateUpdateId = null;
+  // 不管當前是什麼狀態，直接切換到生長狀態
+  if(globalFlowState!=='growing' && globalFlowState!=='pauseAtEnd') {
+    globalFlowState = 'growing';
+    startSyncGrowing();
   }
-  globalFlowState = 'growing';
-  startSyncGrowing();
 }
 
-//開始收合動畫
+/**
+ * 開始收合動畫
+ */
 function startShrinkingAnimation() {
-  if(globalFlowState=='shrinking' || globalFlowState=='pauseAtStart') return;
-  
-  if (delayedStateUpdateId !== null) {
-    gsap.killTweensOf(delayedStateUpdateId);
-    delayedStateUpdateId = null;
+  // 不管當前是什麼狀態，直接切換到收合狀態
+  if(globalFlowState!=='shrinking' && globalFlowState!=='pauseAtStart') {
+    globalFlowState = 'shrinking';
+    startSyncShrinking();
   }
-
-  globalFlowState = 'shrinking';
-  startSyncShrinking();
 }
 
 /**
@@ -1015,46 +912,11 @@ function startSyncGrowing() {
     initSpheres();
   }
   
-  // 清除所有現有的 GSAP 動畫和延遲回調
-  gsap.killTweensOf(spheres);
-  if (delayedStateUpdateId !== null) {
-    gsap.killTweensOf(delayedStateUpdateId);
-    delayedStateUpdateId = null;
-  }
-  
   // 更新全局狀態
   updateFlowState('growing');
   growStartTime = currentTime;
   
-  // 設置生長動畫時間
-  const growDuration = animParams.growSpeed;
-  
-  // 使用 GSAP 控制球體動畫
-  for (let i = 0; i < spheres.length; i++) {
-    const sphere = spheres[i];
-    if (sphere.mesh) {
-      // 記錄起始位置
-      sphere.transitionStartTime = currentTime;
-      sphere.transitionStartPos = sphere.currentPosition;
-      
-      // 使用自定義緩動函數
-      gsap.to(sphere, {
-        currentPosition: sphere.targetLength,
-        duration: growDuration,
-        ease: "customGrowEase",
-        onUpdate: function() {
-          // 確保狀態一致
-          if (globalFlowState !== 'growing' && globalFlowState !== 'pauseAtEnd') {
-            sphere.currentPosition = sphere.targetLength;
-          }
-        },
-        onComplete: function() {
-          // 確保完全到位
-          sphere.currentPosition = sphere.targetLength;
-        }
-      });
-    }
-  }
+  // 不需要更新球體進度方向，updateSpheres 會根據全局狀態自動處理
   
   // 重置所有線條的方向和長度
   for (let i = 0; i < totalLines; i++) {
@@ -1074,17 +936,6 @@ function startSyncGrowing() {
     lineStartTimes[i] = currentTime;
     lineFlowState[i] = 'growing';
   }
-  
-  // 在線條預計完成生長時更新全局狀態
-  delayedStateUpdateId = { id: "stateUpdate" };
-  gsap.to(delayedStateUpdateId, {
-    id: "stateUpdate", 
-    duration: growDuration,
-    onComplete: function() {
-      updateFlowState('pauseAtEnd');
-      delayedStateUpdateId = null;
-    }
-  });
 }
 
 /**
@@ -1096,51 +947,15 @@ function startSyncShrinking() {
   
   console.log("所有線條同步收合");
   
-  // 清除所有現有的 GSAP 動畫和延遲回調
-  gsap.killTweensOf(spheres);
-  if (delayedStateUpdateId !== null) {
-    gsap.killTweensOf(delayedStateUpdateId);
-    delayedStateUpdateId = null;
-  }
-  
   // 更新全局狀態
   updateFlowState('shrinking');
   
   // 設置收合時間
   shrinkStartTime = currentTime;
+  // 使用直接的收縮速度參數，值越大收縮越快，因此需要倒數
+  shrinkEndTime = currentTime + (1.0 / animParams.shrinkSpeed);
   
-  // 使用 GSAP 設置收合動畫
-  const shrinkDuration = animParams.shrinkSpeed;
-  
-  // 設置結束時間（為了兼容現有代碼）
-  shrinkEndTime = currentTime + shrinkDuration;
-  
-  // 為每個球體設置收縮動畫
-  for (let i = 0; i < spheres.length; i++) {
-    const sphere = spheres[i];
-    if (sphere.mesh) {
-      // 記錄起始位置
-      sphere.transitionStartTime = currentTime;
-      sphere.transitionStartPos = sphere.currentPosition;
-      
-      // 使用 GSAP 直接為每個球體設置收縮動畫
-      gsap.to(sphere, {
-        currentPosition: 0,
-        duration: shrinkDuration,
-        ease: "customShrinkEase",
-        onUpdate: function() {
-          // 確保狀態一致
-          if (globalFlowState !== 'shrinking' && globalFlowState !== 'pauseAtStart') {
-            sphere.currentPosition = 0;
-          }
-        },
-        onComplete: function() {
-          // 確保完全歸零
-          sphere.currentPosition = 0;
-        }
-      });
-    }
-  }
+  // 不需要更新球體進度方向，updateSpheres 會根據全局狀態自動處理
   
   // 保持現有線條方向和目標長度，只更新起始時間
   const totalLines = ttParams.numLines + thParams.numLines;
@@ -1149,17 +964,6 @@ function startSyncShrinking() {
     // 更新線條狀態和時間，但保持當前方向和目標長度
     lineFlowState[i] = 'shrinking';
   }
-  
-  // 在線條預計完成收縮時更新全局狀態
-  delayedStateUpdateId = { id: "stateUpdate" };
-  gsap.to(delayedStateUpdateId, {
-    id: "stateUpdate",
-    duration: shrinkDuration,
-    onComplete: function() {
-      updateFlowState('pauseAtStart');
-      delayedStateUpdateId = null;
-    }
-  });
 }
 
 /**
@@ -1216,6 +1020,10 @@ function onMouseMove(event) {
   // 限制旋轉範圍
   targetRotationX = Math.max(-Math.PI, Math.min(Math.PI, targetRotationX));
   targetRotationY = Math.max(-Math.PI, Math.min(Math.PI, targetRotationY));
+  
+  // 更新滑鼠位置
+  mouseX = event.clientX;
+  mouseY = event.clientY;
 }
 
 onMounted(() => {
@@ -1255,9 +1063,7 @@ defineExpose({
   startGrowingAnimation,
   startShrinkingAnimation,
   addMouseControlEvents,
-  updatePosition,
-  animateTextToTargetPosition,
-  animateTextToOrigin
+  updatePosition
 });
 
 /**

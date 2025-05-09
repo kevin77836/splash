@@ -6,10 +6,13 @@
     opacity: 0;
     width: calc(100% - 60%);
     left: 30%;
+    z-index: 10;
     @include max-xxl{
         top: 2rem;
     }
     @include max-md{
+        width: calc(100% - 40%);
+        left: 20%;
         top: 1rem;
     }
     &.active{
