@@ -43,7 +43,7 @@
                 </div>
             </div>
         </div>
-        <div v-if="isStarted" class="section section3">
+        <div v-if="isStarted" class="section ourWorks-section">
         </div>
         <div v-if="isStarted" class="section section4">
         </div>
@@ -57,7 +57,7 @@
         </div>
         <div v-if="isStarted" class="section section9">
         </div>
-        <div v-if="isStarted" class="section ourWorksSection">
+        <div v-if="isStarted" class="section ourWorks-section">
         </div>
         <div v-if="isStarted" class="section section10">
         </div>
@@ -109,7 +109,7 @@
             <div class="header-saparator" :class="{'hidden': !isLandingPage}">
                 <div class="header-saparator-line"></div>
             </div>
-            <div class="header-link" @click="scrollToSection('ourWorksSection')">
+            <div class="header-link" @click="scrollToSection('ourWorks-section')">
                 Our Works
             </div>
             <div class="header-saparator" :class="{'hidden': !isLandingPage}">
@@ -139,7 +139,7 @@
             <div class="menu-item" @click="scrollToSection('aboutUs-section', true)">
                 About Us
             </div>
-            <div class="menu-item" @click="scrollToSection('ourWorksSection', true)">
+            <div class="menu-item" @click="scrollToSection('ourWorks-section', true)">
                 Our Works
             </div>
             <div class="menu-item" @click="scrollToSection('contactUsSection', true)">
@@ -200,6 +200,13 @@
                             isLandingPage.value = true;
                         },
                     },
+                    {
+                        trigger: '.ourWorks-section',
+                        start: 'top 80%',
+                        markers: false,
+                        onEnter: () => growingFunction(),
+                        onLeaveBack: () => shrinkingFunction(),
+                    },
                     // {
                     //     trigger: '.section3',
                     //     start: 'center center',
@@ -211,62 +218,7 @@
                     //         updatePosition(0, 0, 0, 0, -5, 0, self.progress);
                     //     }
                     // },
-                    // {
-                    //     trigger: '.section6',
-                    //     start: 'center center',
-                    //     end: 'center center',
-                    //     markers: false,
-                    //     onEnter: () => growingFunction(),
-                    //     onLeaveBack: () => shrinkingFunction(),
-                    // },
-                    // {
-                    //     trigger: '.section10',
-                    //     start: 'center center',
-                    //     markers: false,
-                    //     onEnter: () => shrinkingFunction(),
-                    //     onLeaveBack: () => growingFunction()
-                    // },
-                    // {
-                    //     trigger: '.section11',
-                    //     start: 'center center',
-                    //     markers: false,
-                    //     onEnter: () => growingFunction(),
-                    //     onLeaveBack: () => shrinkingFunction()
-                    // },
-                    // {
-                    //     trigger: '.section12',
-                    //     start: 'center center',
-                    //     markers: false,
-                    //     onEnter: () => shrinkingFunction(),
-                    //     onLeaveBack: () => growingFunction()
-                    // },
-                    // {
-                    //     trigger: '.section13',
-                    //     start: 'center center',
-                    //     end: 'bottom top',
-                    //     scrub: 1,
-                    //     markers: false,
-                    //     onEnter: () => growingFunction(),
-                    //     onLeaveBack: () => shrinkingFunction(),
-                    // },
-                    // {
-                    //     trigger: '.section14',
-                    //     start: 'center center',
-                    //     end: 'bottom top',
-                    //     scrub: 1,
-                    //     markers: false,
-                    //     onEnter: () => shrinkingFunction(),
-                    //     onLeaveBack: () => growingFunction(),
-                    // },
-                    // {
-                    //     trigger: '.section15',
-                    //     start: 'center center',
-                    //     markers: false,
-                    //     onEnter: () => growingFunction(),
-                    //     onLeaveBack: () => shrinkingFunction()
-                    // }
                 ];
-                
                 // 為每個配置創建相應的 ScrollTrigger
                 sectionConfigs.forEach(config => {
                     gsap.timeline({
@@ -363,10 +315,10 @@
                     opacity: 0,
                     ease: 'none'                     // 線性變化
                 });
-            });
-        
-        }
+                
 
+            });
+        }
     };
 
     const updatePosition = (fromX, fromY, fromZ, toX, toY, toZ, progress) => {
