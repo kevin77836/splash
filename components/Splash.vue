@@ -7,7 +7,6 @@
 <script setup>
 import * as THREE from 'three';
 import { MarchingCubes } from 'three/examples/jsm/objects/MarchingCubes.js';
-import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 import { EXRLoader } from 'three/examples/jsm/loaders/EXRLoader.js';
 import { FontLoader } from 'three/examples/jsm/loaders/FontLoader.js';
 import { TTFLoader } from 'three/examples/jsm/loaders/TTFLoader.js';
@@ -86,7 +85,6 @@ const animParams = reactive({
 let scene = null;
 let camera = null;
 let renderer = null;
-let controls = null;
 let effect = null;
 let clock = null;
 let material = null;
@@ -683,7 +681,7 @@ function updateSpheres() {
 function animate() {
   animationFrameId = requestAnimationFrame(animate);
 
-  if (!effect || !material || !camera || !renderer || !scene || !controls) return;
+  if (!effect || !material || !camera || !renderer || !scene ) return;
 
   // 更新場景邏輯
   updateLineMetaball(effect);
@@ -720,9 +718,6 @@ function animate() {
   scene.position.x = targetScrollOffsetX;
   scene.position.y = targetScrollOffsetY;
   scene.position.z = targetScrollOffsetZ;
-  
-  // 確保控制器始終更新 - 保持自動旋轉
-  controls.update();
   
   // 渲染場景
   renderer.render(scene, camera);
@@ -772,17 +767,6 @@ function initializeScene() {
   renderer.setSize(width, height);
   renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.5));
   container.appendChild(renderer.domElement);
-
-  // 控制器
-  controls = new OrbitControls(camera, renderer.domElement);
-  controls.enableDamping = true;
-
-  // 禁止縮放和平移，只允許旋轉
-  controls.enableZoom = false;     // 禁止縮放
-  controls.enablePan = false;      // 禁止平移
-  controls.enableRotate = false;
-  controls.minDistance = camera.position.length(); // 固定距離
-  controls.maxDistance = camera.position.length(); // 固定距離
 
   // PMREMGenerator
   pmremGenerator = new THREE.PMREMGenerator(renderer);
@@ -862,7 +846,6 @@ function cleanupScene() {
   clearSpheres();
 
   // 清理Three.js資源
-  if (controls) controls.dispose();
   if (renderer) renderer.dispose();
   if (material) {
     material.dispose();
