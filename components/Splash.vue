@@ -691,29 +691,29 @@ function animate() {
   // 更新球體
   updateSpheres();
   
-  // 平滑過渡到目標旋轉角度
-  modelRotationX += (targetRotationX - modelRotationX) * 0.05;
-  modelRotationY += (targetRotationY - modelRotationY) * 0.05;
+  
   
   // 應用旋轉到場景
-  effect.rotation.x = modelRotationX;
-  effect.rotation.y = modelRotationY;
   if(isMobileDevice()){
     effect.rotation.y += 0.0025;
     if (sphereGroup) {
       sphereGroup.rotation.y += 0.0025;
     }
-  }
-  
-  // 更新 effect 和球體群組位置
-  effect.position.x = targetPositionX;
-  effect.position.y = targetPositionY;
-  
-  if (sphereGroup) {
-    sphereGroup.rotation.x = modelRotationX;
-    sphereGroup.rotation.y = modelRotationY;
-    sphereGroup.position.x = targetPositionX;
-    sphereGroup.position.y = targetPositionY;
+  }else{
+    // 平滑過渡到目標旋轉角度
+    modelRotationX += (targetRotationX - modelRotationX) * 0.05;
+    modelRotationY += (targetRotationY - modelRotationY) * 0.05;
+    effect.rotation.y = modelRotationY;
+    effect.rotation.x = modelRotationX;
+    // 更新 effect 和球體群組位置
+    effect.position.x = targetPositionX;
+    effect.position.y = targetPositionY;
+    if (sphereGroup) {
+      sphereGroup.rotation.x = modelRotationX;
+      sphereGroup.rotation.y = modelRotationY;
+      sphereGroup.position.x = targetPositionX;
+      sphereGroup.position.y = targetPositionY;
+    }
   }
   
   // 結合滑鼠控制和滾動位移的最終位置
