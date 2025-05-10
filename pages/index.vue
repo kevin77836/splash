@@ -243,9 +243,10 @@
                         scrub: 2,
                         markers: false,
                         onUpdate: (self) => {
-                            updatePosition(0, 0, 0, 0, -20, 0, self.progress);
+                            updatePosition(0, 0, 0, 0, -15, 0, self.progress);
                         },
-                    },              
+                    },
+                    defaults: { ease: "power1.in" }, 
                 });
                 gsap.timeline({
                     scrollTrigger: {
@@ -263,9 +264,10 @@
                         scrub: 2,
                         markers: false,
                         onUpdate: (self) => {
-                            updatePosition(0, -20, 0, 0, 0, 0, self.progress);
+                            updatePosition(0, -1, 30, 0, 0, 0, self.progress);
                         },
-                    },              
+                    },    
+                    defaults: { ease: "power1.in" },
                 });
                 gsap.to('.aboutUs-section-content-1-1', {
                     scrollTrigger: {

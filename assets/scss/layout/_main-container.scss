@@ -44,6 +44,12 @@
                 width: fit-content;
                 .aboutUs-marquee-content-group-item{
                     font-size: 2rem;
+                    @include max-md{
+                        font-size: 1.5rem;
+                    }
+                    @include max-sm{
+                        font-size: 1rem;
+                    }
                     // font-weight: bold;
                     // text-stroke: 0.1px black;
                     color: black;
