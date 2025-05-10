@@ -1,6 +1,86 @@
 <template>
+    <Splash
+        ref="splashRef" 
+        @resourcesLoaded="handleResourcesLoaded"
+        @stateChange="handleStateChange"
+        @animationComplete="handleAnimationComplete"
+    />
+    <div :class="{'active': isStarted}" class="l-header">
+        <div class="desktop-group">
+            <div class="header-link" :class="{'hidden': isLandingPage}">
+                Splash DigiLab
+            </div>
+            <div class="header-saparator" :class="{'hidden': isLandingPage}">
+                <div class="header-saparator-line"></div>
+            </div>
+            <div class="header-link" @click="scrollToSection('aboutUs-section')">
+                About Us
+            </div>
+            <div class="header-saparator" :class="{'hidden': !isLandingPage}">
+                <div class="header-saparator-line"></div>
+            </div>
+            <div class="header-link" @click="scrollToSection('works-section')">
+                Works
+            </div>
+            <div class="header-saparator" :class="{'hidden': !isLandingPage}">
+                <div class="header-saparator-line"></div>
+            </div>
+            <div class="header-link" @click="scrollToSection('Services-section')">
+                Services
+            </div>
+            <div class="header-saparator" :class="{'hidden': !isLandingPage}">
+                <div class="header-saparator-line"></div>
+            </div>
+            <div class="header-link" @click="scrollToSection('contactUs-section')">
+                Contact Us
+            </div>
+        </div>
+
+        <!-- 漢堡選單按鈕 -->
+        <div class="mobile-group">
+            <div class="header-link" :class="{'hidden': isLandingPage}">Splash DigiLab</div>
+            <div class="header-saparator">
+                <div class="header-saparator-line"></div>
+            </div>
+            <div class="hamburger-menu" @click="toggleMenu">
+                <div :class="{'open': isMenuOpen}" class="hamburger-icon">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </div>
+            </div>
+        </div>
+        <!-- 行動裝置選單 -->
+        <div :class="{'active': isMenuOpen}" class="mobile-menu">
+            <div class="menu-item" @click="scrollToSection('aboutUs-section', true)">
+                About Us
+            </div>
+            <div class="menu-item" @click="scrollToSection('works-section', true)">
+                Works
+            </div>
+            <div class="menu-item" @click="scrollToSection('services-section', true)">
+                Services
+            </div>
+            <div class="menu-item" @click="scrollToSection('contactUs-section', true)">
+                Contact Us
+            </div>
+        </div>
+    </div>
+    <div :class="{'active': isStarted && isLandingPage}" class="l-footer">
+        <div class="desktop-group">
+            <div class="footer-saparator">
+                <div class="footer-saparator-line"></div>
+            </div>
+            <div class="footer-link">
+                Let's Make a Splash
+            </div>
+            <div class="footer-saparator">
+                <div class="footer-saparator-line"></div>
+            </div>
+        </div>        
+    </div>
     <div class="main-container">
-        <div class="main-section">
+        <div class="section main-section">
             <div v-if="loadComplete && !isStarted" class="startButton" @click="clickStart">
                 Start
             </div>
@@ -28,125 +108,79 @@
                     <span class="aboutUs-marquee-content-group-item">素晴らしいデジタルインタラクション</span>
                 </div>
             </div>
-            <div class="aboutUs-content-group">
-                <div class="aboutUs-section-content aboutUs-section-content-1">
-                    <span class="aboutUs-section-content-1-1">123</span>
-                    <span class="aboutUs-section-content-1-2">456</span>
-                </div>
-                <div class="aboutUs-section-content aboutUs-section-content-2">
-                    <span class="aboutUs-section-content-2-1">789</span>
-                    <span class="aboutUs-section-content-2-2">012</span>
-                </div>
-                <div class="aboutUs-section-content aboutUs-section-content-3">
-                    <span class="aboutUs-section-content-3-1">345</span>
-                    <span class="aboutUs-section-content-3-2">678</span>
+            <div class="aboutUs-content-container">
+                <div class="aboutUs-content-group">
+                    <div class="aboutUs-section-content aboutUs-section-content-1">
+                        <span class="aboutUs-section-content-1-1">123</span>
+                        <span class="aboutUs-section-content-1-2">456</span>
+                    </div>
+                    <div class="aboutUs-section-content aboutUs-section-content-2">
+                        <span class="aboutUs-section-content-2-1">789</span>
+                        <span class="aboutUs-section-content-2-2">012</span>
+                    </div>
+                    <div class="aboutUs-section-content aboutUs-section-content-3">
+                        <span class="aboutUs-section-content-3-1">345</span>
+                        <span class="aboutUs-section-content-3-2">678</span>
+                    </div>
                 </div>
             </div>
         </div>
-        <div v-if="isStarted" class="section ourWorks-section">
+        <div v-if="isStarted" class="section works-section">
+            <div class="works-content-container">
+                <a href="#" class="works-content-item works-content-item-15">
+                    <img src="/works/works15.png" alt="">
+                </a>
+                <a href="#" class="works-content-item works-content-item-14">
+                    <img src="/works/works14.png" alt="">
+                </a>
+                <a href="#" class="works-content-item works-content-item-13">
+                    <img src="/works/works13.png" alt="">
+                </a>
+                <a href="#" class="works-content-item works-content-item-12">
+                    <img src="/works/works12.jpg" alt="">
+                </a>
+                <a href="#" class="works-content-item works-content-item-11">
+                    <img src="/works/works11.png" alt="">
+                </a>
+                <a href="#" class="works-content-item works-content-item-10">
+                    <img src="/works/works10.png" alt="">
+                </a>
+                <a href="#" class="works-content-item works-content-item-9">
+                    <img src="/works/works9.png" alt="">
+                </a>
+                <a href="#" class="works-content-item works-content-item-8">
+                    <img src="/works/works8.jpg" alt="">
+                </a>
+                <a href="#" class="works-content-item works-content-item-7">
+                    <img src="/works/works7.png" alt="">
+                </a>
+                <a href="#" class="works-content-item works-content-item-6">
+                    <img src="/works/works6.png" alt="">
+                </a>
+                <a href="#" class="works-content-item works-content-item-5">
+                    <img src="/works/works5.png" alt="">
+                </a>
+                <a href="#" class="works-content-item works-content-item-4">
+                    <img src="/works/works4.jpg" alt="">
+                </a>
+                <a href="#" class="works-content-item works-content-item-3">
+                    <img src="/works/works3.jpg" alt="">
+                </a>
+                <a href="#" class="works-content-item works-content-item-2">
+                    <img src="/works/works2.png" alt="">
+                </a>
+                <a href="#" class="works-content-item works-content-item-1">
+                    <img src="/works/works1.jpg" alt="">
+                </a>
+            </div> 
         </div>
-        <div v-if="isStarted" class="section section4">
+        <div v-if="isStarted" class="section services-section">
         </div>
-        <div v-if="isStarted" class="section section5">
-        </div>
-        <div v-if="isStarted" class="section section6">
-        </div>
-        <div v-if="isStarted" class="section section7">
-        </div>
-        <div v-if="isStarted" class="section section8">
-        </div>
-        <div v-if="isStarted" class="section section9">
-        </div>
-        <div v-if="isStarted" class="section ourWorks-section">
-        </div>
-        <div v-if="isStarted" class="section section10">
-        </div>
-        <div v-if="isStarted" class="section section11">
-        </div>
-        <div v-if="isStarted" class="section section12">
-        </div>
-        <div v-if="isStarted" class="section section13">
-        </div>
-        <div v-if="isStarted" class="section section14">
-        </div>
-        <div v-if="isStarted" class="section section15">
-        </div>
-        <div v-if="isStarted" class="section section16">
-        </div>
-        <div v-if="isStarted" class="section contactUsSection">
+        <div v-if="isStarted" class="section contactUs-section">
         </div>
     </div>
-    <Splash
-    ref="splashRef" 
-    @resourcesLoaded="handleResourcesLoaded"
-    @stateChange="handleStateChange"
-    @animationComplete="handleAnimationComplete"
-    />
-    <div :class="{'active': isStarted && isLandingPage}" class="l-footer">
-        <div class="desktop-group">
-            <div class="footer-saparator">
-                <div class="footer-saparator-line"></div>
-            </div>
-            <div class="footer-link">
-                Let's Make a Splash
-            </div>
-            <div class="footer-saparator">
-                <div class="footer-saparator-line"></div>
-            </div>
-        </div>        
-    </div>
-    <div :class="{'active': isStarted}" class="l-header">
-        <div class="desktop-group">
-            <div class="header-link" :class="{'hidden': isLandingPage}">
-                Splash DigiLab
-            </div>
-            <div class="header-saparator" :class="{'hidden': isLandingPage}">
-                <div class="header-saparator-line"></div>
-            </div>
-            <div class="header-link" @click="scrollToSection('aboutUs-section')">
-                About Us
-            </div>
-            <div class="header-saparator" :class="{'hidden': !isLandingPage}">
-                <div class="header-saparator-line"></div>
-            </div>
-            <div class="header-link" @click="scrollToSection('ourWorks-section')">
-                Our Works
-            </div>
-            <div class="header-saparator" :class="{'hidden': !isLandingPage}">
-                <div class="header-saparator-line"></div>
-            </div>
-            <div class="header-link" @click="scrollToSection('contactUsSection')">
-                Contact Us
-            </div>
-        </div>
+    
 
-        <!-- 漢堡選單按鈕 -->
-        <div class="mobile-group">
-            <div class="header-link" :class="{'hidden': isLandingPage}">Splash DigiLab</div>
-            <div class="header-saparator">
-                <div class="header-saparator-line"></div>
-            </div>
-            <div class="hamburger-menu" @click="toggleMenu">
-                <div :class="{'open': isMenuOpen}" class="hamburger-icon">
-                    <span></span>
-                    <span></span>
-                    <span></span>
-                </div>
-            </div>
-        </div>
-        <!-- 行動裝置選單 -->
-        <div :class="{'active': isMenuOpen}" class="mobile-menu">
-            <div class="menu-item" @click="scrollToSection('aboutUs-section', true)">
-                About Us
-            </div>
-            <div class="menu-item" @click="scrollToSection('ourWorks-section', true)">
-                Our Works
-            </div>
-            <div class="menu-item" @click="scrollToSection('contactUsSection', true)">
-                Contact Us
-            </div>
-        </div>
-    </div>
         <!-- <div class="button-group" style="top: 1rem; position: fixed;">
         <button @click="growingFunction">開始生長</button>
         <button @click="shrinkingFunction">開始收合</button>
@@ -176,19 +210,20 @@
     const isMenuOpen = ref(false);
     const isLandingPage = ref(true);
     let autoPlayTimer = null;
-    
-    
+
     // 設置 ScrollTrigger 動畫
     const setupScrollAnimations = () => {
         // 確保所有區塊已經渲染
         if (process.client) {
             nextTick(() => {
                 // 定義所有區塊的配置
-                const sectionConfigs = [
-                    {
+                //         updatePosition(0, 0, 0, 0, -5, 0, self.progress);
+                gsap.timeline({
+                    scrollTrigger: {
                         trigger: '.gap-section',
-                        start: 'top 80%',
-                        markers: false,
+                        start: '5% 80%',
+                        end: '10% 80%',
+                        scrub: 2,
                         onEnter: () => {
                             stopAutoPlay();
                             animateTextToOrigin();
@@ -199,124 +234,160 @@
                             animateTextToTargetPosition();
                             isLandingPage.value = true;
                         },
-                    },
-                    {
-                        trigger: '.ourWorks-section',
-                        start: 'top 80%',
-                        markers: false,
-                        onEnter: () => growingFunction(),
-                        onLeaveBack: () => shrinkingFunction(),
-                    },
-                    // {
-                    //     trigger: '.section3',
-                    //     start: 'center center',
-                    //     endTrigger: '.section6',
-                    //     end: 'center center',
-                    //     markers: false,
-                    //     scrub: 2,
-                    //     onUpdate: (self) => {
-                    //         updatePosition(0, 0, 0, 0, -5, 0, self.progress);
-                    //     }
-                    // },
-                ];
-                // 為每個配置創建相應的 ScrollTrigger
-                sectionConfigs.forEach(config => {
-                    gsap.timeline({
-                        scrollTrigger: {
-                            trigger: config.trigger,
-                            start: config.start,
-                            end: config.end,
-                            endTrigger: config.endTrigger,
-                            scrub: config.scrub,
-                            markers: config.markers,
-                            onEnter: config.onEnter,
-                            onLeaveBack: config.onLeaveBack,
-                            onUpdate: config.onUpdate
-                        }
-                    });
+                    },              
                 });
-
+                gsap.timeline({
+                    scrollTrigger: {
+                        trigger: '.works-section',
+                        start: 'top top',
+                        onEnter: () => startAutoPlay(),
+                        onLeaveBack: () => stopAutoPlay(),
+                    },              
+                });
                 gsap.to('.aboutUs-section-content-1-1', {
                     scrollTrigger: {
-                      trigger: '.aboutUs-section',   // 以整個 aboutUs-section 為觸發區
-                      start: '5% 80%',              // 滾動到 section 頂部到視口 80% 時開始
-                      end: '10% 80%',             // 滾動到 section 底部到視口 20% 時結束
-                      scrub: 2,                   // 跟隨滾動進度               // 方便調試，完成後可設為 false
+                      trigger: '.aboutUs-section',
+                      start: '5% 80%',
+                      end: '10% 80%',
+                      scrub: 2,
                     },
-                    opacity: 1,                      // 漸變到完全不透明
-                    filter: 'blur(0px)',             // 漸變到清晰
-                    ease: 'none'                     // 線性變化
+                    opacity: 1,
+                    filter: 'blur(0px)',
+                    ease: 'none'
                 });
                 gsap.to('.aboutUs-section-content-1-2', {
                     scrollTrigger: {
-                      trigger: '.aboutUs-section',   // 以整個 aboutUs-section 為觸發區
-                      start: '15% 80%',              // 滾動到 section 頂部到視口 80% 時開始
-                      end: '20% 80%',             // 滾動到 section 底部到視口 20% 時結束
-                      scrub: 2,                   // 跟隨滾動進度
+                      trigger: '.aboutUs-section',
+                      start: '15% 80%',
+                      end: '20% 80%',
+                      scrub: 2,
                     },
-                    opacity: 1,                      // 漸變到完全不透明
-                    filter: 'blur(0px)',             // 漸變到清晰
-                    ease: 'none'                     // 線性變化
+                    opacity: 1,
+                    filter: 'blur(0px)',
+                    ease: 'none'
                 });
                 gsap.to('.aboutUs-section-content-2-1', {
                     scrollTrigger: {
-                      trigger: '.aboutUs-section',   // 以整個 aboutUs-section 為觸發區
-                      start: '25% 80%',              // 滾動到 section 頂部到視口 80% 時開始
-                      end: '30% 80%',             // 滾動到 section 底部到視口 20% 時結束
-                      scrub: 2,                   // 跟隨滾動進度
+                      trigger: '.aboutUs-section',
+                      start: '25% 80%',
+                      end: '30% 80%',
+                      scrub: 2,
                     },
-                    opacity: 1,                      // 漸變到完全不透明
-                    filter: 'blur(0px)',             // 漸變到清晰
-                    ease: 'none'                     // 線性變化
+                    opacity: 1,
+                    filter: 'blur(0px)',
+                    ease: 'none'
                 });
                 gsap.to('.aboutUs-section-content-2-2', {
                     scrollTrigger: {
-                      trigger: '.aboutUs-section',   // 以整個 aboutUs-section 為觸發區
-                      start: '35% 80%',              // 滾動到 section 頂部到視口 80% 時開始
-                      end: '40% 80%',             // 滾動到 section 底部到視口 20% 時結束
-                      scrub: 2,                   // 跟隨滾動進度
+                      trigger: '.aboutUs-section',
+                      start: '35% 80%',
+                      end: '40% 80%',
+                      scrub: 2,
                     },
-                    opacity: 1,                      // 漸變到完全不透明
-                    filter: 'blur(0px)',             // 漸變到清晰
-                    ease: 'none'                     // 線性變化
+                    opacity: 1,
+                    filter: 'blur(0px)',
+                    ease: 'none'
                 });
                 gsap.to('.aboutUs-section-content-3-1', {
                     scrollTrigger: {
-                      trigger: '.aboutUs-section',   // 以整個 aboutUs-section 為觸發區
-                      start: '45% 80%',              // 滾動到 section 頂部到視口 80% 時開始
-                      end: '50% 80%',             // 滾動到 section 底部到視口 20% 時結束
-                      scrub: 2,                   // 跟隨滾動進度
+                      trigger: '.aboutUs-section',
+                      start: '45% 80%',
+                      end: '50% 80%',
+                      scrub: 2,
                     },
-                    opacity: 1,                      // 漸變到完全不透明
-                    filter: 'blur(0px)',             // 漸變到清晰
-                    ease: 'none'                     // 線性變化
+                    opacity: 1,
+                    filter: 'blur(0px)',
+                    ease: 'none'
                 });
                 gsap.to('.aboutUs-section-content-3-2', {
                     scrollTrigger: {
-                      trigger: '.aboutUs-section',   // 以整個 aboutUs-section 為觸發區
-                      start: '55% 80%',              // 滾動到 section 頂部到視口 80% 時開始
-                      end: '60% 80%',             // 滾動到 section 底部到視口 20% 時結束
-                      scrub: 2,                   // 跟隨滾動進度
+                      trigger: '.aboutUs-section',
+                      start: '55% 80%',
+                      end: '60% 80%',
+                      scrub: 2,
                     },
-                    opacity: 1,                      // 漸變到完全不透明
-                    filter: 'blur(0px)',             // 漸變到清晰
-                    ease: 'none'                     // 線性變化
+                    opacity: 1,
+                    filter: 'blur(0px)',
+                    ease: 'none'
                 });
                 gsap.to('.aboutUs-content-group', {
                     scrollTrigger: {
-                      trigger: '.aboutUs-section',   // 以整個 aboutUs-section 為觸發區
-                      start: '80% 80%',              // 滾動到 section 頂部到視口 80% 時開始
-                      end: 'bottom bottom',             // 滾動到 section 底部到視口 20% 時結束
-                      scrub: 0,                   // 跟隨滾動進度
+                      trigger: '.aboutUs-section',
+                      start: '80% 80%',
+                      end: 'bottom bottom',
+                      scrub: 0,
                       markers: false,
                     },
                     transform: 'scale(100)',
-                    '--before-blur': '0px',
+                    '--before-blur': '0',
                     opacity: 0,
-                    ease: 'none'                     // 線性變化
+                    ease: 'none'
                 });
-                
 
+                // 建立透明度和位移動畫的統一配置
+                const itemCount = 15; // 元素總數
+                const totalDistance = 500; // 元素移動的總直線距離
+                const zDistance = 6000; // Z軸最大移動距離
+                const zVariation = 0.2; // Z軸變化範圍（20%）
+                const baseStartPercent = 0; // 起始滾動百分比
+                const opacityDuration = 2; // 每個元素透明度動畫的滾動百分比
+                const moveDuration = 25; // 每個元素位移動畫的滾動百分比
+                const delayBetweenItems = 5; // 元素之間的延遲百分比
+                
+                // 為每個元素創建動畫
+                for (let i = 1; i <= itemCount; i++) {
+                    // 計算此元素的延遲
+                    const itemDelay = (i - 1) * delayBetweenItems;
+                    // 計算透明度動畫的起始和結束點
+                    const opacityStart = `${baseStartPercent + itemDelay}% top`;
+                    const opacityEnd = `${baseStartPercent + itemDelay + opacityDuration}% top`;
+                    // 計算位移動畫的起始和結束點
+                    const moveStart = opacityStart;
+                    const moveEnd = `${baseStartPercent + itemDelay + moveDuration}% center`;
+                    
+                    // 為每個元素生成隨機角度 (0-360度)
+                    // 使用 i 作為種子確保每次刷新頁面角度相同，避免閃爍
+                    const randomAngle = Math.floor(Math.random() * 360)
+                    
+                    // 將角度轉換為弧度
+                    const rad = randomAngle * Math.PI / 180;
+                    
+                    // 計算 x 和 y 坐標，保持直線距離為 totalDistance
+                    const x = Math.round(totalDistance * Math.cos(rad));
+                    const y = Math.round(totalDistance * Math.sin(rad));
+                    
+                    // 計算 z 軸偏移（在基準值的基礎上添加一些隨機性）
+                    const zOffset = Math.round(zDistance * (0.8 + (i % 5) * zVariation / 5));
+                    
+                    // 透明度動畫
+                    gsap.to(`.works-content-item-${i}`, {
+                        scrollTrigger: {
+                            trigger: '.works-section',
+                            start: opacityStart,
+                            end: opacityEnd,
+                            scrub: 0,
+                            markers: false,
+                            toggleActions: 'restart none none reset'
+                        },
+                        opacity: 1,
+                        ease: 'power1.inOut'
+                    });
+                    
+                    // 位移動畫
+                    gsap.to(`.works-content-item-${i}`, {
+                        scrollTrigger: {
+                            trigger: '.works-section',
+                            start: moveStart,
+                            end: moveEnd,
+                            scrub: 0,
+                            markers: false
+                        },
+                        '--transform-x': x,
+                        '--transform-y': y,
+                        '--transform-z': zOffset,
+                        ease: 'none'
+                    });
+                }
             });
         }
     };

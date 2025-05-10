@@ -2,19 +2,6 @@
     width: 100%;
     height: 100%;
     .main-section{
-        position: relative;
-        margin: 0 auto;
-        height: 100%;
-        width: $breakpoint-xl;
-        @include max-xxl{
-            width: $breakpoint-md;
-        }
-        @include max-md{
-            width: $breakpoint-sm;
-        }
-        @include max-sm{
-            width: 100%;
-        }
         .startButton{
             z-index: 10;
             position: absolute;
@@ -30,74 +17,6 @@
             background-color: transparent;
             border-radius: 50%;
         }
-        .company-name{
-            color: black;
-            opacity: 1;
-            transition-duration: 1s;
-            transition-property: opacity;
-            transition-timing-function: cubic-bezier(0,0,.015,1);
-            font-size: 5rem;
-            @include max-xxl{
-                font-size: 4rem;
-            }
-            @include max-md{
-                font-size: 3rem;
-            }
-            @include max-sm{
-                font-size: 2.5rem;
-            }
-            &.hidden{
-                opacity: 0;
-                .front-name{
-                    transform: translate(calc(-100% + 25%), -50%);
-                }
-                .back-name{
-                    transform: translate(calc(0% - 25%), -50%);
-                }
-            }
-            
-            .front-name{
-                position: fixed;
-                top: 50%;
-                left: 50%;
-                width: calc($breakpoint-xl / 2);
-                @include max-xxl{
-                    width: calc($breakpoint-md / 2);
-                }
-                @include max-md{
-                    width: calc($breakpoint-sm / 2);
-                }
-                @include max-sm{
-                    width: calc(100% / 2);
-                }
-                text-align: center;
-                transform: translate(-100%, -50%);
-                transition-duration: 1s;
-                transition-property: transform;
-                transition-timing-function: cubic-bezier(0,0,.015,1);
-            }
-            
-            .back-name{
-                position: fixed;
-                top: 50%;
-                left: 50%;
-                width: calc($breakpoint-xl / 2);
-                @include max-xxl{
-                    width: calc($breakpoint-md / 2);
-                }
-                @include max-md{
-                    width: calc($breakpoint-sm / 2);
-                }
-                @include max-sm{
-                    width: calc(100% / 2);
-                }
-                text-align: center;
-                transform: translate(0, -50%);
-                transition-duration: 1s;
-                transition-property: transform;
-                transition-timing-function: cubic-bezier(0,0,.015,1);
-            }
-        }
     }
     .section{
         position: relative;
@@ -105,14 +24,16 @@
         height: 100%;
     }
     .gap-section{
-        height: 200%;
+        height: 100%;
     }
     .aboutUs-section{
-        z-index: 10;
-        height: 1000%;
+        height: 500%;
         .aboutUs-marquee{
+            z-index: 10;
             width: 100%;
-            background-color: black;
+            background-color: #F2F2F2;
+            border-top: 1px solid black;
+            border-bottom: 1px solid black;
             overflow: hidden;
             position: relative;
             display: flex;
@@ -123,8 +44,9 @@
                 width: fit-content;
                 .aboutUs-marquee-content-group-item{
                     font-size: 2rem;
-                    font-weight: bold;
-                    color: white;
+                    // font-weight: bold;
+                    // text-stroke: 0.1px black;
+                    color: black;
                     white-space: nowrap;
                     flex-shrink: 0;
                     letter-spacing: 1rem;
@@ -139,72 +61,67 @@
                 animation-delay: -10s;
             }
         }
-        .aboutUs-content-group{
-            width: 100%;
-            height: 100vh;
+        .aboutUs-content-container{
             position: sticky;
             top: 0;
-            left: 0;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            flex-direction: column;
-            gap: 3rem;
             overflow: hidden;
             transform: scale(1);
-            .aboutUs-section-content{
-                font-weight: bold;
-                font-size: 6rem;
-                @include max-lg{
-                    font-size: 5rem;
-                }
-                @include max-md{
-                    font-size: 4rem;
-                }
-                @include max-sm{
-                    font-size: 3rem;
-                }
-                .aboutUs-section-content-1-1 {
-                    opacity: 0;                    // 一開始隱形
-                    filter: blur(10px);            // 一開始模糊
-                    transition: none;              // 關閉原生過渡，讓 GSAP 控制
-                    position: relative;
-                    z-index: 100;
-                }
-                .aboutUs-section-content-1-2 {
-                    opacity: 0;                    // 一開始隱形
-                    filter: blur(10px);            // 一開始模糊
-                    transition: none;              // 關閉原生過渡，讓 GSAP 控制
-                    position: relative;
-                    z-index: 100;
-                }
-                .aboutUs-section-content-2-1 {
-                    opacity: 0;                    // 一開始隱形
-                    filter: blur(10px);            // 一開始模糊
-                    transition: none;              // 關閉原生過渡，讓 GSAP 控制
-                    position: relative;
-                    z-index: 100;
-                }
-                .aboutUs-section-content-2-2 {
-                    opacity: 0;                    // 一開始隱形
-                    filter: blur(10px);            // 一開始模糊
-                    transition: none;              // 關閉原生過渡，讓 GSAP 控制
-                    position: relative;
-                    z-index: 100;
-                }
-                .aboutUs-section-content-3-1 {
-                    opacity: 0;                    // 一開始隱形
-                    filter: blur(10px);            // 一開始模糊
-                    transition: none;              // 關閉原生過渡，讓 GSAP 控制
-                    position: relative;
-                    z-index: 100;
-                }
-                .aboutUs-section-content-3-2 {
-                    opacity: 0;                    // 一開始隱形
-                    filter: blur(10px);            // 一開始模糊
-                    transition: none;              // 關閉原生過渡，讓 GSAP 控制
-                    position: relative;
-                    z-index: 100;
+            .aboutUs-content-group{
+                width: 100%;
+                height: 100vh;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                flex-direction: column;
+                gap: 3rem;
+                .aboutUs-section-content{
+                    font-weight: bold;
+                    font-size: 6rem;
+                    @include max-lg{
+                        font-size: 5rem;
+                    }
+                    @include max-md{
+                        font-size: 4rem;
+                    }
+                    @include max-sm{
+                        font-size: 3rem;
+                    }
+                    .aboutUs-section-content-1-1 {
+                        opacity: 0;                    // 一開始隱形
+                        filter: blur(10px);            // 一開始模糊
+                        transition: none;              // 關閉原生過渡，讓 GSAP 控制
+                        position: relative;
+                    }
+                    .aboutUs-section-content-1-2 {
+                        opacity: 0;                    // 一開始隱形
+                        filter: blur(10px);            // 一開始模糊
+                        transition: none;              // 關閉原生過渡，讓 GSAP 控制
+                        position: relative;
+                    }
+                    .aboutUs-section-content-2-1 {
+                        opacity: 0;                    // 一開始隱形
+                        filter: blur(10px);            // 一開始模糊
+                        transition: none;              // 關閉原生過渡，讓 GSAP 控制
+                        position: relative;
+                    }
+                    .aboutUs-section-content-2-2 {
+                        opacity: 0;                    // 一開始隱形
+                        filter: blur(10px);            // 一開始模糊
+                        transition: none;              // 關閉原生過渡，讓 GSAP 控制
+                        position: relative;
+                    }
+                    .aboutUs-section-content-3-1 {
+                        opacity: 0;                    // 一開始隱形
+                        filter: blur(10px);            // 一開始模糊
+                        transition: none;              // 關閉原生過渡，讓 GSAP 控制
+                        position: relative;
+                    }
+                    .aboutUs-section-content-3-2 {
+                        opacity: 0;                    // 一開始隱形
+                        filter: blur(10px);            // 一開始模糊
+                        transition: none;              // 關閉原生過渡，讓 GSAP 控制
+                        position: relative;
+                    }
                 }
             }
             --before-blur: 100;
@@ -217,16 +134,42 @@
                 right: 0;
                 background-color: white;
                 opacity: 0.5;
-                background-color: rgba(255,255,255,0.5);
-                backdrop-filter: blur(100px);
-                -webkit-backdrop-filter: blur(100px);
+                background-color: rgba(#F2F2F2,0.5);
+                backdrop-filter: blur(var(--before-blur)px);
+                -webkit-backdrop-filter: blur(var(--before-blur)px);
                 z-index: -1;
             }
         }
 
     }
-    .ourWorks-section{
-        height: 500%;
+    .works-section{
+        height: 1000%;
+        .works-content-container{
+            width: 100%;
+            height: 100vh;
+            position: sticky;
+            top: 0;
+            left: 0;
+            perspective: 1000px;
+            transform-style: preserve-3d;
+            overflow: hidden;
+            .works-content-item{
+                position: absolute;
+                top: 50%;
+                left: 50%;
+                width: 300px;
+                background-color: grey;
+                opacity: 0;
+                --transform-x: 0;
+                --transform-y: 0;
+                --transform-z: 0;
+                transform: translate3d(
+                    calc(-50% + var(--transform-x, 0) * 1px), 
+                    calc(-50% + var(--transform-y, 0) * 1px), 
+                    calc(-3500px + var(--transform-z, 0) * 1px)
+                );
+            }
+        }
     }
 }
 
