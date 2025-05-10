@@ -50,8 +50,6 @@
                     @include max-sm{
                         font-size: 1rem;
                     }
-                    // font-weight: bold;
-                    // text-stroke: 0.1px black;
                     color: black;
                     white-space: nowrap;
                     flex-shrink: 0;
@@ -60,11 +58,11 @@
                 }
             }
             .aboutUs-marquee-content-group{
-                animation: marquee-animation 20s linear infinite;
+                animation: marquee-animation 40s linear infinite;
             }
             .aboutUs-marquee-content-group2{
-                animation: marquee-animation2 20s linear infinite;
-                animation-delay: -10s;
+                animation: marquee-animation2 40s linear infinite;
+                animation-delay: -20s;
             }
         }
         .aboutUs-content-container{
