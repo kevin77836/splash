@@ -24,7 +24,7 @@
         height: 100%;
     }
     .gap-section{
-        height: 100%;
+        height: 50%;
     }
     .aboutUs-section{
         height: 500%;
@@ -124,7 +124,6 @@
                     }
                 }
             }
-            --before-blur: 100;
             ::before{
                 content: "";
                 position: absolute;
@@ -132,15 +131,29 @@
                 bottom: 0;
                 left: 0;
                 right: 0;
-                background-color: white;
-                opacity: 0.5;
-                background-color: rgba(#F2F2F2,0.5);
-                backdrop-filter: blur(var(--before-blur)px);
-                -webkit-backdrop-filter: blur(var(--before-blur)px);
+                background-color: rgba(#F2F2F2,0.1);
+                backdrop-filter: blur(1px);
+                -webkit-backdrop-filter: blur(1px);
                 z-index: -1;
             }
         }
 
+    } 
+    @keyframes marquee-animation {
+        0% {
+            transform: translateX(100%);
+        }
+        100% {
+            transform: translateX(-100%); 
+        }
+    }
+    @keyframes marquee-animation2 {
+        0% {
+            transform: translateX(0%);
+        }
+        100% {
+            transform: translateX(-200%); 
+        }
     }
     .works-section{
         height: 1000%;
@@ -170,22 +183,5 @@
                 );
             }
         }
-    }
-}
-
-@keyframes marquee-animation {
-    0% {
-        transform: translateX(100%);
-    }
-    100% {
-        transform: translateX(-100%); 
-    }
-}
-@keyframes marquee-animation2 {
-    0% {
-        transform: translateX(0%);
-    }
-    100% {
-        transform: translateX(-200%); 
     }
 }

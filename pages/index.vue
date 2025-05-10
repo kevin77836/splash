@@ -222,8 +222,7 @@
                     scrollTrigger: {
                         trigger: '.gap-section',
                         start: '5% 80%',
-                        end: '10% 80%',
-                        scrub: 2,
+                        markers: false,
                         onEnter: () => {
                             stopAutoPlay();
                             animateTextToOrigin();
@@ -238,10 +237,34 @@
                 });
                 gsap.timeline({
                     scrollTrigger: {
+                        trigger: '.aboutUs-section',
+                        start: 'top bottom',
+                        end: 'bottom bottom',
+                        scrub: 2,
+                        markers: false,
+                        onUpdate: (self) => {
+                            updatePosition(0, 0, 0, 0, -20, 0, self.progress);
+                        },
+                    },              
+                });
+                gsap.timeline({
+                    scrollTrigger: {
                         trigger: '.works-section',
                         start: 'top top',
                         onEnter: () => startAutoPlay(),
                         onLeaveBack: () => stopAutoPlay(),
+                    },              
+                });
+                gsap.timeline({
+                    scrollTrigger: {
+                        trigger: '.works-section',
+                        start: 'top bottom',
+                        end: '5% center',
+                        scrub: 2,
+                        markers: false,
+                        onUpdate: (self) => {
+                            updatePosition(0, -20, 0, 0, 0, 0, self.progress);
+                        },
                     },              
                 });
                 gsap.to('.aboutUs-section-content-1-1', {
@@ -319,12 +342,10 @@
                       markers: false,
                     },
                     transform: 'scale(100)',
-                    '--before-blur': '0',
                     opacity: 0,
                     ease: 'none'
                 });
 
-                // 建立透明度和位移動畫的統一配置
                 const itemCount = 15; // 元素總數
                 const totalDistance = 500; // 元素移動的總直線距離
                 const zDistance = 6000; // Z軸最大移動距離
@@ -333,6 +354,23 @@
                 const opacityDuration = 2; // 每個元素透明度動畫的滾動百分比
                 const moveDuration = 25; // 每個元素位移動畫的滾動百分比
                 const delayBetweenItems = 5; // 元素之間的延遲百分比
+                
+                // 生成一組隨機角度，但每次頁面加載時保持一致
+                // 使用 seedrandom 的概念，基於元素索引生成偽隨機角度
+                const generateRandomAngles = (count) => {
+                    const angles = [];
+                    for (let i = 0; i < count; i++) {
+                        // 使用質數乘法和正弦函數創造更隨機的分布
+                        // 但對於相同的索引，每次都會產生相同的角度
+                        const seed = Math.sin(i * 97.123) * 10000;
+                        const random = Math.abs(seed - Math.floor(seed));
+                        angles.push(random * 360);
+                    }
+                    return angles;
+                };
+                
+                // 預先生成所有角度
+                const randomAngles = generateRandomAngles(itemCount);
                 
                 // 為每個元素創建動畫
                 for (let i = 1; i <= itemCount; i++) {
@@ -345,9 +383,8 @@
                     const moveStart = opacityStart;
                     const moveEnd = `${baseStartPercent + itemDelay + moveDuration}% center`;
                     
-                    // 為每個元素生成隨機角度 (0-360度)
-                    // 使用 i 作為種子確保每次刷新頁面角度相同，避免閃爍
-                    const randomAngle = Math.floor(Math.random() * 360)
+                    // 取得此元素的預先生成的隨機角度
+                    const randomAngle = randomAngles[i-1];
                     
                     // 將角度轉換為弧度
                     const rad = randomAngle * Math.PI / 180;
@@ -370,7 +407,7 @@
                             toggleActions: 'restart none none reset'
                         },
                         opacity: 1,
-                        ease: 'power1.inOut'
+                        ease: 'none'
                     });
                     
                     // 位移動畫
