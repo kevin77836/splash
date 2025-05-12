@@ -139,14 +139,13 @@ let textOriginPosition2 = null; // 儲存文字2的原點位置
  */
 function generateMaterial() {
   return new THREE.MeshPhysicalMaterial({
-    color: 0xffffff,
     metalness: 0,
     roughness: 0,
     transparent: true,
-    opacity: 0.5,
-    transmission: 1,   // 增加透光性
+    opacity: 0.75,
+    transmission: 1.0,   // 增加透光性
     ior: 1.5,          // 折射率
-    thickness: 1,    // 材質厚度
+    thickness: 2,    // 材質厚度
     envMapIntensity: 10.0,
     side: THREE.DoubleSide,
     dispersion: 2,
@@ -689,8 +688,6 @@ function animate() {
   // 更新球體
   updateSpheres();
   
-  
-  
   // 應用旋轉到場景
   if(isMobileDevice()){
     effect.rotation.y += 0.0025;
@@ -701,6 +698,9 @@ function animate() {
     // 平滑過渡到目標旋轉角度
     modelRotationX += (targetRotationX - modelRotationX) * 0.05;
     modelRotationY += (targetRotationY - modelRotationY) * 0.05;
+
+    modelRotationY += 0.25;
+
     effect.rotation.y = modelRotationY;
     effect.rotation.x = modelRotationX;
     // 更新 effect 和球體群組位置
@@ -775,6 +775,12 @@ function initializeScene() {
   // 材質
   material = generateMaterial();
 
+  // const spGeom = new THREE.SphereGeometry(4, 64, 64);
+  // const sp1 = new THREE.Mesh(spGeom, generateMaterial());
+  // sp1.position.set(4, -2, 6);
+  // sp1.scale.set(0.7, 0.7, 0.7);
+  // scene.add(sp1);
+
   // Marching Cubes
   let resolution;
   if (!isMobileDevice()){
@@ -813,6 +819,18 @@ function initializeScene() {
   
   // 載入字體並創建文字
   loadFontAndCreateText();
+
+  const textureLoader = new THREE.TextureLoader();
+  textureLoader.setPath('/works/');
+  const bgTexture = textureLoader.load('works1.jpg', () => {
+    console.log('背景紋理加載完成');
+  });
+  
+  // const bgGeometry = new THREE.PlaneGeometry(19.2, 14.4);
+  // const bgMaterial = new THREE.MeshBasicMaterial({ map: bgTexture });
+  // const bgMesh = new THREE.Mesh(bgGeometry, bgMaterial);
+  // bgMesh.position.set(0, 0, -1);
+  // scene.add(bgMesh);
 
   // 註冊自定義緩動函數（只註冊一次）
   gsap.registerEase("customGrowEase", function(x) {

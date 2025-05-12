@@ -111,12 +111,12 @@
             <div class="aboutUs-content-container">
                 <div class="aboutUs-content-group">
                     <div class="aboutUs-section-content aboutUs-section-content-1">
-                        <span class="aboutUs-section-content-1-1">123</span>
-                        <span class="aboutUs-section-content-1-2">456</span>
+                        <span class="aboutUs-section-content-1-1">Splash Digilab</span>
+                        <span class="aboutUs-section-content-1-2">專注 XR 策展與互動設計</span>
                     </div>
                     <div class="aboutUs-section-content aboutUs-section-content-2">
-                        <span class="aboutUs-section-content-2-1">789</span>
-                        <span class="aboutUs-section-content-2-2">012</span>
+                        <span class="aboutUs-section-content-2-1">用科技敘事</span>
+                        <span class="aboutUs-section-content-2-2">用設計引發參與</span>
                     </div>
                     <div class="aboutUs-section-content aboutUs-section-content-3">
                         <span class="aboutUs-section-content-3-1">345</span>
@@ -194,12 +194,13 @@
 <script setup>
     import gsap from 'gsap';
     import { ScrollTrigger } from 'gsap/ScrollTrigger';
+    import { CustomEase } from 'gsap/CustomEase';
     import { useWindowSize } from '@vueuse/core'
     const { width, height } = useWindowSize();
     
-    // 註冊 ScrollTrigger 插件
+    // 註冊 ScrollTrigger 和 CustomEase 插件
     if (process.client) {
-        gsap.registerPlugin(ScrollTrigger);
+        gsap.registerPlugin(ScrollTrigger, CustomEase);
     }
     
     const splashRef = ref(null);
@@ -217,7 +218,6 @@
         if (process.client) {
             nextTick(() => {
                 // 定義所有區塊的配置
-                //         updatePosition(0, 0, 0, 0, -5, 0, self.progress);
                 gsap.timeline({
                     scrollTrigger: {
                         trigger: '.gap-section',
@@ -239,21 +239,21 @@
                     scrollTrigger: {
                         trigger: '.aboutUs-section',
                         start: 'top bottom',
-                        end: 'bottom bottom',
+                        end: 'center bottom',
                         scrub: 2,
                         markers: false,
                         onUpdate: (self) => {
                             updatePosition(0, 0, 0, 0, -15, 0, self.progress);
                         },
                     },
-                    defaults: { ease: "power1.in" }, 
+                    // defaults: { ease: "power1.in" }, 
                 });
                 gsap.timeline({
                     scrollTrigger: {
                         trigger: '.works-section',
                         start: 'top top',
-                        onEnter: () => startAutoPlay(),
-                        onLeaveBack: () => stopAutoPlay(),
+                        onEnter: () => growingFunction(),
+                        onLeaveBack: () => shrinkingFunction(),
                     },              
                 });
                 gsap.timeline({
@@ -471,6 +471,11 @@
     // 處理資源載入完成事件
     const handleResourcesLoaded = () => {
         loadComplete.value = true;
+        
+        // 設置初始位置為 (0,0,5)
+        if (splashRef.value) {
+            splashRef.value.updatePosition(0, 0, 15);
+        }
     }
     
     // 處理狀態變化
@@ -503,6 +508,28 @@
         
         // 設置滾動動畫
         setupScrollAnimations();
+        
+        // 從 (0,0,20) 平滑過渡到 (0,0,0)
+        // 創建自定義緩動
+        const customEasing = CustomEase.create("custom", "M0,0 C0,0 0.015,1 1,1 ");
+        
+        gsap.to({
+            x: 0,
+            y: 0,
+            z: 15
+        }, {
+            x: 0,
+            y: 0,
+            z: 0,
+            duration: 1.5,
+            ease: customEasing, // 使用自定義緩動
+            onUpdate: function() {
+                // 動畫每一幀更新場景位置
+                if (splashRef.value) {
+                    splashRef.value.updatePosition(this.targets()[0].x, this.targets()[0].y, this.targets()[0].z);
+                }
+            }
+        });
         
         // 啟用頁面滾動
         document.body.style.overflow = 'auto';
