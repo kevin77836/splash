@@ -201,11 +201,11 @@ function loadFontAndCreateText() {
     textTargetPosition2 = new THREE.Vector3(4, 0, -5);
     
     // 創建第一個文字 - 初始位置為原點
-    textMesh1 = createText('Splash', new THREE.Vector3(1, 0, -5),'left', 1);
+    textMesh1 = createText('Splash', new THREE.Vector3(3, 0, -5),'left', 1);
     scene.add(textMesh1);
     
     // 創建第二個文字 - 初始位置為原點
-    textMesh2 = createText('DigiLab', new THREE.Vector3(-1, 0, -5),'right', 1);
+    textMesh2 = createText('DigiLab', new THREE.Vector3(-3, 0, -5),'right', 1);
     scene.add(textMesh2);
   });
 }
@@ -284,7 +284,7 @@ function animateTextToTargetPosition() {
   gsap.to(textMesh1.material, {
     opacity: 1,
     duration: duration, // 透明度變化稍快於位移，提前達到完全不透明
-    ease: "customGrowEase"
+    ease: "easeOut"
   });
   
   // 文字2位置動畫
@@ -300,7 +300,7 @@ function animateTextToTargetPosition() {
   gsap.to(textMesh2.material, {
     opacity: 1,
     duration: duration, // 透明度變化稍快於位移，提前達到完全不透明
-    ease: "customGrowEase"
+    ease: "easeOut"
   });
 }
 
@@ -332,7 +332,7 @@ function animateTextToOrigin() {
   gsap.to(textMesh1.material, {
     opacity: 0,
     duration: duration, // 透明度變化稍快，提前完全透明
-    ease: "customShrinkEase"
+    ease: "easeIn"
   });
   
   // 文字2位置動畫
@@ -348,7 +348,7 @@ function animateTextToOrigin() {
   gsap.to(textMesh2.material, {
     opacity: 0,
     duration: duration, // 透明度變化稍快，提前完全透明
-    ease: "customShrinkEase"
+    ease: "easeIn"
   });
 }
 

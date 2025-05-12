@@ -111,16 +111,29 @@
             <div class="aboutUs-content-container">
                 <div class="aboutUs-content-group">
                     <div class="aboutUs-section-content aboutUs-section-content-1">
-                        <span class="aboutUs-section-content-1-1">Splash Digilab</span>
-                        <span class="aboutUs-section-content-1-2">專注 XR 策展與互動設計</span>
+                        <span class="aboutUs-section-content-1-1">Splash DigiLab</span>
+                        <span class="aboutUs-section-content-1-2">如水花迸濺的創意</span>
                     </div>
                     <div class="aboutUs-section-content aboutUs-section-content-2">
-                        <span class="aboutUs-section-content-2-1">用科技敘事</span>
-                        <span class="aboutUs-section-content-2-2">用設計引發參與</span>
+                        <span class="aboutUs-section-content-2-1">結合</span>
+                        <span class="aboutUs-section-content-2-2">
+                            <div class="service-group">
+                                <div class="service-group-item">XR策展</div>
+                                <div class="service-group-item">互動設計</div>
+                                <div class="service-group-item">數位藝術</div>
+                                <div class="service-group-item">網頁開發</div>
+                                <div class="service-group-item">AR/VR</div>
+                                <div class="service-group-item">UI/UX</div>
+                                <div class="service-group-item">2D/3D動畫</div>
+                                <div class="service-group-item">平面設計</div>
+                                <div class="service-group-item">CIS</div>
+                            </div>
+                        </span>
                     </div>
                     <div class="aboutUs-section-content aboutUs-section-content-3">
-                        <span class="aboutUs-section-content-3-1">345</span>
-                        <span class="aboutUs-section-content-3-2">678</span>
+                        <span class="aboutUs-section-content-3-1">呈現</span>
+                        <span class="aboutUs-section-content-3-2">素晴らしい</span>
+                        <span class="aboutUs-section-content-3-3">的極致體驗</span>
                     </div>
                 </div>
             </div>
@@ -252,8 +265,8 @@
                     scrollTrigger: {
                         trigger: '.works-section',
                         start: 'top top',
-                        onEnter: () => growingFunction(),
-                        onLeaveBack: () => shrinkingFunction(),
+                        onEnter: () => startAutoPlay(),
+                        onLeaveBack: () => stopAutoPlay(),
                     },              
                 });
                 gsap.timeline({
@@ -335,6 +348,17 @@
                     filter: 'blur(0px)',
                     ease: 'none'
                 });
+                gsap.to('.aboutUs-section-content-3-3', {
+                    scrollTrigger: {
+                      trigger: '.aboutUs-section',
+                      start: '60% 80%',
+                      end: '65% 80%',
+                      scrub: 2,
+                    },
+                    opacity: 1,
+                    filter: 'blur(0px)',
+                    ease: 'none'
+                });
                 gsap.to('.aboutUs-content-group', {
                     scrollTrigger: {
                       trigger: '.aboutUs-section',
@@ -349,7 +373,7 @@
                 });
 
                 const itemCount = 15; // 元素總數
-                const totalDistance = 500; // 元素移動的總直線距離
+                const totalDistance = 300; // 元素移動的總直線距離
                 const zDistance = 6000; // Z軸最大移動距離
                 const zVariation = 0.2; // Z軸變化範圍（20%）
                 const baseStartPercent = 0; // 起始滾動百分比
@@ -474,7 +498,7 @@
         
         // 設置初始位置為 (0,0,5)
         if (splashRef.value) {
-            splashRef.value.updatePosition(0, 0, 15);
+            splashRef.value.updatePosition(0, 0, 10);
         }
     }
     
@@ -506,22 +530,24 @@
         animateTextToTargetPosition();
         splashRef.value.addMouseControlEvents();
         
+        // 啟動服務項目的跑馬燈效果
+        startServiceMarquee();
+        
         // 設置滾動動畫
         setupScrollAnimations();
-        
-        // 從 (0,0,20) 平滑過渡到 (0,0,0)
+    
         // 創建自定義緩動
         const customEasing = CustomEase.create("custom", "M0,0 C0,0 0.015,1 1,1 ");
         
         gsap.to({
             x: 0,
             y: 0,
-            z: 15
+            z: 10
         }, {
             x: 0,
             y: 0,
             z: 0,
-            duration: 1.5,
+            duration: 3,
             ease: customEasing, // 使用自定義緩動
             onUpdate: function() {
                 // 動畫每一幀更新場景位置
@@ -592,6 +618,34 @@
         }, 100);
     }
     
+    // 服務項目跑馬燈效果
+    let serviceMarqueeInterval = null;
+    const startServiceMarquee = () => {
+        if (process.client) {
+            nextTick(() => {
+                const items = document.querySelectorAll('.service-group-item');
+                if (items.length === 0) return;
+                
+                let currentIndex = 0;
+                
+                // 初始顯示第一個項目
+                items[0].classList.add('active');
+                
+                // 設置輪播間隔
+                serviceMarqueeInterval = setInterval(() => {
+                    // 移除當前項目的活動狀態
+                    items[currentIndex].classList.remove('active');
+                    
+                    // 更新索引到下一個項目
+                    currentIndex = (currentIndex + 1) % items.length;
+                    
+                    // 顯示新的當前項目
+                    items[currentIndex].classList.add('active');
+                }, 1000); // 每個項目顯示 1 秒
+            });
+        }
+    };
+
     onMounted(() => {
         document.body.style.overflow = 'hidden';
     });
@@ -599,6 +653,9 @@
     onUnmounted(() => {
         if (autoPlayTimer) {
             clearTimeout(autoPlayTimer);
+        }
+        if (serviceMarqueeInterval) {
+            clearInterval(serviceMarqueeInterval);
         }
         isAutoPlaying.value = false;
         

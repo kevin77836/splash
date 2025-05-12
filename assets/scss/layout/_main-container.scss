@@ -78,18 +78,73 @@
                 justify-content: center;
                 flex-direction: column;
                 gap: 3rem;
+                @include max-md{
+                    gap: 2rem;
+                }
                 .aboutUs-section-content{
                     font-weight: bold;
-                    font-size: 6rem;
-                    @include max-lg{
-                        font-size: 5rem;
-                    }
-                    @include max-md{
-                        font-size: 4rem;
-                    }
-                    @include max-sm{
+                    display: flex;
+                    gap: 1rem;
+                    font-size: 4rem;
+                    @include max-xl{
                         font-size: 3rem;
                     }
+                    @include max-lg{
+                        font-size: 2rem;
+                    }
+                    @include max-md{
+                        flex-direction: column;
+                        gap: 2rem;
+                        text-align: center;
+                    }
+                    .service-group {
+                        display: flex;
+                        flex-wrap: wrap;
+                        justify-content: center;
+                        align-items: center;
+                        gap: 0.5rem;
+                        background-color: black;
+                        height: 4rem;
+                        width: 24rem;
+                        @include max-xl{
+                            height: 3rem;
+                            width: 18rem;
+                        }
+                        @include max-lg{
+                            height: 2rem;
+                            width: 12rem;
+                        }
+                        .service-group-item {
+                            opacity: 0;
+                            color: white;
+                            display: none;
+                            font-size: calc(4rem - 1rem);
+                            @include max-xl{
+                                font-size: calc(3rem - 1rem);
+                            }
+                            @include max-lg{
+                                font-size: calc(2rem - 0.5rem);
+                            }
+                            &.active {
+                                opacity: 1;
+                                display: inline-block;
+                                animation: fadeIn 0.5s;
+                            }
+                        }
+                        
+                        @keyframes fadeIn {
+                            from { opacity: 0; }
+                            to { opacity: 1; }
+                        }
+                    }
+
+                    &-2,&-3{
+                        @include max-md{
+                            flex-direction: row;
+                            gap: 1rem;
+                        }
+                    }
+
                     .aboutUs-section-content-1-1 {
                         opacity: 0;                    // 一開始隱形
                         filter: blur(10px);            // 一開始模糊
@@ -121,6 +176,13 @@
                         position: relative;
                     }
                     .aboutUs-section-content-3-2 {
+                        opacity: 0;                    // 一開始隱形
+                        filter: blur(10px);            // 一開始模糊
+                        transition: none;              // 關閉原生過渡，讓 GSAP 控制
+                        position: relative;
+                        text-decoration: underline;
+                    }
+                    .aboutUs-section-content-3-3 {
                         opacity: 0;                    // 一開始隱形
                         filter: blur(10px);            // 一開始模糊
                         transition: none;              // 關閉原生過渡，讓 GSAP 控制
