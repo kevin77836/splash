@@ -259,7 +259,6 @@
                             updatePosition(0, 0, 0, 0, -15, 0, self.progress);
                         },
                     },
-                    // defaults: { ease: "power1.in" }, 
                 });
                 gsap.timeline({
                     scrollTrigger: {
@@ -279,8 +278,10 @@
                         onUpdate: (self) => {
                             updatePosition(0, -1, 30, 0, 0, 0, self.progress);
                         },
+                        onLeaveBack: () => {
+                            updatePosition(0, -15, 0)
+                        }
                     },    
-                    defaults: { ease: "power1.in" },
                 });
                 gsap.to('.aboutUs-section-content-1-1', {
                     scrollTrigger: {
@@ -367,7 +368,7 @@
                       scrub: 0,
                       markers: false,
                     },
-                    transform: 'scale(100)',
+                    transform: 'scale(10)',
                     opacity: 0,
                     ease: 'none'
                 });
@@ -448,7 +449,7 @@
                         '--transform-x': x,
                         '--transform-y': y,
                         '--transform-z': zOffset,
-                        ease: 'none'
+                        ease: "power2.in",
                     });
                 }
             });
