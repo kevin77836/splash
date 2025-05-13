@@ -65,9 +65,9 @@ const animParams = reactive({
   subtract: 20,                   // Metaball 減法參數
   
   // 統一動畫控制參數（現在代表秒數）
-  growSpeed: 3,                 // 生長動畫持續時間（秒）
+  growSpeed: 5,                 // 生長動畫持續時間（秒）
   growthEaseOutPower: 0.15,       // 生長緩動指數 (值越小結尾越平滑)
-  shrinkSpeed: 1,               // 收縮動畫持續時間（秒）
+  shrinkSpeed: 0.5,               // 收縮動畫持續時間（秒）
   shrinkEaseInPower: 2.5,         // 收縮緩動指數 (值越大開頭越快)
   
   // 波浪效果設定
@@ -698,8 +698,6 @@ function animate() {
     // 平滑過渡到目標旋轉角度
     modelRotationX += (targetRotationX - modelRotationX) * 0.05;
     modelRotationY += (targetRotationY - modelRotationY) * 0.05;
-
-    modelRotationY += 0.25;
 
     effect.rotation.y = modelRotationY;
     effect.rotation.x = modelRotationX;
