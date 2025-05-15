@@ -334,16 +334,15 @@
                 const moveDuration = 25; // 每個元素位移動畫的滾動百分比
                 const delayBetweenItems = 5; // 元素之間的延遲百分比
                 
-                // 生成一組隨機角度，但每次頁面加載時保持一致
-                // 使用 seedrandom 的概念，基於元素索引生成偽隨機角度
+                // 使用種子算法生成固定的隨機角度集合
+                // 這確保每次頁面加載時元素方向一致
                 const generateRandomAngles = (count) => {
                     const angles = [];
                     for (let i = 0; i < count; i++) {
-                        // 使用質數乘法和正弦函數創造更隨機的分布
-                        // 但對於相同的索引，每次都會產生相同的角度
+                        // 使用數學函數生成偽隨機數
                         const seed = Math.sin(i * 97.123) * 10000;
                         const random = Math.abs(seed - Math.floor(seed));
-                        angles.push(random * 360);
+                        angles.push(random * 360); // 轉換為0-360度的角度
                     }
                     return angles;
                 };
@@ -351,58 +350,54 @@
                 // 預先生成所有角度
                 const randomAngles = generateRandomAngles(itemCount);
                 
-                // 為每個元素創建動畫
+                // 建立單一時間軸來管理所有作品項目的動畫
+                // 這樣可以在一個 ScrollTrigger 中處理所有動畫
+                const worksTimeline = gsap.timeline({
+                    scrollTrigger: {
+                        trigger: '.works-section',
+                        start: '0% top', // 從頁面頂部開始
+                        end: `${baseStartPercent + (itemCount-1) * delayBetweenItems + moveDuration}% center`, // 動態計算結束點
+                        scrub: 1.5, // 平滑的滾動效果
+                        markers: false,
+                    }
+                });
+                
+                // 為每個作品項目添加動畫
                 for (let i = 1; i <= itemCount; i++) {
-                    // 計算此元素的延遲
+                    // 計算此元素在滾動過程中的延遲
                     const itemDelay = (i - 1) * delayBetweenItems;
-                    // 計算透明度動畫的起始和結束點
-                    const opacityStart = `${baseStartPercent + itemDelay}% top`;
-                    const opacityEnd = `${baseStartPercent + itemDelay + opacityDuration}% top`;
-                    // 計算位移動畫的起始和結束點
-                    const moveStart = opacityStart;
-                    const moveEnd = `${baseStartPercent + itemDelay + moveDuration}% center`;
                     
-                    // 取得此元素的預先生成的隨機角度
+                    // 根據預生成的角度計算方向
                     const randomAngle = randomAngles[i-1];
+                    const rad = randomAngle * Math.PI / 180; // 轉換為弧度
                     
-                    // 將角度轉換為弧度
-                    const rad = randomAngle * Math.PI / 180;
-                    
-                    // 計算 x 和 y 坐標，保持直線距離為 totalDistance
+                    // 計算 x 和 y 坐標，形成放射狀分布
                     const x = Math.round(totalDistance * Math.cos(rad));
                     const y = Math.round(totalDistance * Math.sin(rad));
                     
-                    // 計算 z 軸偏移（在基準值的基礎上添加一些隨機性）
-                    const zOffset = Math.round(zDistance * (0.8 + (i % 5) * zVariation / 5));
+                    // Z軸偏移計算，添加隨機變化
+                    // const zOffset = Math.round(zDistance * (0.8 + (i % 5) * zVariation / 5));
                     
-                    // 透明度動畫
-                    gsap.to(`.works-content-item-${i}`, {
-                        scrollTrigger: {
-                            trigger: '.works-section',
-                            start: opacityStart,
-                            end: opacityEnd,
-                            scrub: 0,
-                            markers: false,
-                            toggleActions: 'restart none none reset'
-                        },
-                        opacity: 1,
-                        ease: 'none'
-                    });
+                    // 計算動畫開始的相對位置
+                    // 這決定了每個元素何時開始動畫
+                    const startPosition = itemDelay / (moveDuration + (itemCount-1) * delayBetweenItems);
                     
-                    // 位移動畫
-                    gsap.to(`.works-content-item-${i}`, {
-                        scrollTrigger: {
-                            trigger: '.works-section',
-                            start: moveStart,
-                            end: moveEnd,
-                            scrub: 0,
-                            markers: false
-                        },
-                        '--transform-x': x,
-                        '--transform-y': y,
-                        '--transform-z': zOffset,
-                        ease: "power2.in",
-                    });
+                    // 添加到同一時間軸，使用相對位置控制時序
+                    // 首先控制透明度變化
+                    worksTimeline.to(`.works-content-item-${i}`, { 
+                        opacity: 1, // 從透明變為完全不透明
+                        duration: opacityDuration / moveDuration, // 計算相對持續時間
+                        ease: 'none' // 線性變化
+                    }, startPosition);
+                    
+                    // 然後控制位置變化（同時進行）
+                    worksTimeline.to(`.works-content-item-${i}`, {
+                        '--transform-x': x, // CSS變量控制X軸位置
+                        '--transform-y': y, // CSS變量控制Y軸位置
+                        '--transform-z': zDistance, // CSS變量控制Z軸位置
+                        ease: 'power2.in', // 使用power2.in緩動函數
+                        duration: 1 // 相對持續時間
+                    }, startPosition); // 與透明度動畫同時開始
                 }
             });
         }
