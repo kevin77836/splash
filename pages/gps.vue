@@ -71,6 +71,7 @@ onMounted(() => {
     message.value = '你的瀏覽器不支援 Geolocation API';
   } else {
     message.value = '點擊按鈕獲取你的位置';
+    getDistance();
   }
 });
 </script>

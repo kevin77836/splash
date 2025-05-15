@@ -99,13 +99,15 @@
             <div class="aboutUs-marquee">
                 <div class="aboutUs-marquee-content-group">
                     <span class="aboutUs-marquee-content-group-item">Splash DigiLab</span>
-                    <span class="aboutUs-marquee-content-group-item">斯巴拉系數位互動</span>
-                    <span class="aboutUs-marquee-content-group-item">素晴らしいデジタルインタラクション</span>
+                    <span class="aboutUs-marquee-content-group-item">Splash DigiLab</span>
+                    <span class="aboutUs-marquee-content-group-item">Splash DigiLab</span>
+                    <span class="aboutUs-marquee-content-group-item">Splash DigiLab</span>
                 </div>
                 <div class="aboutUs-marquee-content-group2">
                     <span class="aboutUs-marquee-content-group-item">Splash DigiLab</span>
-                    <span class="aboutUs-marquee-content-group-item">斯巴拉系數位互動</span>
-                    <span class="aboutUs-marquee-content-group-item">素晴らしいデジタルインタラクション</span>
+                    <span class="aboutUs-marquee-content-group-item">Splash DigiLab</span>
+                    <span class="aboutUs-marquee-content-group-item">Splash DigiLab</span>
+                    <span class="aboutUs-marquee-content-group-item">Splash DigiLab</span>
                 </div>
             </div>
             <div class="aboutUs-content-container">

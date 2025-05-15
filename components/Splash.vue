@@ -11,6 +11,7 @@ import { EXRLoader } from 'three/examples/jsm/loaders/EXRLoader.js';
 import { FontLoader } from 'three/examples/jsm/loaders/FontLoader.js';
 import { TTFLoader } from 'three/examples/jsm/loaders/TTFLoader.js';
 import gsap from 'gsap';
+import Stats from 'stats.js';
 
 // 父組件事件
 const emit = defineEmits([
@@ -133,6 +134,8 @@ let textOriginPosition2 = null; // 儲存文字2的原點位置
 // =========================================
 // 3. 材質和環境設定
 // =========================================
+
+let stats = null;
 
 /**
  * 生成液體材質
@@ -678,6 +681,7 @@ function updateSpheres() {
  * 動畫主循環
  */
 function animate() {
+  stats.begin();
   animationFrameId = requestAnimationFrame(animate);
 
   if (!effect || !material || !camera || !renderer || !scene ) return;
@@ -717,6 +721,7 @@ function animate() {
   scene.position.y = targetScrollOffsetY;
   scene.position.z = targetScrollOffsetZ;
   
+  stats.end();     
   // 渲染場景
   renderer.render(scene, camera);
 }
@@ -818,11 +823,17 @@ function initializeScene() {
   // 載入字體並創建文字
   loadFontAndCreateText();
 
-  const textureLoader = new THREE.TextureLoader();
-  textureLoader.setPath('/works/');
-  const bgTexture = textureLoader.load('works1.jpg', () => {
-    console.log('背景紋理加載完成');
-  });
+  stats = new Stats();
+  stats.showPanel(0);               // 0: fps, 1: ms, 2: mb, 3+: custom
+  stats.dom.style.position = 'fixed';
+  stats.dom.style.top = '0px';
+  document.body.appendChild(stats.dom);
+
+  // const textureLoader = new THREE.TextureLoader();
+  // textureLoader.setPath('/works/');
+  // const bgTexture = textureLoader.load('works1.jpg', () => {
+  //   console.log('背景紋理加載完成');
+  // });
   
   // const bgGeometry = new THREE.PlaneGeometry(19.2, 14.4);
   // const bgMaterial = new THREE.MeshBasicMaterial({ map: bgTexture });
