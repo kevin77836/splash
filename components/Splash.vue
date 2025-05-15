@@ -550,7 +550,7 @@ function updateLineMetaball(obj) {
  */
 function initSpheres() {
   // 清理現有球體
-  clearSpheres();
+  // clearSpheres();
   
   // 建立球體群組
   if (!sphereGroup) {
@@ -581,31 +581,31 @@ function initSpheres() {
 /**
  * 清理所有球體
  */
-function clearSpheres() {
-  // 從場景中移除所有球體並釋放資源
-  for (let i = 0; i < spheres.length; i++) {
-    const sphere = spheres[i];
+// function clearSpheres() {
+//   // 從場景中移除所有球體並釋放資源
+//   for (let i = 0; i < spheres.length; i++) {
+//     const sphere = spheres[i];
     
-    if (sphere.mesh) {
-      if (sphereGroup) {
-        sphereGroup.remove(sphere.mesh);
-      } else {
-        scene.remove(sphere.mesh);
-      }
-      sphere.mesh.geometry.dispose();
-    }
-  }
+//     if (sphere.mesh) {
+//       if (sphereGroup) {
+//         sphereGroup.remove(sphere.mesh);
+//       } else {
+//         scene.remove(sphere.mesh);
+//       }
+//       sphere.mesh.geometry.dispose();
+//     }
+//   }
   
-  // 清空陣列
-  spheres = [];
+//   // 清空陣列
+//   spheres = [];
   
-  // 清空群組
-  if (sphereGroup) {
-    scene.remove(sphereGroup);
-    sphereGroup = new THREE.Group();
-    scene.add(sphereGroup);
-  }
-}
+//   // 清空群組
+//   if (sphereGroup) {
+//     scene.remove(sphereGroup);
+//     sphereGroup = new THREE.Group();
+//     scene.add(sphereGroup);
+//   }
+// }
 
 /**
  * 創建並發射一個球體
@@ -856,83 +856,83 @@ function initializeScene() {
 /**
  * 清理Three.js資源
  */
-function cleanupScene() {
-  // 停止動畫
-  cancelAnimationFrame(animationFrameId);
+// function cleanupScene() {
+//   // 停止動畫
+//   cancelAnimationFrame(animationFrameId);
 
-  // 移除視窗大小變化監聽
-  window.removeEventListener('resize', handleResize);
+//   // 移除視窗大小變化監聽
+//   window.removeEventListener('resize', handleResize);
 
-  // 重置滾動位移變量
-  targetScrollOffsetX = 0;
-  targetScrollOffsetY = 0;
-  targetScrollOffsetZ = 0;
+//   // 重置滾動位移變量
+//   targetScrollOffsetX = 0;
+//   targetScrollOffsetY = 0;
+//   targetScrollOffsetZ = 0;
 
-  // 清理球體
-  clearSpheres();
+//   // 清理球體
+//   clearSpheres();
 
-  // 清理Three.js資源
-  if (renderer) renderer.dispose();
-  if (material) {
-    material.dispose();
-    if (scene?.environment) scene.environment.dispose();
-  }
+//   // 清理Three.js資源
+//   if (renderer) renderer.dispose();
+//   if (material) {
+//     material.dispose();
+//     if (scene?.environment) scene.environment.dispose();
+//   }
   
-  if (effect) {
-    scene?.remove(effect);
-  }
+//   if (effect) {
+//     scene?.remove(effect);
+//   }
   
-  // 清理球體群組
-  if (sphereGroup) {
-    scene?.remove(sphereGroup);
-    sphereGroup = null;
-  }
+//   // 清理球體群組
+//   if (sphereGroup) {
+//     scene?.remove(sphereGroup);
+//     sphereGroup = null;
+//   }
   
-  // 清理文字相關資源
-  textTargetPosition1 = null;
-  textTargetPosition2 = null;
-  textOriginPosition1 = null;
-  textOriginPosition2 = null;
+//   // 清理文字相關資源
+//   textTargetPosition1 = null;
+//   textTargetPosition2 = null;
+//   textOriginPosition1 = null;
+//   textOriginPosition2 = null;
   
-  if (scene) {
-    // 清理場景中的物件
-    scene.traverse((object) => {
-      if (object instanceof THREE.Mesh) {
-        object.geometry?.dispose();
-        const objMaterial = object.material;
-        if (Array.isArray(objMaterial)) {
-          objMaterial.forEach((mat) => mat.dispose());
-        } else if (objMaterial) {
-          objMaterial.dispose();
-        }
-      }
-    });
-  }
+//   if (scene) {
+//     // 清理場景中的物件
+//     scene.traverse((object) => {
+//       if (object instanceof THREE.Mesh) {
+//         object.geometry?.dispose();
+//         const objMaterial = object.material;
+//         if (Array.isArray(objMaterial)) {
+//           objMaterial.forEach((mat) => mat.dispose());
+//         } else if (objMaterial) {
+//           objMaterial.dispose();
+//         }
+//       }
+//     });
+//   }
   
-  if (pmremGenerator) pmremGenerator.dispose();
+//   if (pmremGenerator) pmremGenerator.dispose();
 
-  // 移除畫布
-  if (canvasContainer.value && renderer) {
-    canvasContainer.value.removeChild(renderer.domElement);
-  }
+//   // 移除畫布
+//   if (canvasContainer.value && renderer) {
+//     canvasContainer.value.removeChild(renderer.domElement);
+//   }
 
-  // 清理球體材質
-  if (sphereMaterial) {
-    sphereMaterial.dispose();
-  }
+//   // 清理球體材質
+//   if (sphereMaterial) {
+//     sphereMaterial.dispose();
+//   }
 
-  // 清理文字物件
-  if (textMesh1) {
-    scene.remove(textMesh1);
-    textMesh1.geometry.dispose();
-    textMesh1.material.dispose();
-  }
-  if (textMesh2) {
-    scene.remove(textMesh2);
-    textMesh2.geometry.dispose();
-    textMesh2.material.dispose();
-  }
-}
+//   // 清理文字物件
+//   if (textMesh1) {
+//     scene.remove(textMesh1);
+//     textMesh1.geometry.dispose();
+//     textMesh1.material.dispose();
+//   }
+//   if (textMesh2) {
+//     scene.remove(textMesh2);
+//     textMesh2.geometry.dispose();
+//     textMesh2.material.dispose();
+//   }
+// }
 
 // =========================================
 // 8. 用戶互動控制
@@ -1177,13 +1177,13 @@ function addMouseControlEvents() {
 /**
  * 移除滑鼠控制事件
  */
-function removeMouseControlEvents() {
-  const container = canvasContainer.value;
-  if (!container) return;
+// function removeMouseControlEvents() {
+//   const container = canvasContainer.value;
+//   if (!container) return;
   
-  // 無論是否為行動裝置，都應移除事件以防止內存洩漏
-  window.removeEventListener('mousemove', onMouseMove);
-}
+//   // 無論是否為行動裝置，都應移除事件以防止內存洩漏
+//   window.removeEventListener('mousemove', onMouseMove);
+// }
 
 /**
  * 滑鼠移動事件處理
@@ -1238,12 +1238,12 @@ onMounted(() => {
   window.addEventListener('resize', handleResize);
 });
 
-onUnmounted(() => {
-  cleanupScene();
+// onUnmounted(() => {
+//   cleanupScene();
 
-  // 移除滑鼠控制事件
-  removeMouseControlEvents();
-});
+//   // 移除滑鼠控制事件
+//   removeMouseControlEvents();
+// });
 
 // 暴露方法給父組件
 defineExpose({
