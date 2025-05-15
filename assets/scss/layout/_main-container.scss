@@ -78,18 +78,6 @@
                 justify-content: center;
                 flex-direction: column;
                 gap: 3rem;
-                /* GPU 加速和性能優化 */
-                will-change: transform, opacity;
-                transform: translateZ(0);
-                backface-visibility: hidden;
-                perspective: 1000px;
-                transform-style: preserve-3d;
-                /* 文字渲染優化 */
-                text-rendering: optimizeSpeed;
-                -webkit-font-smoothing: antialiased;
-                -moz-osx-font-smoothing: grayscale;
-                /* 減少浏覽器渲染層重繪 */
-                contain: layout style paint;
                 @include max-md{
                     gap: 2rem;
                 }
@@ -182,20 +170,7 @@
                     }
                 }
             }
-            ::before{
-                content: "";
-                position: absolute;
-                top: 0;
-                bottom: 0;
-                left: 0;
-                right: 0;
-                background-color: rgba(#F2F2F2,0.1);
-                backdrop-filter: blur(1px);
-                -webkit-backdrop-filter: blur(1px);
-                z-index: -1;
-            }
         }
-
     } 
     @keyframes marquee-animation {
         0% {
@@ -224,10 +199,6 @@
             perspective: 1000px;
             transform-style: preserve-3d;
             overflow: hidden;
-            /* 容器層級 GPU 加速 */
-            will-change: transform;
-            contain: layout style;
-            backface-visibility: hidden;
             .works-content-item{
                 position: absolute;
                 top: 50%;
@@ -242,17 +213,6 @@
                     calc(-50% + var(--transform-y, 0) * 1px), 
                     calc(-3500px + var(--transform-z, 0) * 1px)
                 );
-                /* 元素層級 GPU 加速 */
-                will-change: transform, opacity;
-                backface-visibility: hidden;
-                transform-style: preserve-3d;
-                
-                /* 圖片優化 */
-                img {
-                    will-change: transform;
-                    transform: translateZ(0);
-                    backface-visibility: hidden;
-                }
             }
         }
     }

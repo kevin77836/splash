@@ -307,6 +307,7 @@
                     .to('.aboutUs-section-content-3-2', { opacity: 1, filter: 'blur(0px)', duration: 0.1 }, 0.5)
                     .to('.aboutUs-section-content-3-3', { opacity: 1, filter: 'blur(0px)', duration: 0.1 }, 0.6);
                 
+                // 單獨處理縮放動畫，因為它有不同的觸發點
                 gsap.to('.aboutUs-content-group', {
                     scrollTrigger: {
                         trigger: '.aboutUs-section',
@@ -314,20 +315,10 @@
                         end: 'bottom bottom',
                         scrub: 0.5, // 更平滑的過渡
                         markers: false,
-                        pin: false, // 不固定元素
-                        anticipatePin: 1, // 提前準備固定效果
-                        fastScrollEnd: true, // 快速滾動時仍完成動畫
-                        preventOverlaps: true, // 防止重疊
                     },
-                    // 優化變換方式：使用多重變換而非單一 scale
-                    // 使用 matrix3d 變換以獲得更高效能和更好的像素控制
-                    // 分解 3D 變換可減少瀏覽器渲染計算負擔
-                    transform: 'matrix3d(5, 0, 0, 0, 0, 5, 0, 0, 0, 0, 5, 0, 0, 0, 0, 1)',
+                    // transform: 'scale(50)',
                     opacity: 0,
-                    ease: 'power1.inOut', // 使用更平滑的緩動函數
-                    force3D: true, // 強制使用 3D 變換以啟用 GPU 加速
-                    overwrite: 'auto', // 自動處理覆蓋問題
-                    clearProps: 'transform', // 動畫完成後清除屬性
+                    ease: 'none'
                 });
 
                 const itemCount = 15; // 元素總數
