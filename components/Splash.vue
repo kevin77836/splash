@@ -168,7 +168,6 @@ function loadEnvironmentMap() {
         pmremGenerator.dispose();
         texture.dispose();
 
-        console.log("環境貼圖已載入");
         scene.environment = envMap;
         
         // 更新主材質
@@ -933,8 +932,6 @@ function cleanupScene() {
     textMesh2.geometry.dispose();
     textMesh2.material.dispose();
   }
-
-  console.log("Three.js場景已清理");
 }
 
 // =========================================
@@ -991,8 +988,6 @@ function initializeCollapsedState() {
     if (lineFlowState[i] === undefined) continue;
     lineFlowState[i] = 'pauseAtStart';
   }
-  
-  console.log("初始化完成：線條收合狀態");
 }
 
 // 當狀態改變時通知父組件
@@ -1002,10 +997,8 @@ function updateFlowState(newState) {
   
   // 檢查是否完成特定狀態，通知父組件
   if (newState === 'pauseAtEnd') {
-    console.log("所有線條已生長完成，暫停動畫");
     emit('animationComplete', 'growing');
   } else if (newState === 'pauseAtStart') {
-    console.log("所有線條已收合完成，進入起始暫停狀態");
     emit('animationComplete', 'shrinking');
   }
 }
@@ -1017,8 +1010,6 @@ function startSyncGrowing() {
   if (!clock) return;
   const currentTime = clock.getElapsedTime();
   const totalLines = ttParams.numLines + thParams.numLines;
-  
-  console.log("所有線條同步生長");
   
   // 確保球體已初始化
   if (spheres.length === 0) {
@@ -1104,8 +1095,6 @@ function startSyncShrinking() {
   if (!clock) return;
   const currentTime = clock.getElapsedTime();
   
-  console.log("所有線條同步收合");
-  
   // 清除所有現有的 GSAP 動畫和延遲回調
   gsap.killTweensOf(spheres);
   if (delayedStateUpdateId !== null) {
@@ -1181,10 +1170,7 @@ function addMouseControlEvents() {
   
   // 只有在非行動裝置上才添加滑鼠控制
   if (!isMobileDevice()) {
-    console.log('啟用桌面滑鼠控制');
     window.addEventListener('mousemove', onMouseMove);
-  } else {
-    console.log('行動裝置，不啟用滑鼠控制');
   }
 }
 
@@ -1237,7 +1223,6 @@ onMounted(() => {
   
   // 載入環境貼圖
   loadEnvironmentMap().then(() => {
-    console.log('環境貼圖載入完成');
     
     // 初始化為收合狀態
     initializeCollapsedState();
@@ -1280,7 +1265,5 @@ function updatePosition(xOffset, yOffset, zOffset) {
   targetScrollOffsetX = xOffset;
   targetScrollOffsetY = -yOffset;
   targetScrollOffsetZ = zOffset;
-  
-  console.log(`更新滾動位移: x=${xOffset}, y=${yOffset}, z=${zOffset}`);
 }
 </script>
