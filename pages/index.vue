@@ -133,11 +133,11 @@
                         </span>
                     </div>
                     <div class="aboutUs-section-content aboutUs-section-content-3">
-                        <span class="aboutUs-section-content-3-1">呈現</span>
                         <div class="section-content-3-group">
+                            <span class="aboutUs-section-content-3-1">呈現</span>
                             <span class="aboutUs-section-content-3-2">素晴らしい</span>
-                            <span class="aboutUs-section-content-3-3">的極致體驗</span>
                         </div>
+                        <span class="aboutUs-section-content-3-3">的極致體驗</span>
                     </div>
                 </div>
             </div>
@@ -262,6 +262,7 @@
                         onUpdate: (self) => {
                             updatePosition(0, 0, 0, 0, -15, 0, self.progress);
                         },
+                        onEnter: () => startServiceMarquee(),
                     },
                 });
                 gsap.timeline({
@@ -501,10 +502,9 @@
     const handleResourcesLoaded = () => {
         loadComplete.value = true;
         
-        // 設置初始位置為 (0,0,5)
-        if (splashRef.value) {
-            splashRef.value.updatePosition(0, 0, 10);
-        }
+        // if (splashRef.value) {
+        //     splashRef.value.updatePosition(0, 0, 10);
+        // }
     }
     
     // 處理狀態變化
@@ -535,32 +535,29 @@
         animateTextToTargetPosition();
         splashRef.value.addMouseControlEvents();
         
-        // 啟動服務項目的跑馬燈效果
-        startServiceMarquee();
-        
         // 設置滾動動畫
         setupScrollAnimations();
     
         // 創建自定義緩動
-        const customEasing = CustomEase.create("custom", "M0,0 C0,0 0.015,1 1,1 ");
+        // const customEasing = CustomEase.create("custom", "M0,0 C0,0 0.015,1 1,1 ");
         
-        gsap.to({
-            x: 0,
-            y: 0,
-            z: 10
-        }, {
-            x: 0,
-            y: 0,
-            z: 0,
-            duration: 3,
-            ease: customEasing, // 使用自定義緩動
-            onUpdate: function() {
-                // 動畫每一幀更新場景位置
-                if (splashRef.value) {
-                    splashRef.value.updatePosition(this.targets()[0].x, this.targets()[0].y, this.targets()[0].z);
-                }
-            }
-        });
+        // gsap.to({
+        //     x: 0,
+        //     y: 0,
+        //     z: 20
+        // }, {
+        //     x: 0,
+        //     y: 0,
+        //     z: 0,
+        //     duration: 1,
+        //     ease: customEasing, // 使用自定義緩動
+        //     onUpdate: function() {
+        //         // 動畫每一幀更新場景位置
+        //         if (splashRef.value) {
+        //             splashRef.value.updatePosition(this.targets()[0].x, this.targets()[0].y, this.targets()[0].z);
+        //         }
+        //     }
+        // });
         
         // 啟用頁面滾動
         document.body.style.overflow = 'auto';
@@ -626,29 +623,21 @@
     // 服務項目跑馬燈效果
     let serviceMarqueeInterval = null;
     const startServiceMarquee = () => {
-        if (process.client) {
-            nextTick(() => {
-                const items = document.querySelectorAll('.service-group-item');
-                if (items.length === 0) return;
-                
-                let currentIndex = 0;
-                
-                // 初始顯示第一個項目
-                items[0].classList.add('active');
-                
-                // 設置輪播間隔
-                serviceMarqueeInterval = setInterval(() => {
-                    // 移除當前項目的活動狀態
-                    items[currentIndex].classList.remove('active');
-                    
-                    // 更新索引到下一個項目
-                    currentIndex = (currentIndex + 1) % items.length;
-                    
-                    // 顯示新的當前項目
-                    items[currentIndex].classList.add('active');
-                }, 1000); // 每個項目顯示 1 秒
-            });
-        }
+        if(serviceMarqueeInterval) return;
+        const items = document.querySelectorAll('.service-group-item');
+        if (items.length === 0) return;
+        
+        let currentIndex = 0;
+        
+        items[0].classList.add('active');
+        
+        serviceMarqueeInterval = setInterval(() => {
+            items[currentIndex].classList.remove('active');
+            currentIndex = (currentIndex + 1) % items.length;
+            
+            // 顯示新的當前項目
+            items[currentIndex].classList.add('active');
+        }, 1000); // 每個項目顯示 1 秒
     };
 
     onMounted(() => {
