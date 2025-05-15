@@ -136,6 +136,10 @@ let textOriginPosition2 = null; // 儲存文字2的原點位置
 // =========================================
 
 let stats = null;
+const fps = 60;
+const singleFrameTime = (1 / fps);
+let timestamp = 0;
+
 
 /**
  * 生成液體材質
@@ -279,13 +283,13 @@ function animateTextToTargetPosition() {
     y: targetPos1.y,
     z: targetPos1.z,
     duration: duration,
-    ease: "customGrowEase" // 使用已註冊的自定義緩動函數
+    ease: "customGrowEase"
   });
   
   // 文字1透明度動畫
   gsap.to(textMesh1.material, {
     opacity: 1,
-    duration: duration, // 透明度變化稍快於位移，提前達到完全不透明
+    duration: duration,
     ease: "easeOut"
   });
   
@@ -295,13 +299,13 @@ function animateTextToTargetPosition() {
     y: targetPos2.y,
     z: targetPos2.z,
     duration: duration,
-    ease: "customGrowEase" // 使用已註冊的自定義緩動函數
+    ease: "customGrowEase"
   });
   
   // 文字2透明度動畫
   gsap.to(textMesh2.material, {
     opacity: 1,
-    duration: duration, // 透明度變化稍快於位移，提前達到完全不透明
+    duration: duration,
     ease: "easeOut"
   });
 }
@@ -683,7 +687,9 @@ function animate() {
   stats.begin();
   animationFrameId = requestAnimationFrame(animate);
 
-  if (!effect || !material || !camera || !renderer || !scene ) return;
+  const delta = clock.getDelta();
+  timestamp += delta;
+  if (!effect || !material || !camera || !renderer || !scene || timestamp < singleFrameTime ) return;
 
   // 更新場景邏輯
   updateLineMetaball(effect);
@@ -723,6 +729,8 @@ function animate() {
   stats.end();     
   // 渲染場景
   renderer.render(scene, camera);
+  
+  timestamp = (timestamp % singleFrameTime)
 }
 
 /**
@@ -1043,16 +1051,16 @@ function startSyncGrowing() {
         currentPosition: sphere.targetLength,
         duration: growDuration,
         ease: "customGrowEase",
-        onUpdate: function() {
-          // 確保狀態一致
-          if (globalFlowState !== 'growing' && globalFlowState !== 'pauseAtEnd') {
-            sphere.currentPosition = sphere.targetLength;
-          }
-        },
-        onComplete: function() {
-          // 確保完全到位
-          sphere.currentPosition = sphere.targetLength;
-        }
+        // onUpdate: function() {
+        //   // 確保狀態一致
+        //   if (globalFlowState !== 'growing' && globalFlowState !== 'pauseAtEnd') {
+        //     sphere.currentPosition = sphere.targetLength;
+        //   }
+        // },
+        // onComplete: function() {
+        //   // 確保完全到位
+        //   sphere.currentPosition = sphere.targetLength;
+        // }
       });
     }
   }
@@ -1127,16 +1135,16 @@ function startSyncShrinking() {
         currentPosition: 0,
         duration: shrinkDuration,
         ease: "customShrinkEase",
-        onUpdate: function() {
-          // 確保狀態一致
-          if (globalFlowState !== 'shrinking' && globalFlowState !== 'pauseAtStart') {
-            sphere.currentPosition = 0;
-          }
-        },
-        onComplete: function() {
-          // 確保完全歸零
-          sphere.currentPosition = 0;
-        }
+        // onUpdate: function() {
+        //   // 確保狀態一致
+        //   if (globalFlowState !== 'shrinking' && globalFlowState !== 'pauseAtStart') {
+        //     sphere.currentPosition = 0;
+        //   }
+        // },
+        // onComplete: function() {
+        //   // 確保完全歸零
+        //   sphere.currentPosition = 0;
+        // }
       });
     }
   }
