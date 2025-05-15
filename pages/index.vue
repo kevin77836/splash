@@ -288,90 +288,37 @@
                         }
                     },    
                 });
-                gsap.to('.aboutUs-section-content-1-1', {
+                
+                // 優化：將關於 aboutUs-content-container 的動畫合併到一個時間軸中
+                // 這樣可以減少 ScrollTrigger 實例數量，提高效能
+                const aboutUsContentTimeline = gsap.timeline({
                     scrollTrigger: {
-                      trigger: '.aboutUs-section',
-                      start: '5% 80%',
-                      end: '10% 80%',
-                      scrub: 2,
-                    },
-                    opacity: 1,
-                    filter: 'blur(0px)',
-                    ease: 'none'
+                        trigger: '.aboutUs-section',
+                        start: '5% 80%',
+                        end: '65% 70%',
+                        scrub: 1.5, // 調整為稍微平滑的過渡
+                        markers: false
+                    }
                 });
-                gsap.to('.aboutUs-section-content-1-2', {
-                    scrollTrigger: {
-                      trigger: '.aboutUs-section',
-                      start: '15% 80%',
-                      end: '20% 80%',
-                      scrub: 2,
-                    },
-                    opacity: 1,
-                    filter: 'blur(0px)',
-                    ease: 'none'
-                });
-                gsap.to('.aboutUs-section-content-2-1', {
-                    scrollTrigger: {
-                      trigger: '.aboutUs-section',
-                      start: '25% 80%',
-                      end: '30% 80%',
-                      scrub: 2,
-                    },
-                    opacity: 1,
-                    filter: 'blur(0px)',
-                    ease: 'none'
-                });
-                gsap.to('.aboutUs-section-content-2-2', {
-                    scrollTrigger: {
-                      trigger: '.aboutUs-section',
-                      start: '35% 80%',
-                      end: '40% 80%',
-                      scrub: 2,
-                    },
-                    opacity: 1,
-                    filter: 'blur(0px)',
-                    ease: 'none'
-                });
-                gsap.to('.aboutUs-section-content-3-1', {
-                    scrollTrigger: {
-                      trigger: '.aboutUs-section',
-                      start: '45% 80%',
-                      end: '50% 80%',
-                      scrub: 2,
-                    },
-                    opacity: 1,
-                    filter: 'blur(0px)',
-                    ease: 'none'
-                });
-                gsap.to('.aboutUs-section-content-3-2', {
-                    scrollTrigger: {
-                      trigger: '.aboutUs-section',
-                      start: '55% 80%',
-                      end: '60% 80%',
-                      scrub: 2,
-                    },
-                    opacity: 1,
-                    filter: 'blur(0px)',
-                    ease: 'none'
-                });
-                gsap.to('.aboutUs-section-content-3-3', {
-                    scrollTrigger: {
-                      trigger: '.aboutUs-section',
-                      start: '60% 80%',
-                      end: '65% 80%',
-                      scrub: 2,
-                    },
-                    opacity: 1,
-                    filter: 'blur(0px)',
-                    ease: 'none'
-                });
+                
+                // 使用一個時間軸添加所有文字元素的動畫
+                aboutUsContentTimeline
+                    .to('.aboutUs-section-content-1-1', { opacity: 1, filter: 'blur(0px)', duration: 0.1 }, 0)
+                    .to('.aboutUs-section-content-1-2', { opacity: 1, filter: 'blur(0px)', duration: 0.1 }, 0.1)
+                    .to('.aboutUs-section-content-2-1', { opacity: 1, filter: 'blur(0px)', duration: 0.1 }, 0.2)
+                    .to('.aboutUs-section-content-2-2', { opacity: 1, filter: 'blur(0px)', duration: 0.1 }, 0.3)
+                    .to('.aboutUs-section-content-3-1', { opacity: 1, filter: 'blur(0px)', duration: 0.1 }, 0.4)
+                    .to('.aboutUs-section-content-3-2', { opacity: 1, filter: 'blur(0px)', duration: 0.1 }, 0.5)
+                    .to('.aboutUs-section-content-3-3', { opacity: 1, filter: 'blur(0px)', duration: 0.1 }, 0.6);
+                
+                // 單獨處理縮放動畫，因為它有不同的觸發點
                 gsap.to('.aboutUs-content-group', {
                     scrollTrigger: {
-                      trigger: '.aboutUs-section',
-                      start: '80% 80%',
-                      end: 'bottom bottom',
-                      scrub: 0,
-                      markers: false,
+                        trigger: '.aboutUs-section',
+                        start: '80% 80%',
+                        end: 'bottom bottom',
+                        scrub: 0,
+                        markers: false,
                     },
                     transform: 'scale(10)',
                     opacity: 0,
