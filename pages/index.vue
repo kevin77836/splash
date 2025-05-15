@@ -143,49 +143,49 @@
         <div v-if="isStarted" class="section works-section">
             <div class="works-content-container">
                 <a href="#" class="works-content-item works-content-item-15">
-                    <img src="/works/works15.png" alt="">
+                    <img src="/works/works15.webp" alt="">
                 </a>
                 <a href="#" class="works-content-item works-content-item-14">
-                    <img src="/works/works14.png" alt="">
+                    <img src="/works/works14.webp" alt="">
                 </a>
                 <a href="#" class="works-content-item works-content-item-13">
-                    <img src="/works/works13.png" alt="">
+                    <img src="/works/works13.webp" alt="">
                 </a>
                 <a href="#" class="works-content-item works-content-item-12">
-                    <img src="/works/works12.jpg" alt="">
+                    <img src="/works/works12.webp" alt="">
                 </a>
                 <a href="#" class="works-content-item works-content-item-11">
-                    <img src="/works/works11.png" alt="">
+                    <img src="/works/works11.webp" alt="">
                 </a>
                 <a href="#" class="works-content-item works-content-item-10">
-                    <img src="/works/works10.png" alt="">
+                    <img src="/works/works10.webp" alt="">
                 </a>
                 <a href="#" class="works-content-item works-content-item-9">
-                    <img src="/works/works9.png" alt="">
+                    <img src="/works/works9.webp" alt="">
                 </a>
                 <a href="#" class="works-content-item works-content-item-8">
-                    <img src="/works/works8.jpg" alt="">
+                    <img src="/works/works8.webp" alt="">
                 </a>
                 <a href="#" class="works-content-item works-content-item-7">
-                    <img src="/works/works7.png" alt="">
+                    <img src="/works/works7.webp" alt="">
                 </a>
                 <a href="#" class="works-content-item works-content-item-6">
-                    <img src="/works/works6.png" alt="">
+                    <img src="/works/works6.webp" alt="">
                 </a>
                 <a href="#" class="works-content-item works-content-item-5">
-                    <img src="/works/works5.png" alt="">
+                    <img src="/works/works5.webp" alt="">
                 </a>
                 <a href="#" class="works-content-item works-content-item-4">
-                    <img src="/works/works4.jpg" alt="">
+                    <img src="/works/works4.webp" alt="">
                 </a>
                 <a href="#" class="works-content-item works-content-item-3">
-                    <img src="/works/works3.jpg" alt="">
+                    <img src="/works/works3.webp" alt="">
                 </a>
                 <a href="#" class="works-content-item works-content-item-2">
-                    <img src="/works/works2.png" alt="">
+                    <img src="/works/works2.webp" alt="">
                 </a>
                 <a href="#" class="works-content-item works-content-item-1">
-                    <img src="/works/works1.jpg" alt="">
+                    <img src="/works/works1.webp" alt="">
                 </a>
             </div> 
         </div>

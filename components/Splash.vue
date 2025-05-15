@@ -53,7 +53,7 @@ const sphereParams = reactive({
   maxRadius: 0.5,      // 最大半徑
   minLength: 3.0,      // 最小目標長度
   maxLength: 10.0,      // 最大目標長度
-  segmentDetail: 16,   // 幾何體細分
+  segmentDetail: 8,   // 幾何體細分
   minScale: 0        // 最小縮放值(原點狀態)
 });
 
