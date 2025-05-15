@@ -278,7 +278,7 @@
                         trigger: '.works-section',
                         start: 'top bottom',
                         end: '5% center',
-                        scrub: 2,
+                        scrub: 1.5,
                         markers: false,
                         onUpdate: (self) => {
                             updatePosition(0, -1, 30, 0, 0, 0, self.progress);
@@ -289,19 +289,15 @@
                     },    
                 });
                 
-                // 優化：將關於 aboutUs-content-container 的動畫合併到一個時間軸中
-                // 這樣可以減少 ScrollTrigger 實例數量，提高效能
                 const aboutUsContentTimeline = gsap.timeline({
                     scrollTrigger: {
                         trigger: '.aboutUs-section',
                         start: '5% 80%',
                         end: '65% 70%',
-                        scrub: 1.5, // 調整為稍微平滑的過渡
+                        scrub: 1.5,
                         markers: false
                     }
                 });
-                
-                // 使用一個時間軸添加所有文字元素的動畫
                 aboutUsContentTimeline
                     .to('.aboutUs-section-content-1-1', { opacity: 1, filter: 'blur(0px)', duration: 0.1 }, 0)
                     .to('.aboutUs-section-content-1-2', { opacity: 1, filter: 'blur(0px)', duration: 0.1 }, 0.1)
@@ -311,24 +307,32 @@
                     .to('.aboutUs-section-content-3-2', { opacity: 1, filter: 'blur(0px)', duration: 0.1 }, 0.5)
                     .to('.aboutUs-section-content-3-3', { opacity: 1, filter: 'blur(0px)', duration: 0.1 }, 0.6);
                 
-                // 單獨處理縮放動畫，因為它有不同的觸發點
                 gsap.to('.aboutUs-content-group', {
                     scrollTrigger: {
                         trigger: '.aboutUs-section',
-                        start: '80% 80%',
+                        start: '70% 80%',
                         end: 'bottom bottom',
-                        scrub: 0,
+                        scrub: 0.5, // 更平滑的過渡
                         markers: false,
+                        pin: false, // 不固定元素
+                        anticipatePin: 1, // 提前準備固定效果
+                        fastScrollEnd: true, // 快速滾動時仍完成動畫
+                        preventOverlaps: true, // 防止重疊
                     },
-                    transform: 'scale(10)',
+                    // 優化變換方式：使用多重變換而非單一 scale
+                    // 使用 matrix3d 變換以獲得更高效能和更好的像素控制
+                    // 分解 3D 變換可減少瀏覽器渲染計算負擔
+                    transform: 'matrix3d(5, 0, 0, 0, 0, 5, 0, 0, 0, 0, 5, 0, 0, 0, 0, 1)',
                     opacity: 0,
-                    ease: 'none'
+                    ease: 'power1.inOut', // 使用更平滑的緩動函數
+                    force3D: true, // 強制使用 3D 變換以啟用 GPU 加速
+                    overwrite: 'auto', // 自動處理覆蓋問題
+                    clearProps: 'transform', // 動畫完成後清除屬性
                 });
 
                 const itemCount = 15; // 元素總數
                 const totalDistance = 300; // 元素移動的總直線距離
                 const zDistance = 6000; // Z軸最大移動距離
-                const zVariation = 0.2; // Z軸變化範圍（20%）
                 const baseStartPercent = 0; // 起始滾動百分比
                 const opacityDuration = 2; // 每個元素透明度動畫的滾動百分比
                 const moveDuration = 25; // 每個元素位移動畫的滾動百分比
