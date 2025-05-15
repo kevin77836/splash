@@ -85,14 +85,14 @@
                 Start
             </div>
       
-            <h1 :class="{'hidden': !isLandingPage || (isLandingPage && !isStarted)}" class="company-name">
-            <!-- <span class="front-name">
+            <!-- <h1 :class="{'hidden': !isLandingPage || (isLandingPage && !isStarted)}" class="company-name">
+            <span class="front-name">
             Splash
             </span>
             <span class="back-name">
             DigiLab
-                </span> -->
-            </h1>
+                </span>
+            </h1> -->
         </div>
         <div v-if="isStarted" class="section gap-section"></div>
         <div v-if="isStarted" class="section aboutUs-section">
@@ -134,8 +134,10 @@
                     </div>
                     <div class="aboutUs-section-content aboutUs-section-content-3">
                         <span class="aboutUs-section-content-3-1">呈現</span>
-                        <span class="aboutUs-section-content-3-2">素晴らしい</span>
-                        <span class="aboutUs-section-content-3-3">的極致體驗</span>
+                        <div class="section-content-3-group">
+                            <span class="aboutUs-section-content-3-2">素晴らしい</span>
+                            <span class="aboutUs-section-content-3-3">的極致體驗</span>
+                        </div>
                     </div>
                 </div>
             </div>
