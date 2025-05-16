@@ -275,7 +275,8 @@ function animateTextToTargetPosition() {
   targetPos2.y -= text2Height / 4;
   
   // 設置動畫參數
-  const duration = animParams.growSpeed;
+  // const duration = animParams.growSpeed;
+  const duration = 1;
   
   // 確保文字一開始是透明的
   textMesh1.material.opacity = 0;
@@ -327,14 +328,15 @@ function animateTextToOrigin() {
   gsap.killTweensOf(textMesh2.material);
   
   // 設置動畫參數
-  const duration = animParams.shrinkSpeed;
+  // const duration = animParams.shrinkSpeed;
+  const duration = 1;
   
   // 文字1位置動畫
   gsap.to(textMesh1.position, {
     x: textOriginPosition1.x,
     y: textOriginPosition1.y,
     z: textOriginPosition1.z,
-    duration: duration,
+    duration: 1,
     ease: "customShrinkEase" // 使用已註冊的自定義緩動函數
   });
   

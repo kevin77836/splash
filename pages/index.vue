@@ -237,7 +237,6 @@
         // 確保所有區塊已經渲染
         if (process.client) {
             nextTick(() => {
-                // 定義所有區塊的配置
                 gsap.timeline({
                     scrollTrigger: {
                         trigger: '.gap-section',
@@ -268,30 +267,7 @@
                         onEnter: () => startServiceMarquee(),
                     },
                 });
-                gsap.timeline({
-                    scrollTrigger: {
-                        trigger: '.works-section',
-                        start: 'top top',
-                        onEnter: () => growingFunction(),
-                        onLeaveBack: () => shrinkingFunction(),
-                    },              
-                });
-                gsap.timeline({
-                    scrollTrigger: {
-                        trigger: '.works-section',
-                        start: 'top bottom',
-                        end: '5% center',
-                        scrub: 1.5,
-                        markers: false,
-                        onUpdate: (self) => {
-                            updatePosition(0, -1, 30, 0, 0, 0, self.progress);
-                        },
-                        onLeaveBack: () => {
-                            updatePosition(0, -15, 0)
-                        }
-                    },    
-                });
-                
+
                 const aboutUsContentTimeline = gsap.timeline({
                     scrollTrigger: {
                         trigger: '.aboutUs-section',
@@ -311,7 +287,6 @@
                     .to('.aboutUs-section-content-3-2', { opacity: 1, filter: 'blur(0px)', duration: 0.1 }, 0.6)
                     .to('.aboutUs-section-content-3-3', { opacity: 1, filter: 'blur(0px)', duration: 0.1 }, 0.7);
                 
-                // 單獨處理縮放動畫，因為它有不同的觸發點
                 gsap.to('.aboutUs-content-group', {
                     scrollTrigger: {
                         trigger: '.aboutUs-section',
@@ -325,6 +300,29 @@
                     // filter: 'blur(100px)',
                     ease: 'none'
                 });
+                
+                gsap.timeline({
+                    scrollTrigger: {
+                        trigger: '.works-section',
+                        start: 'top bottom',
+                        end: 'top top',
+                        scrub: 1.5,
+                        markers: false,
+                        onUpdate: (self) => {
+                            updatePosition(0, -1, 30, 0, 0, 0, self.progress);
+                        },
+                        onLeave: () => {
+                            growingFunction()
+                        },
+                        onEnterBack: () => {
+                            shrinkingFunction()
+                        },
+                        onLeaveBack: () => {
+                            updatePosition(0, -15, 0)
+                        }
+                    },    
+                });
+                
 
                 const itemCount = 15; // 元素總數
                 const totalDistance = 300; // 元素移動的總直線距離
@@ -399,6 +397,22 @@
                         duration: 1 // 相對持續時間
                     }, startPosition); // 與透明度動畫同時開始
                 }
+
+                gsap.timeline({
+                    scrollTrigger: {
+                        trigger: '.services-section',
+                        start: 'top top',
+                        end: '5% top',
+                        scrub: 1.5,
+                        markers: false,
+                        onUpdate: (self) => {
+                            updatePosition(0, -1, 30, 0, 0, 0, self.progress);
+                        },
+                        onLeaveBack: () => {
+                            updatePosition(0, -15, 0)
+                        }
+                    },    
+                });
             });
         }
     };
@@ -442,11 +456,10 @@
     
     // 處理資源載入完成事件
     const handleResourcesLoaded = () => {
+        if (splashRef.value) {
+            splashRef.value.updatePosition(0, 0, 10);
+        }
         loadComplete.value = true;
-        
-        // if (splashRef.value) {
-        //     splashRef.value.updatePosition(0, 0, 10);
-        // }
     }
     
     // 處理狀態變化
@@ -481,25 +494,25 @@
         setupScrollAnimations();
     
         // 創建自定義緩動
-        // const customEasing = CustomEase.create("custom", "M0,0 C0,0 0.015,1 1,1 ");
+        const customEasing = CustomEase.create("custom", "M0,0 C0,0 0.015,1 1,1 ");
         
-        // gsap.to({
-        //     x: 0,
-        //     y: 0,
-        //     z: 20
-        // }, {
-        //     x: 0,
-        //     y: 0,
-        //     z: 0,
-        //     duration: 1,
-        //     ease: customEasing, // 使用自定義緩動
-        //     onUpdate: function() {
-        //         // 動畫每一幀更新場景位置
-        //         if (splashRef.value) {
-        //             splashRef.value.updatePosition(this.targets()[0].x, this.targets()[0].y, this.targets()[0].z);
-        //         }
-        //     }
-        // });
+        gsap.to({
+            x: 0,
+            y: 0,
+            z: 10
+        }, {
+            x: 0,
+            y: 0,
+            z: 0,
+            duration: 1,
+            ease: customEasing, // 使用自定義緩動
+            onUpdate: function() {
+                // 動畫每一幀更新場景位置
+                if (splashRef.value) {
+                    splashRef.value.updatePosition(this.targets()[0].x, this.targets()[0].y, this.targets()[0].z);
+                }
+            }
+        });
         
         // 啟用頁面滾動
         document.body.style.overflow = 'auto';
