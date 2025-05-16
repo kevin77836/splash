@@ -147,10 +147,10 @@
         </div>
         <div v-if="isStarted" class="section works-section">
             <div class="works-content-container">
-                <a href="#" class="works-content-item works-content-item-15">
+                <a href="#" class="works-content-item works-content-item-15 column">
                     <img src="/works/works15.webp" alt="">
                 </a>
-                <a href="#" class="works-content-item works-content-item-14">
+                <a href="#" class="works-content-item works-content-item-14 column">
                     <img src="/works/works14.webp" alt="">
                 </a>
                 <a href="#" class="works-content-item works-content-item-13">
@@ -159,13 +159,13 @@
                 <a href="#" class="works-content-item works-content-item-12">
                     <img src="/works/works12.webp" alt="">
                 </a>
-                <a href="#" class="works-content-item works-content-item-11">
+                <a href="#" class="works-content-item works-content-item-11 column">
                     <img src="/works/works11.webp" alt="">
                 </a>
                 <a href="#" class="works-content-item works-content-item-10">
                     <img src="/works/works10.webp" alt="">
                 </a>
-                <a href="#" class="works-content-item works-content-item-9">
+                <a href="#" class="works-content-item works-content-item-9 column">
                     <img src="/works/works9.webp" alt="">
                 </a>
                 <a href="#" class="works-content-item works-content-item-8">
@@ -174,10 +174,10 @@
                 <a href="#" class="works-content-item works-content-item-7">
                     <img src="/works/works7.webp" alt="">
                 </a>
-                <a href="#" class="works-content-item works-content-item-6">
+                <a href="#" class="works-content-item works-content-item-6 column">
                     <img src="/works/works6.webp" alt="">
                 </a>
-                <a href="#" class="works-content-item works-content-item-5">
+                <a href="#" class="works-content-item works-content-item-5 column">
                     <img src="/works/works5.webp" alt="">
                 </a>
                 <a href="#" class="works-content-item works-content-item-4">
