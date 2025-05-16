@@ -321,7 +321,7 @@
                         markers: false,
                     },
                     opacity: 0,
-                    filter: 'blur(10px)',
+                    // filter: 'blur(10px)',
                     ease: 'none'
                 });
 
