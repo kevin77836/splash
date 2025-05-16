@@ -234,15 +234,15 @@ function createText(text, position, align, size = 0.5) {
 
   const mesh = new THREE.Mesh(geometry, material);
   const textWidth = geometry.boundingBox.max.x - geometry.boundingBox.min.x;
+  const textHeight = geometry.boundingBox.max.y - geometry.boundingBox.min.y;
   if(align === 'left'){
-    mesh.position.set(position.x - textWidth, position.y, position.z);
-    textOriginPosition1 = new THREE.Vector3(position.x - textWidth, position.y, position.z);
+    mesh.position.set(position.x - textWidth, position.y - textHeight / 4, position.z);
+    textOriginPosition1 = new THREE.Vector3(position.x - textWidth, position.y - textHeight / 4, position.z);
   }else if(align === 'right'){
-    mesh.position.set(position.x , position.y, position.z);
-    textOriginPosition2 = new THREE.Vector3(position.x , position.y, position.z);
+    mesh.position.set(position.x , position.y - textHeight / 4, position.z);
+    textOriginPosition2 = new THREE.Vector3(position.x , position.y - textHeight / 4, position.z);
   }
-  
-  // 提高文字的渲染優先順序，確保被正確渲染和折射
+
   mesh.renderOrder = 1;
   
   return mesh;
@@ -262,13 +262,17 @@ function animateTextToTargetPosition() {
   
   // 計算文字1的目標位置（考慮文字寬度）
   const text1Width = textMesh1.geometry.boundingBox.max.x - textMesh1.geometry.boundingBox.min.x;
+  const text1Height = textMesh1.geometry.boundingBox.max.y - textMesh1.geometry.boundingBox.min.y;
   const targetPos1 = textTargetPosition1.clone();
   targetPos1.x -= text1Width / 2;
+  targetPos1.y -= text1Height / 4;
   
   // 計算文字2的目標位置（考慮文字寬度）
   const text2Width = textMesh2.geometry.boundingBox.max.x - textMesh2.geometry.boundingBox.min.x;
+  const text2Height = textMesh2.geometry.boundingBox.max.y - textMesh2.geometry.boundingBox.min.y;
   const targetPos2 = textTargetPosition2.clone();
   targetPos2.x -= text2Width / 2;
+  targetPos2.y -= text2Height / 4;
   
   // 設置動畫參數
   const duration = animParams.growSpeed;

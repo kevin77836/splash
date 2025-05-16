@@ -113,8 +113,11 @@
             <div class="aboutUs-content-container">
                 <div class="aboutUs-content-group">
                     <div class="aboutUs-section-content aboutUs-section-content-1">
-                        <span class="aboutUs-section-content-1-1">Splash DigiLab</span>
-                        <span class="aboutUs-section-content-1-2">如水花迸濺的創意</span>
+                        <div class="section-content-1-group">
+                            <span class="aboutUs-section-content-1-1">Splash</span>
+                            <span class="aboutUs-section-content-1-2">DigiLab</span>
+                        </div>
+                        <span class="aboutUs-section-content-1-3">如水花迸濺的創意</span>
                     </div>
                     <div class="aboutUs-section-content aboutUs-section-content-2">
                         <span class="aboutUs-section-content-2-1">結合</span>
@@ -257,7 +260,7 @@
                         trigger: '.aboutUs-section',
                         start: 'top bottom',
                         end: 'center bottom',
-                        scrub: 2,
+                        scrub: 1.5,
                         markers: false,
                         onUpdate: (self) => {
                             updatePosition(0, 0, 0, 0, -15, 0, self.progress);
@@ -269,8 +272,8 @@
                     scrollTrigger: {
                         trigger: '.works-section',
                         start: 'top top',
-                        onEnter: () => startAutoPlay(),
-                        onLeaveBack: () => stopAutoPlay(),
+                        onEnter: () => growingFunction(),
+                        onLeaveBack: () => shrinkingFunction(),
                     },              
                 });
                 gsap.timeline({
@@ -301,11 +304,12 @@
                 aboutUsContentTimeline
                     .to('.aboutUs-section-content-1-1', { opacity: 1, filter: 'blur(0px)', duration: 0.1 }, 0)
                     .to('.aboutUs-section-content-1-2', { opacity: 1, filter: 'blur(0px)', duration: 0.1 }, 0.1)
-                    .to('.aboutUs-section-content-2-1', { opacity: 1, filter: 'blur(0px)', duration: 0.1 }, 0.2)
-                    .to('.aboutUs-section-content-2-2', { opacity: 1, filter: 'blur(0px)', duration: 0.1 }, 0.3)
-                    .to('.aboutUs-section-content-3-1', { opacity: 1, filter: 'blur(0px)', duration: 0.1 }, 0.4)
-                    .to('.aboutUs-section-content-3-2', { opacity: 1, filter: 'blur(0px)', duration: 0.1 }, 0.5)
-                    .to('.aboutUs-section-content-3-3', { opacity: 1, filter: 'blur(0px)', duration: 0.1 }, 0.6);
+                    .to('.aboutUs-section-content-1-3', { opacity: 1, filter: 'blur(0px)', duration: 0.1 }, 0.2)
+                    .to('.aboutUs-section-content-2-1', { opacity: 1, filter: 'blur(0px)', duration: 0.1 }, 0.3)
+                    .to('.aboutUs-section-content-2-2', { opacity: 1, filter: 'blur(0px)', duration: 0.1 }, 0.4)
+                    .to('.aboutUs-section-content-3-1', { opacity: 1, filter: 'blur(0px)', duration: 0.1 }, 0.5)
+                    .to('.aboutUs-section-content-3-2', { opacity: 1, filter: 'blur(0px)', duration: 0.1 }, 0.6)
+                    .to('.aboutUs-section-content-3-3', { opacity: 1, filter: 'blur(0px)', duration: 0.1 }, 0.7);
                 
                 // 單獨處理縮放動畫，因為它有不同的觸發點
                 gsap.to('.aboutUs-content-group', {
@@ -313,11 +317,11 @@
                         trigger: '.aboutUs-section',
                         start: '70% 80%',
                         end: 'bottom bottom',
-                        scrub: 0.5, // 更平滑的過渡
+                        scrub: 0,
                         markers: false,
                     },
-                    // transform: 'scale(50)',
                     opacity: 0,
+                    filter: 'blur(10px)',
                     ease: 'none'
                 });
 
