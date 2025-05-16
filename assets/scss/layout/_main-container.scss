@@ -83,8 +83,8 @@
                 // transform: translate3d(0,0,calc(var(--transform-z, 0) * 1px));
                 @include max-md{
                     gap: 2rem;
-                    align-items: flex-start;
-                    padding: 0 1rem;
+                    // align-items: flex-start;
+                    // padding: 0 1rem;
                 }
                 .aboutUs-section-content{
                     display: flex;
