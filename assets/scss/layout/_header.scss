@@ -2,7 +2,8 @@
     position: fixed;
     top: 4rem;
     transition-duration: 1s;
-    transition-timing-function: cubic-bezier(0,0,.015,1);
+    // transition-timing-function: cubic-bezier(0,0,.015,1);
+    transition-timing-function: ease;
     opacity: 0;
     width: calc(100% - 60%);
     left: 30%;
