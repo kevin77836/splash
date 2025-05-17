@@ -11,7 +11,7 @@ import { EXRLoader } from 'three/examples/jsm/loaders/EXRLoader.js';
 import { FontLoader } from 'three/examples/jsm/loaders/FontLoader.js';
 import { TTFLoader } from 'three/examples/jsm/loaders/TTFLoader.js';
 import gsap from 'gsap';
-import Stats from 'stats.js';
+// import Stats from 'stats.js';
 
 // 父組件事件
 const emit = defineEmits([
@@ -135,7 +135,7 @@ let textOriginPosition2 = null; // 儲存文字2的原點位置
 // 3. 材質和環境設定
 // =========================================
 
-let stats = null;
+// let stats = null;
 const fps = 60;
 const singleFrameTime = (1 / fps);
 let timestamp = 0;
@@ -840,11 +840,11 @@ function initializeScene() {
   // 載入字體並創建文字
   loadFontAndCreateText();
 
-  stats = new Stats();
-  stats.showPanel(0);               // 0: fps, 1: ms, 2: mb, 3+: custom
-  stats.dom.style.position = 'fixed';
-  stats.dom.style.top = '0px';
-  document.body.appendChild(stats.dom);
+  // stats = new Stats();
+  // stats.showPanel(0);               // 0: fps, 1: ms, 2: mb, 3+: custom
+  // stats.dom.style.position = 'fixed';
+  // stats.dom.style.top = '0px';
+  // document.body.appendChild(stats.dom);
 
   // const textureLoader = new THREE.TextureLoader();
   // textureLoader.setPath('/works/');
