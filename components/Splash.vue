@@ -690,7 +690,7 @@ function updateSpheres() {
  * 動畫主循環
  */
 function animate() {
-  stats.begin();
+  // stats.begin();
   animationFrameId = requestAnimationFrame(animate);
 
   const delta = clock.getDelta();
@@ -736,7 +736,7 @@ function animate() {
   scene.position.y = targetScrollOffsetY;
   scene.position.z = targetScrollOffsetZ;
   
-  stats.end();     
+  // stats.end();     
   // 渲染場景
   renderer.render(scene, camera);
   
