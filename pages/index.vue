@@ -147,10 +147,10 @@
         </div>
         <div v-if="isStarted" class="section works-section">
             <div class="works-content-container">
-                <a href="#" class="works-content-item works-content-item-15 column">
+                <a href="#" class="works-content-item works-content-item-15">
                     <img src="/works/works15.webp" alt="">
                 </a>
-                <a href="#" class="works-content-item works-content-item-14 column">
+                <a href="#" class="works-content-item works-content-item-14">
                     <img src="/works/works14.webp" alt="">
                 </a>
                 <a href="#" class="works-content-item works-content-item-13">
@@ -159,13 +159,13 @@
                 <a href="#" class="works-content-item works-content-item-12">
                     <img src="/works/works12.webp" alt="">
                 </a>
-                <a href="#" class="works-content-item works-content-item-11 column">
+                <a href="#" class="works-content-item works-content-item-11">
                     <img src="/works/works11.webp" alt="">
                 </a>
                 <a href="#" class="works-content-item works-content-item-10">
                     <img src="/works/works10.webp" alt="">
                 </a>
-                <a href="#" class="works-content-item works-content-item-9 column">
+                <a href="#" class="works-content-item works-content-item-9">
                     <img src="/works/works9.webp" alt="">
                 </a>
                 <a href="#" class="works-content-item works-content-item-8">
@@ -174,10 +174,10 @@
                 <a href="#" class="works-content-item works-content-item-7">
                     <img src="/works/works7.webp" alt="">
                 </a>
-                <a href="#" class="works-content-item works-content-item-6 column">
+                <a href="#" class="works-content-item works-content-item-6">
                     <img src="/works/works6.webp" alt="">
                 </a>
-                <a href="#" class="works-content-item works-content-item-5 column">
+                <a href="#" class="works-content-item works-content-item-5">
                     <img src="/works/works5.webp" alt="">
                 </a>
                 <a href="#" class="works-content-item works-content-item-4">
@@ -195,6 +195,68 @@
             </div> 
         </div>
         <div v-if="isStarted" class="section services-section">
+            <div class="services-content-container">
+                <div class="services-content title-content">
+                    <h2 class="services-title">Services</h2>
+                    <div class="services-description">
+                        介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹
+                    </div>
+                </div>
+                <div class="services-content services-content-1">
+                    <h2 class="services-title">XR策展</h2>
+                    <div class="services-description">
+                        介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹
+                    </div>
+                </div>
+                <div class="services-content services-content-2">
+                    <h2 class="services-title">互動設計</h2>
+                    <div class="services-description">
+                        介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹
+                    </div>
+                </div>
+                <div class="services-content services-content-3">
+                    <h2 class="services-title">數位藝術</h2>
+                    <div class="services-description">
+                        介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹
+                    </div>
+                </div>
+                <div class="services-content services-content-4">
+                    <h2 class="services-title">網頁開發</h2>
+                    <div class="services-description">
+                        介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹
+                    </div>
+                </div>
+                <div class="services-content services-content-5">
+                    <h2 class="services-title">AR/VR</h2>
+                    <div class="services-description">
+                        介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹
+                    </div>
+                </div>
+                <div class="services-content services-content-6">
+                    <h2 class="services-title">UI/UX</h2>
+                    <div class="services-description">
+                        介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹
+                    </div>
+                </div>
+                <div class="services-content services-content-7">
+                    <h2 class="services-title">2D/3D動畫</h2>
+                    <div class="services-description">
+                        介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹
+                    </div>
+                </div>
+                <div class="services-content services-content-8">
+                    <h2 class="services-title">平面設計</h2>
+                    <div class="services-description">
+                        介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹
+                    </div>
+                </div>
+                <div class="services-content services-content-9">
+                    <h2 class="services-title">CIS</h2>
+                    <div class="services-description">
+                        介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹
+                    </div>
+                </div>
+            </div>
         </div>
         <div v-if="isStarted" class="section contactUs-section">
         </div>
@@ -259,7 +321,7 @@
                         trigger: '.aboutUs-section',
                         start: 'top bottom',
                         end: 'center bottom',
-                        scrub: 1.5,
+                        scrub: true,
                         markers: false,
                         onUpdate: (self) => {
                             updatePosition(0, 0, 0, 0, -15, 0, self.progress);
@@ -273,7 +335,7 @@
                         trigger: '.aboutUs-section',
                         start: '5% 80%',
                         end: '65% 70%',
-                        scrub: 1.5,
+                        scrub: true,
                         markers: false
                     }
                 });
@@ -292,7 +354,7 @@
                         trigger: '.aboutUs-section',
                         start: '70% 80%',
                         end: 'bottom bottom',
-                        scrub: 0,
+                        scrub: true,
                         markers: false,
                     },
                     opacity: 0,
@@ -306,10 +368,10 @@
                         trigger: '.works-section',
                         start: 'top bottom',
                         end: 'top top',
-                        scrub: 1.5,
+                        scrub: true,
                         markers: false,
                         onUpdate: (self) => {
-                            updatePosition(0, -1, 30, 0, 0, 0, self.progress);
+                            updatePosition(0, -1, 30, 0, 0, -20, self.progress);
                         },
                         onLeave: () => {
                             growingFunction()
@@ -323,15 +385,27 @@
                     },    
                 });
                 
-
                 const itemCount = 15; // 元素總數
-                const totalDistance = 300; // 元素移動的總直線距離
+                const totalDistance = 600; // 元素移動的總直線距離
                 const zDistance = 6000; // Z軸最大移動距離
                 const baseStartPercent = 0; // 起始滾動百分比
                 const opacityDuration = 2; // 每個元素透明度動畫的滾動百分比
-                const moveDuration = 25; // 每個元素位移動畫的滾動百分比
+                const moveDuration = 30; // 每個元素位移動畫的滾動百分比
                 const delayBetweenItems = 5; // 元素之間的延遲百分比
                 
+                const worksTimeline = gsap.timeline({
+                    scrollTrigger: {
+                        trigger: '.works-section',
+                        start: '0% top', // 從頁面頂部開始
+                        end: `${baseStartPercent + (itemCount-1) * delayBetweenItems + moveDuration}% bottom`, // 動態計算結束點
+                        scrub: true, // 平滑的滾動效果
+                        markers: false,
+                        onUpdate: (self) => {
+                            updatePosition(0, 0, -15, 0, 0, 15, self.progress);
+                        },
+                    }
+                });
+
                 // 使用種子算法生成固定的隨機角度集合
                 // 這確保每次頁面加載時元素方向一致
                 const generateRandomAngles = (count) => {
@@ -347,18 +421,6 @@
                 
                 // 預先生成所有角度
                 const randomAngles = generateRandomAngles(itemCount);
-                
-                // 建立單一時間軸來管理所有作品項目的動畫
-                // 這樣可以在一個 ScrollTrigger 中處理所有動畫
-                const worksTimeline = gsap.timeline({
-                    scrollTrigger: {
-                        trigger: '.works-section',
-                        start: '0% top', // 從頁面頂部開始
-                        end: `${baseStartPercent + (itemCount-1) * delayBetweenItems + moveDuration}% center`, // 動態計算結束點
-                        scrub: 1.5, // 平滑的滾動效果
-                        markers: false,
-                    }
-                });
                 
                 // 為每個作品項目添加動畫
                 for (let i = 1; i <= itemCount; i++) {
@@ -393,26 +455,116 @@
                         '--transform-x': x, // CSS變量控制X軸位置
                         '--transform-y': y, // CSS變量控制Y軸位置
                         '--transform-z': zDistance, // CSS變量控制Z軸位置
-                        ease: 'power2.in', // 使用power2.in緩動函數
+                        ease: 'power1.in', // 使用power2.in緩動函數
                         duration: 1 // 相對持續時間
                     }, startPosition); // 與透明度動畫同時開始
                 }
 
                 gsap.timeline({
                     scrollTrigger: {
-                        trigger: '.services-section',
-                        start: 'top top',
-                        end: '5% top',
-                        scrub: 1.5,
+                        trigger: '.title-content',
+                        start: 'top bottom',
+                        end: '80% bottom',
+                        scrub: true,
                         markers: false,
-                        onUpdate: (self) => {
-                            updatePosition(0, -1, 30, 0, 0, 0, self.progress);
+                        onEnter: () => {
+                            shrinkingFunction()
+                        },
+                        onLeave: () => {
+                            changeMaterialType('wireframe');
+                            growingFunction()
+                        },
+                        onEnterBack: () => {
+                            changeMaterialType('water');
+                            shrinkingFunction()
                         },
                         onLeaveBack: () => {
-                            updatePosition(0, -15, 0)
-                        }
-                    },    
+                            growingFunction()
+                        },
+                        onUpdate: (self) => {
+                            console.log('width',width)
+                            if(width.value > 768){
+                                updatePosition(0, 0, 15, -10, 0, 0, self.progress);
+                            }else{
+                                updatePosition(0, 0, 15, 0, -3, 0, self.progress);
+                            }
+                        },
+                    },   
                 });
+
+                const servicesItemCount = 9;
+                for (let i = 1; i <= servicesItemCount; i++) {
+                    gsap.timeline({
+                        scrollTrigger: {
+                            trigger: `.services-content-${i}`,
+                            start: 'top 80%',
+                            end: '80% bottom',
+                            scrub: true,
+                            markers: false,
+                            onEnter: () => {
+                                shrinkingFunction()
+                            },
+                            onLeave: () => {
+                                growingFunction()
+                                if(i === 1){
+                                    changeMaterialType('metallic');
+                                }else if(i === 2){
+                                    changeMaterialType('matte');
+                                }else if(i === 3){
+                                    changeMaterialType('wireframe');
+                                }else if(i === 4){
+                                    changeMaterialType('neon');
+                                }else if(i === 5){
+                                    changeMaterialType('noise');
+                                }else if(i === 6){
+                                    changeMaterialType('circuit');
+                                }else if(i === 7){
+                                    changeMaterialType('marble');
+                                }else if(i === 8){
+                                    changeMaterialType('galaxy');
+                                }else if(i === 9){
+                                    changeMaterialType('animated_waves');
+                                }
+                            },
+                            onEnterBack: () => {
+                                shrinkingFunction()
+                            },
+                            onLeaveBack: () => {
+                                growingFunction()
+                                if(i === 1){
+                                    changeMaterialType('wireframe');
+                                }else if(i === 2){
+                                    changeMaterialType('metallic');
+                                }else if(i === 3){
+                                    changeMaterialType('matte');
+                                }else if(i === 4){
+                                    changeMaterialType('wireframe');
+                                }else if(i === 5){
+                                    changeMaterialType('neon');
+                                }else if(i === 6){
+                                    changeMaterialType('noise');
+                                }else if(i === 7){
+                                    changeMaterialType('circuit');
+                                }else if(i === 8){
+                                    changeMaterialType('marble');
+                                }else if(i === 9){
+                                    changeMaterialType('galaxy');
+                                }
+                            },
+                            onUpdate: (self) => {
+                                if(width.value > 768){
+                                    if(i % 2 === 0){
+                                        updatePosition(10, 0, 0, -10, 0, 0, self.progress);
+                                    }else{
+                                        updatePosition(-10, 0, 0, 10, 0, 0, self.progress);
+                                    }
+                                }else{
+                                    splashRef.value.updatePosition(0, -3, 0);
+                                }
+                            },
+                        },   
+                    });
+                }
             });
         }
     };
@@ -451,6 +603,12 @@
     const animateTextToOrigin = () => {
         if (splashRef.value) {
             splashRef.value.animateTextToOrigin();
+        }
+    }
+
+    const changeMaterialType = (materialType) => {
+        if (splashRef.value) {
+            splashRef.value.changeMaterialType(materialType);
         }
     }
     
