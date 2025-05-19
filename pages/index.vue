@@ -113,11 +113,13 @@
             <div class="aboutUs-content-container">
                 <div class="aboutUs-content-group">
                     <div class="aboutUs-section-content aboutUs-section-content-1">
-                        <div class="section-content-1-group">
+                        <!-- <div class="section-content-1-group">
                             <span class="aboutUs-section-content-1-1">Splash</span>
                             <span class="aboutUs-section-content-1-2">DigiLab</span>
-                        </div>
-                        <span class="aboutUs-section-content-1-3">如水花迸濺的創意</span>
+                        </div> -->
+                        <span class="aboutUs-section-content-1-1">迸濺般</span>
+                        <hr class="aboutUs-section-hr-1" color="black" size="1">
+                        <span class="aboutUs-section-content-1-2">的創意</span>
                     </div>
                     <div class="aboutUs-section-content aboutUs-section-content-2">
                         <span class="aboutUs-section-content-2-1">結合</span>
@@ -293,7 +295,7 @@
     const isMenuOpen = ref(false);
     const isLandingPage = ref(true);
     let autoPlayTimer = null;
-
+    
     // 設置 ScrollTrigger 動畫
     const setupScrollAnimations = () => {
         // 確保所有區塊已經渲染
@@ -341,14 +343,13 @@
                 });
                 aboutUsContentTimeline
                     .to('.aboutUs-section-content-1-1', { opacity: 1, filter: 'blur(0px)', duration: 0.1 }, 0)
-                    .to('.aboutUs-section-content-1-2', { opacity: 1, filter: 'blur(0px)', duration: 0.1 }, 0.1)
-                    .to('.aboutUs-section-content-1-3', { opacity: 1, filter: 'blur(0px)', duration: 0.1 }, 0.2)
+                    .to('.aboutUs-section-hr-1', { width: '100%', duration: 0.1 }, 0.1)
+                    .to('.aboutUs-section-content-1-2', { opacity: 1, filter: 'blur(0px)', duration: 0.1 }, 0.2)
                     .to('.aboutUs-section-content-2-1', { opacity: 1, filter: 'blur(0px)', duration: 0.1 }, 0.3)
-                    .to('.aboutUs-section-content-2-2', { opacity: 1, filter: 'blur(0px)', duration: 0.1 }, 0.4)
+                    .to('.aboutUs-section-content-2-2', { width: '100%', duration: 0.1 }, 0.4)
                     .to('.aboutUs-section-content-3-1', { opacity: 1, filter: 'blur(0px)', duration: 0.1 }, 0.5)
                     .to('.aboutUs-section-content-3-2', { opacity: 1, filter: 'blur(0px)', duration: 0.1 }, 0.6)
                     .to('.aboutUs-section-content-3-3', { opacity: 1, filter: 'blur(0px)', duration: 0.1 }, 0.7);
-                
                 gsap.to('.aboutUs-content-group', {
                     scrollTrigger: {
                         trigger: '.aboutUs-section',
@@ -357,9 +358,18 @@
                         scrub: true,
                         markers: false,
                     },
-                    opacity: 0,
                     transform: 'scale(5)',
-                    // filter: 'blur(100px)',
+                    ease: 'none'
+                });
+                gsap.to('.aboutUs-section', {
+                    scrollTrigger: {
+                        trigger: '.aboutUs-section',
+                        start: '70% 80%',
+                        end: 'bottom bottom',
+                        scrub: true,
+                        markers: false,
+                    },
+                    opacity: 0,
                     ease: 'none'
                 });
                 
@@ -511,19 +521,19 @@
                                 }else if(i === 2){
                                     changeMaterialType('matte');
                                 }else if(i === 3){
-                                    changeMaterialType('wireframe');
+                                    changeMaterialType('gold');
                                 }else if(i === 4){
                                     changeMaterialType('neon');
                                 }else if(i === 5){
-                                    changeMaterialType('noise');
+                                    changeMaterialType('ice');
                                 }else if(i === 6){
-                                    changeMaterialType('circuit');
+                                    changeMaterialType('holographic');
                                 }else if(i === 7){
-                                    changeMaterialType('marble');
+                                    changeMaterialType('cloud');
                                 }else if(i === 8){
-                                    changeMaterialType('galaxy');
+                                    changeMaterialType('chameleon');
                                 }else if(i === 9){
-                                    changeMaterialType('animated_waves');
+                                    changeMaterialType('galaxy');
                                 }
                             },
                             onEnterBack: () => {
@@ -538,17 +548,17 @@
                                 }else if(i === 3){
                                     changeMaterialType('matte');
                                 }else if(i === 4){
-                                    changeMaterialType('wireframe');
+                                    changeMaterialType('gold');
                                 }else if(i === 5){
                                     changeMaterialType('neon');
                                 }else if(i === 6){
-                                    changeMaterialType('noise');
+                                    changeMaterialType('ice');
                                 }else if(i === 7){
-                                    changeMaterialType('circuit');
+                                    changeMaterialType('holographic');
                                 }else if(i === 8){
-                                    changeMaterialType('marble');
+                                    changeMaterialType('cloud');
                                 }else if(i === 9){
-                                    changeMaterialType('galaxy');
+                                    changeMaterialType('chameleon');
                                 }
                             },
                             onUpdate: (self) => {
@@ -584,13 +594,13 @@
     // 基本動畫控制函數
     const growingFunction = () => {
         if (splashRef.value) {
-            splashRef.value.startGrowingAnimation();
+        splashRef.value.startGrowingAnimation();
         }
     }
     
     const shrinkingFunction = () => {
         if (splashRef.value) {
-            splashRef.value.startShrinkingAnimation();
+        splashRef.value.startShrinkingAnimation();
         }
     }
 
@@ -630,14 +640,14 @@
         if (!isAutoPlaying.value) return;
         
         if (animationType === 'growing') {
-            // 生長動畫完成，等待1秒後開始收縮
-            autoPlayTimer = setTimeout(() => {
-                shrinkingFunction();
+        // 生長動畫完成，等待1秒後開始收縮
+        autoPlayTimer = setTimeout(() => {
+            shrinkingFunction();
             }, 0);
         } else if (animationType === 'shrinking') {
             // 收縮動畫完成，等待2秒後開始生長
-            autoPlayTimer = setTimeout(() => {
-                growingFunction();
+        autoPlayTimer = setTimeout(() => {
+            growingFunction();
             }, 1000);
         }
     }
@@ -691,8 +701,8 @@
         
         // 清除任何待執行的定時器
         if (autoPlayTimer) {
-            clearTimeout(autoPlayTimer);
-            autoPlayTimer = null;
+        clearTimeout(autoPlayTimer);
+        autoPlayTimer = null;
         }
         
         // 執行收合動畫，使其回到起點
@@ -759,7 +769,7 @@
     // 組件卸載時清理
     onUnmounted(() => {
         if (autoPlayTimer) {
-            clearTimeout(autoPlayTimer);
+        clearTimeout(autoPlayTimer);
         }
         if (serviceMarqueeInterval) {
             clearInterval(serviceMarqueeInterval);

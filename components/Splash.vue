@@ -36,7 +36,6 @@ const ttParams = reactive({
   shrinkPower: 0.25,     // 粗到細線條：粗細變化曲線指數
   numLines: 4            // 粗到細線條：數量
 });
-
 const thParams = reactive({
   startStrength: 0.01,   // 細到粗線條：起始端粗度
   endStrength: 0.1,      // 細到粗線條：末端粗度
@@ -114,7 +113,6 @@ let lineFlowState = [];       // 每條線的流動狀態
 
 // --- 球體特效 ---
 let spheres = [];             // 儲存所有射出的球體
-let sphereMaterial = null;    // 共用球體材質
 
 // --- 流動控制狀態 ---
 let shrinkStartTime = null;   // 收合開始時間
@@ -144,11 +142,12 @@ const materialTypes = {
   MATTE: 'matte',          // 霧面材質
   WIREFRAME: 'wireframe',  // 線框材質
   NEON: 'neon',            // 霓虹材質
-  NOISE: 'noise',          // 噪點材質
-  CIRCUIT: 'circuit',      // 電路板材質
-  MARBLE: 'marble',        // 大理石材質
   GALAXY: 'galaxy',        // 星系材質
-  ANIMATED_WAVES: 'animated_waves'  // 動態波浪材質
+  GOLD: 'gold',            // 金屬材質
+  ICE: 'ice',            // 冰晶材質
+  HOLOGRAPHIC: 'holographic',  // 全息圖材質
+  CLOUD: 'cloud',            // 雲彩材質
+  CHAMELEON: 'chameleon',    // 變色龍材質
 };
 
 // 當前材質類型
@@ -169,14 +168,12 @@ function generateWaterMaterial() {
   });
 }
 function generateMetallicMaterial() {
-  return new THREE.MeshPhysicalMaterial({
-    metalness: 0.95,
-    roughness: 0.05,
-    transparent: false,
-    reflectivity: 1.0,
-    envMapIntensity: 1.5,
-    color: 0x888888,
-    side: THREE.DoubleSide,
+  return new THREE.MeshStandardMaterial({
+    color:0xffffff,
+    metalness:1.0,
+    roughness:0.05,
+    envMapIntensity:2.0,
+    side:THREE.DoubleSide
   });
 }
 function generateMatteMaterial() {
@@ -192,8 +189,10 @@ function generateMatteMaterial() {
 }
 function generateWireFrameMaterial(){
   return new THREE.MeshBasicMaterial({
-    color: 0xe0e0ff,
-    wireframe: true
+    color:0xffffff,
+    transparent:true,
+    opacity:0.2,
+    wireframe:true
   });
 }
 function generateNeonMaterial() {
@@ -242,399 +241,48 @@ function generateNeonMaterial() {
     transparent: true
   });
 }
-function generateNoiseMaterial() {
-  // 創建噪點紋理
-  const size = 512;
-  const canvas = document.createElement('canvas');
-  canvas.width = size;
-  canvas.height = size;
-  const context = canvas.getContext('2d');
-  
-  // 填充灰色背景
-  context.fillStyle = '#444444';
-  context.fillRect(0, 0, size, size);
-  
-  // 生成噪點
-  const imageData = context.getImageData(0, 0, size, size);
-  const data = imageData.data;
-  
-  for (let i = 0; i < data.length; i += 4) {
-    // 添加隨機噪點
-    const noise = Math.random() * 50 - 25;
-    
-    // 修改RGB通道
-    data[i] = Math.max(0, Math.min(255, data[i] + noise));     // R
-    data[i + 1] = Math.max(0, Math.min(255, data[i + 1] + noise)); // G
-    data[i + 2] = Math.max(0, Math.min(255, data[i + 2] + noise)); // B
-  }
-  
-  // 更新canvas
-  context.putImageData(imageData, 0, 0);
-  
-  // 創建紋理
-  const texture = new THREE.CanvasTexture(canvas);
-  texture.wrapS = THREE.RepeatWrapping;
-  texture.wrapT = THREE.RepeatWrapping;
-  texture.repeat.set(4, 4);
-  
-  // 創建材質
-  return new THREE.MeshStandardMaterial({
-    map: texture,
-    roughness: 0.8,
-    metalness: 0.2,
-    bumpMap: texture,
-    bumpScale: 0.05,
-    side: THREE.DoubleSide,
-  });
-}
-function generateCircuitMaterial() {
-  // 創建電路板紋理
-  const size = 1024;
-  const canvas = document.createElement('canvas');
-  canvas.width = size;
-  canvas.height = size;
-  const context = canvas.getContext('2d');
-  
-  // 填充深色背景
-  context.fillStyle = '#0a1a2a';
-  context.fillRect(0, 0, size, size);
-  
-  // 繪製電路線
-  context.strokeStyle = '#00ff88';
-  context.lineWidth = 2;
-  
-  // 生成隨機電路路徑
-  const paths = 40;
-  for (let i = 0; i < paths; i++) {
-    let x = Math.random() * size;
-    let y = Math.random() * size;
-    
-    context.beginPath();
-    context.moveTo(x, y);
-    
-    // 每條路徑生成多個連接點
-    const segments = 5 + Math.floor(Math.random() * 10);
-    for (let j = 0; j < segments; j++) {
-      // 90度轉角
-      if (Math.random() > 0.5) {
-        x += (Math.random() - 0.5) * 200;
-        context.lineTo(x, y);
-      } else {
-        y += (Math.random() - 0.5) * 200;
-        context.lineTo(x, y);
-      }
-    }
-    
-    context.stroke();
-    
-    // 在某些端點添加節點
-    if (Math.random() > 0.7) {
-      context.fillStyle = '#00ff88';
-      context.beginPath();
-      context.arc(x, y, 3 + Math.random() * 5, 0, Math.PI * 2);
-      context.fill();
-    }
-  }
-  
-  // 添加一些發光點
-  for (let i = 0; i < 100; i++) {
-    const x = Math.random() * size;
-    const y = Math.random() * size;
-    
-    // 創建漸變發光效果
-    const gradient = context.createRadialGradient(
-      x, y, 0,
-      x, y, 5 + Math.random() * 10
-    );
-    
-    gradient.addColorStop(0, 'rgba(0, 255, 136, 0.8)');
-    gradient.addColorStop(1, 'rgba(0, 255, 136, 0)');
-    
-    context.fillStyle = gradient;
-    context.beginPath();
-    context.arc(x, y, 10, 0, Math.PI * 2);
-    context.fill();
-  }
-  
-  // 創建紋理
-  const texture = new THREE.CanvasTexture(canvas);
-  
-  // 創建發光材質
-  return new THREE.MeshStandardMaterial({
-    map: texture,
-    emissive: new THREE.Color(0x00ff88),
-    emissiveMap: texture,
-    emissiveIntensity: 0.5,
-    roughness: 0.7,
-    metalness: 0.3,
-    side: THREE.DoubleSide,
-  });
-}
-function generateMarbleMaterial() {
-  // 創建大理石紋理
-  const size = 1024;
-  const canvas = document.createElement('canvas');
-  canvas.width = size;
-  canvas.height = size;
-  const context = canvas.getContext('2d');
-  
-  // 填充白色底色
-  context.fillStyle = '#f5f5f5';
-  context.fillRect(0, 0, size, size);
-  
-  // 添加大理石紋理
-  for (let layer = 0; layer < 5; layer++) {
-    // 生成大理石紋層
-    const veins = 3 + Math.floor(Math.random() * 5);
-    
-    for (let i = 0; i < veins; i++) {
-      // 選擇紋理顏色 - 淺灰到深灰
-      context.strokeStyle = `rgba(60, 60, 60, ${0.1 + Math.random() * 0.2})`;
-      context.lineWidth = 1 + Math.random() * 3;
-      
-      // 起點
-      let x = Math.random() * size;
-      let y = Math.random() * size;
-      
-      context.beginPath();
-      context.moveTo(x, y);
-      
-      // 生成彎曲路徑
-      const points = 5 + Math.floor(Math.random() * 10);
-      for (let j = 0; j < points; j++) {
-        // 控制點
-        const cp1x = x + (Math.random() - 0.5) * 300;
-        const cp1y = y + (Math.random() - 0.5) * 300;
-        const cp2x = x + (Math.random() - 0.5) * 300;
-        const cp2y = y + (Math.random() - 0.5) * 300;
-        
-        // 下一個點
-        x = x + (Math.random() - 0.5) * 300;
-        y = y + (Math.random() - 0.5) * 300;
-        
-        // 貝塞爾曲線
-        context.bezierCurveTo(cp1x, cp1y, cp2x, cp2y, x, y);
-      }
-      
-      context.stroke();
-    }
-  }
-  
-  // 添加一些金色斑點
-  context.fillStyle = 'rgba(212, 175, 55, 0.1)';
-  for (let i = 0; i < 50; i++) {
-    const x = Math.random() * size;
-    const y = Math.random() * size;
-    const radius = 1 + Math.random() * 3;
-    
-    context.beginPath();
-    context.arc(x, y, radius, 0, Math.PI * 2);
-    context.fill();
-  }
-  
-  // 創建紋理
-  const texture = new THREE.CanvasTexture(canvas);
-  
-  // 創建材質
+function generateGoldMaterial() {
   return new THREE.MeshPhysicalMaterial({
-    map: texture,
-    roughness: 0.1,
-    metalness: 0.2,
-    clearcoat: 0.8,
-    clearcoatRoughness: 0.2,
-    side: THREE.DoubleSide,
-    envMapIntensity: 1.5,
-    flatShading: false
-  });
-}
-function generateGalaxyMaterial() {
-  // 創建星系紋理
-  const size = 1024;
-  const canvas = document.createElement('canvas');
-  canvas.width = size;
-  canvas.height = size;
-  const context = canvas.getContext('2d');
-  
-  // 填充深空背景
-  context.fillStyle = '#000000';
-  context.fillRect(0, 0, size, size);
-  
-  // 創建星系漩渦中心漸變
-  const centerX = size / 2;
-  const centerY = size / 2;
-  
-  const gradient = context.createRadialGradient(
-    centerX, centerY, 0,
-    centerX, centerY, size * 0.4
-  );
-  
-  gradient.addColorStop(0, 'rgba(120, 0, 255, 0.5)');
-  gradient.addColorStop(0.5, 'rgba(0, 50, 120, 0.2)');
-  gradient.addColorStop(1, 'rgba(0, 0, 0, 0)');
-  
-  context.fillStyle = gradient;
-  context.beginPath();
-  context.arc(centerX, centerY, size * 0.5, 0, Math.PI * 2);
-  context.fill();
-  
-  // 繪製星系旋臂
-  const arms = 3;
-  const rotation = Math.random() * Math.PI * 2;
-  
-  for (let arm = 0; arm < arms; arm++) {
-    const armAngle = (arm / arms) * Math.PI * 2 + rotation;
-    
-    // 每條旋臂添加500顆星星
-    for (let i = 0; i < 500; i++) {
-      // 距離中心的距離
-      const distance = Math.pow(Math.random(), 0.5) * size * 0.45;
-      
-      // 旋臂彎曲角度
-      const curve = distance * 0.006;
-      const angle = armAngle + curve;
-      
-      // 星星位置
-      const x = centerX + Math.cos(angle) * distance + (Math.random() - 0.5) * distance * 0.3;
-      const y = centerY + Math.sin(angle) * distance + (Math.random() - 0.5) * distance * 0.3;
-      
-      // 星星大小和亮度
-      const radius = Math.random() * 2 + 0.5;
-      const brightness = Math.random() * 0.8 + 0.2;
-      
-      // 選擇星星顏色
-      let starColor;
-      const colorRandom = Math.random();
-      if (colorRandom < 0.6) {
-        // 藍白色星星
-        starColor = `rgba(180, 200, 255, ${brightness})`;
-      } else if (colorRandom < 0.8) {
-        // 橙色星星
-        starColor = `rgba(255, 180, 100, ${brightness})`;
-      } else {
-        // 紫色星星
-        starColor = `rgba(200, 100, 255, ${brightness})`;
-      }
-      
-      // 繪製星星
-      context.fillStyle = starColor;
-      context.beginPath();
-      context.arc(x, y, radius, 0, Math.PI * 2);
-      context.fill();
-      
-      // 添加星星光暈
-      if (radius > 1.5) {
-        const glow = context.createRadialGradient(
-          x, y, 0,
-          x, y, radius * 3
-        );
-        glow.addColorStop(0, starColor);
-        glow.addColorStop(1, 'rgba(0, 0, 0, 0)');
-        
-        context.fillStyle = glow;
-        context.beginPath();
-        context.arc(x, y, radius * 3, 0, Math.PI * 2);
-        context.fill();
-      }
-    }
-  }
-  
-  // 添加背景星星
-  for (let i = 0; i < 1000; i++) {
-    const x = Math.random() * size;
-    const y = Math.random() * size;
-    const radius = Math.random() * 1.2;
-    
-    // 隨機星星亮度
-    const brightness = Math.random() * 0.8 + 0.2;
-    context.fillStyle = `rgba(255, 255, 255, ${brightness})`;
-    
-    context.beginPath();
-    context.arc(x, y, radius, 0, Math.PI * 2);
-    context.fill();
-  }
-  
-  // 創建紋理
-  const texture = new THREE.CanvasTexture(canvas);
-  
-  // 創建材質
-  return new THREE.MeshStandardMaterial({
-    map: texture,
-    emissive: new THREE.Color(0x3333ff),
-    emissiveMap: texture,
-    emissiveIntensity: 0.8,
-    roughness: 1.0,
-    metalness: 0.0,
-    side: THREE.DoubleSide,
-  });
-}
-function generateAnimatedWavesMaterial() {
-  // 使用著色器材質創建動態波浪效果
-  const vertexShader = `
-  varying vec2 vUv;
-  varying vec3 vPosition;
-  varying vec3 vNormal;
-  
-  void main() {
-    vUv = uv;
-    vPosition = position;
-    vNormal = normal;
-    gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
-  }
-  `;
-  
-  const fragmentShader = `
-  uniform float time;
-  uniform vec3 baseColor;
-  uniform vec3 waveColor;
-  
-  varying vec2 vUv;
-  varying vec3 vPosition;
-  varying vec3 vNormal;
-  
-  // 簡單的柏林噪聲函數
-  float noise(vec2 p) {
-    return sin(p.x * 10.0) * sin(p.y * 10.0);
-  }
-  
-  void main() {
-    // 創建多層次波浪
-    float wave1 = sin(vUv.x * 10.0 + time) * sin(vUv.y * 10.0 + time * 0.7) * 0.5 + 0.5;
-    float wave2 = sin(vUv.x * 20.0 - time * 0.5) * sin(vUv.y * 20.0 + time * 0.3) * 0.5 + 0.5;
-    
-    // 添加一些柏林噪聲
-    float noiseValue = noise(vUv * 5.0 + time * 0.1) * 0.5 + 0.5;
-    
-    // 合併波浪
-    float waves = wave1 * 0.6 + wave2 * 0.3 + noiseValue * 0.1;
-    
-    // 計算光照效果
-    float lighting = dot(normalize(vNormal), normalize(vec3(1.0, 1.0, 1.0)));
-    lighting = lighting * 0.5 + 0.5; // 轉換到 0-1 範圍
-    
-    // 混合顏色
-    vec3 color = mix(baseColor, waveColor, waves);
-    
-    // 應用光照
-    color *= 0.8 + lighting * 0.2;
-    
-    gl_FragColor = vec4(color, 1.0);
-  }
-  `;
-  
-  // 著色器 uniform 參數
-  const uniforms = {
-    time: { value: 0 },
-    baseColor: { value: new THREE.Color(0x0066cc) }, // 深藍
-    waveColor: { value: new THREE.Color(0x66ccff) }  // 淺藍
-  };
-  
-  // 創建著色器材質
-  return new THREE.ShaderMaterial({
-    uniforms: uniforms,
-    vertexShader: vertexShader,
-    fragmentShader: fragmentShader,
+    color: 0xFFD700,            // 金黃色
+    metalness: 1.0,             // 完全金屬
+    roughness: 0.2,             // 低粗糙度，光滑表面
+    envMapIntensity: 1.5,       // 環境映射強度
+    reflectivity: 0.9,          // 反射率，強化鏡面反射
+    clearcoat: 1.0,             // 外層清漆，增加光澤感
+    clearcoatRoughness: 0.1,    // 清漆層的粗糙度
+    transparent: false,
     side: THREE.DoubleSide
   });
+}
+function generateIceMaterial() {
+  return new THREE.MeshPhysicalMaterial({
+    color:0xb3e5fc,
+    metalness:0.1,
+    roughness:0.2,
+    transmission:0.8,
+    clearcoat:0.5,
+    side:THREE.DoubleSide
+  });
+}
+function generateHolographicMaterial() {
+  const vs=`varying vec3 vNormal; void main(){vNormal=normalize(normalMatrix*normal); gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.0);}`;
+  const fs=`varying vec3 vNormal; void main(){float f=abs(vNormal.y); vec3 col=mix(vec3(1.0,0.0,1.0),vec3(0.0,1.0,1.0),f); gl_FragColor=vec4(col,1.0);} `;
+  return new THREE.ShaderMaterial({ vertexShader:vs, fragmentShader:fs, side:THREE.DoubleSide });
+}
+function generateGalaxyMaterial() {
+  const vs=`varying vec3 vPos; void main(){vPos=position; gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.0);}`;
+  const fs=`varying vec3 vPos; void main(){float r=length(vPos.xy); float t=fract(r*10.0 - vPos.z); vec3 c=vec3(0.1,0.0,0.2) + 0.5*sin(vec3(1.0,2.0,3.0)*t*6.2831); gl_FragColor=vec4(c,1.0);} `;
+  return new THREE.ShaderMaterial({ vertexShader:vs, fragmentShader:fs, side:THREE.DoubleSide, transparent:true });
+}
+function generateCloudShaderMaterial() {
+  const vs = `varying vec3 vPos; void main(){vPos=position;gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.0);}`;
+  const fs = `varying vec3 vPos; void main(){float d=length(vPos.xy);float a=1.0 - smoothstep(0.4,0.5,d);gl_FragColor=vec4(vec3(1.0),a);} `;
+  return new THREE.ShaderMaterial({ vertexShader: vs, fragmentShader: fs, transparent: true });
+}
+function generateChameleonMaterial() {
+  const vs = `varying vec3 vPos; void main(){vPos=position;gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.0);}`;
+  const fs = `varying vec3 vPos; uniform float time; void main(){float t=sin(time+vPos.y);vec3 c=vec3(0.5+0.5*t,0.5-0.5*t,0.5);gl_FragColor=vec4(c,1.0);} `;
+  return new THREE.ShaderMaterial({ uniforms:{time:{value:0}}, vertexShader: vs, fragmentShader: fs });
 }
 
 function updateMaterialAnimate(){
@@ -644,58 +292,6 @@ function updateMaterialAnimate(){
   if (currentMaterialType === materialTypes.NEON) {
     if (material && material.uniforms && material.uniforms.time !== undefined) {
       material.uniforms.time.value = elapsedTime;
-    }
-    
-    if (sphereMaterial && sphereMaterial.uniforms && sphereMaterial.uniforms.time !== undefined) {
-      sphereMaterial.uniforms.time.value = elapsedTime;
-    }
-  }
-  
-  // 更新彩虹材質
-  if (currentMaterialType === materialTypes.RAINBOW && material && material.map) {
-    material.map.offset.x = elapsedTime * 0.05;
-    material.map.needsUpdate = true;
-    
-    if (sphereMaterial && sphereMaterial.map) {
-      sphereMaterial.map.offset.x = elapsedTime * 0.07;
-      sphereMaterial.map.needsUpdate = true;
-    }
-  }
-  
-  // 更新動態波浪材質
-  if (currentMaterialType === materialTypes.ANIMATED_WAVES) {
-    if (material && material.uniforms && material.uniforms.time !== undefined) {
-      material.uniforms.time.value = elapsedTime;
-    }
-    
-    if (sphereMaterial && sphereMaterial.uniforms && sphereMaterial.uniforms.time !== undefined) {
-      sphereMaterial.uniforms.time.value = elapsedTime;
-    }
-  }
-  
-  // 更新星系材質（添加旋轉效果）
-  if (currentMaterialType === materialTypes.GALAXY && material && material.map) {
-    material.map.rotation += 0.001;
-    material.map.needsUpdate = true;
-    
-    if (sphereMaterial && sphereMaterial.map) {
-      sphereMaterial.map.rotation += 0.001;
-      sphereMaterial.map.needsUpdate = true;
-    }
-  }
-  
-  // 更新電路板材質（變換顏色）
-  if (currentMaterialType === materialTypes.CIRCUIT) {
-    if (material) {
-      const hue = 0.3 + 0.1 * Math.sin(elapsedTime * 0.2); // 在綠色範圍內變化
-      material.emissive.setHSL(hue, 1.0, 0.5);
-      material.needsUpdate = true;
-    }
-    
-    if (sphereMaterial) {
-      const hue = 0.3 + 0.1 * Math.sin(elapsedTime * 0.3);
-      sphereMaterial.emissive.setHSL(hue, 1.0, 0.5);
-      sphereMaterial.needsUpdate = true;
     }
   }
 }
@@ -712,16 +308,18 @@ function generateMaterial() {
       return generateWireFrameMaterial();
     case materialTypes.NEON:
       return generateNeonMaterial();
-    case materialTypes.NOISE:
-      return generateNoiseMaterial();
-    case materialTypes.CIRCUIT:
-      return generateCircuitMaterial();
-    case materialTypes.MARBLE:
-      return generateMarbleMaterial();
     case materialTypes.GALAXY:
       return generateGalaxyMaterial();
-    case materialTypes.ANIMATED_WAVES:
-      return generateAnimatedWavesMaterial();
+    case materialTypes.GOLD:
+      return generateGoldMaterial();
+    case materialTypes.ICE:
+      return generateIceMaterial();
+    case materialTypes.HOLOGRAPHIC:
+      return generateHolographicMaterial();
+    case materialTypes.CLOUD:
+      return generateCloudShaderMaterial();
+    case materialTypes.CHAMELEON:
+      return generateChameleonMaterial();
     default:
       return generateWaterMaterial();
   }
@@ -755,31 +353,13 @@ function changeMaterialType(materialType) {
     
     // 更新 Marching Cubes 材質
     effect.material = material;
-  }
-  
-  // 更新球體材質
-  if (sphereMaterial) {
-    // 釋放舊材質資源
-    sphereMaterial.dispose();
-    
-    // 生成新材質
-    sphereMaterial = generateMaterial();
-    
-    // 更新環境貼圖
-    if (scene && scene.environment) {
-      sphereMaterial.envMap = scene.environment;
-      sphereMaterial.needsUpdate = true;
-    }
-    
-    // 更新所有球體的材質
+
     for (let i = 0; i < spheres.length; i++) {
       if (spheres[i].mesh) {
-        spheres[i].mesh.material = sphereMaterial;
+        spheres[i].mesh.material = material;
       }
     }
   }
-  
-  console.log(`材質已從 ${oldMaterialType} 切換為 ${materialType}`);
 }
 
 function loadEnvironmentMap() {
@@ -798,10 +378,6 @@ function loadEnvironmentMap() {
         if (material) {
           material.envMap = envMap;
           material.needsUpdate = true;
-        }
-        if (sphereMaterial) {
-          sphereMaterial.envMap = envMap;
-          sphereMaterial.needsUpdate = true;
         }
         
         resolve(envMap);
@@ -842,14 +418,14 @@ function createText(text, position, align, size = 0.5) {
   geometry.computeBoundingBox();
 
   // 使用物理材質替代基本材質，以便能夠被折射
-  const material = new THREE.MeshPhysicalMaterial({
+  const TextMaterial = new THREE.MeshPhysicalMaterial({
     color: 0x000000,
     transparent: true,
     opacity: 0,
     transmission: 1,  // 輕微的透射性
   });
 
-  const mesh = new THREE.Mesh(geometry, material);
+  const mesh = new THREE.Mesh(geometry, TextMaterial);
   const textWidth = geometry.boundingBox.max.x - geometry.boundingBox.min.x;
   const textHeight = geometry.boundingBox.max.y - geometry.boundingBox.min.y;
   if(align === 'left'){
@@ -1206,46 +782,12 @@ function initSpheres() {
 }
 
 /**
- * 清理所有球體
- */
-// function clearSpheres() {
-//   // 從場景中移除所有球體並釋放資源
-//   for (let i = 0; i < spheres.length; i++) {
-//     const sphere = spheres[i];
-    
-//     if (sphere.mesh) {
-//       if (sphereGroup) {
-//         sphereGroup.remove(sphere.mesh);
-//       } else {
-//         scene.remove(sphere.mesh);
-//       }
-//       sphere.mesh.geometry.dispose();
-//     }
-//   }
-  
-//   // 清空陣列
-//   spheres = [];
-  
-//   // 清空群組
-//   if (sphereGroup) {
-//     scene.remove(sphereGroup);
-//     sphereGroup = new THREE.Group();
-//     scene.add(sphereGroup);
-//   }
-// }
-
-/**
  * 創建並發射一個球體
  */
 function createSphere(direction, size) {
   const geometry = new THREE.SphereGeometry(size, sphereParams.segmentDetail, sphereParams.segmentDetail);
   
-  // 使用共用材質
-  if (!sphereMaterial) {
-    sphereMaterial = generateMaterial();
-  }
-  
-  const sphere = new THREE.Mesh(geometry, sphereMaterial);
+  const sphere = new THREE.Mesh(geometry, material);
   
   // 設置初始位置為原點
   sphere.position.set(0, 0, 0);
@@ -1308,12 +850,12 @@ function updateSpheres() {
  */
 function animate() {
   stats.begin();
-  
+
   // 僅在需要時進行渲染，節省資源
   if (!effect || !material || !camera || !renderer || !scene) {
     return;
   }
-  
+
   updateMaterialAnimate();
   // 更新場景邏輯
   updateLineMetaball(effect);
@@ -1414,12 +956,6 @@ function initializeScene() {
   // 材質
   material = generateMaterial();
 
-  // const spGeom = new THREE.SphereGeometry(4, 64, 64);
-  // const sp1 = new THREE.Mesh(spGeom, generateMaterial());
-  // sp1.position.set(4, -2, 6);
-  // sp1.scale.set(0.7, 0.7, 0.7);
-  // scene.add(sp1);
-
   // Marching Cubes
   let resolution;
   if (!isMobileDevice()){
@@ -1447,9 +983,6 @@ function initializeScene() {
 
   // 時鐘
   clock = new THREE.Clock();
-  
-  // 初始化共用材質
-  sphereMaterial = generateMaterial();
   
   // 初始化滾動位移變量
   targetScrollOffsetX = 0;
@@ -1490,94 +1023,6 @@ function initializeScene() {
   return true;
 }
 
-/**
- * 清理Three.js資源
- */
-// function cleanupScene() {
-//   // 停止動畫
-//   cancelAnimationFrame(animationFrameId);
-
-//   // 移除視窗大小變化監聽
-//   window.removeEventListener('resize', handleResize);
-
-//   // 重置滾動位移變量
-//   targetScrollOffsetX = 0;
-//   targetScrollOffsetY = 0;
-//   targetScrollOffsetZ = 0;
-
-//   // 清理球體
-//   clearSpheres();
-
-//   // 清理Three.js資源
-//   if (renderer) renderer.dispose();
-//   if (material) {
-//     material.dispose();
-//     if (scene?.environment) scene.environment.dispose();
-//   }
-  
-//   if (effect) {
-//     scene?.remove(effect);
-//   }
-  
-//   // 清理球體群組
-//   if (sphereGroup) {
-//     scene?.remove(sphereGroup);
-//     sphereGroup = null;
-//   }
-  
-//   // 清理文字相關資源
-//   textTargetPosition1 = null;
-//   textTargetPosition2 = null;
-//   textOriginPosition1 = null;
-//   textOriginPosition2 = null;
-  
-//   if (scene) {
-//     // 清理場景中的物件
-//     scene.traverse((object) => {
-//       if (object instanceof THREE.Mesh) {
-//         object.geometry?.dispose();
-//         const objMaterial = object.material;
-//         if (Array.isArray(objMaterial)) {
-//           objMaterial.forEach((mat) => mat.dispose());
-//         } else if (objMaterial) {
-//           objMaterial.dispose();
-//         }
-//       }
-//     });
-//   }
-  
-//   if (pmremGenerator) pmremGenerator.dispose();
-
-//   // 移除畫布
-//   if (canvasContainer.value && renderer) {
-//     canvasContainer.value.removeChild(renderer.domElement);
-//   }
-
-//   // 清理球體材質
-//   if (sphereMaterial) {
-//     sphereMaterial.dispose();
-//   }
-
-//   // 清理文字物件
-//   if (textMesh1) {
-//     scene.remove(textMesh1);
-//     textMesh1.geometry.dispose();
-//     textMesh1.material.dispose();
-//   }
-//   if (textMesh2) {
-//     scene.remove(textMesh2);
-//     textMesh2.geometry.dispose();
-//     textMesh2.material.dispose();
-//   }
-// }
-
-// =========================================
-// 8. 用戶互動控制
-// =========================================
-
-/**
- * 檢查是否為行動裝置
- */
 function isMobileDevice() {
   return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
 }
@@ -1798,6 +1243,15 @@ function startSyncShrinking() {
   });
 }
 
+function updatePosition(xOffset, yOffset, zOffset) {
+  if (!scene) return;
+  
+  // 設置目標滾動位移，animate 函數會平滑過渡到這些值
+  targetScrollOffsetX = xOffset;
+  targetScrollOffsetY = -yOffset;
+  targetScrollOffsetZ = zOffset;
+}
+
 /**
  * 添加滑鼠控制事件
  */
@@ -1875,13 +1329,6 @@ onMounted(() => {
   window.addEventListener('resize', handleResize);
 });
 
-// onUnmounted(() => {
-//   cleanupScene();
-
-//   // 移除滑鼠控制事件
-//   removeMouseControlEvents();
-// });
-
 // 暴露方法給父組件
 defineExpose({
   startGrowingAnimation,
@@ -1892,16 +1339,4 @@ defineExpose({
   animateTextToOrigin,
   changeMaterialType,
 });
-
-/**
- * 根據滾動位置更新模型位置
- */
-function updatePosition(xOffset, yOffset, zOffset) {
-  if (!scene) return;
-  
-  // 設置目標滾動位移，animate 函數會平滑過渡到這些值
-  targetScrollOffsetX = xOffset;
-  targetScrollOffsetY = -yOffset;
-  targetScrollOffsetZ = zOffset;
-}
 </script>
