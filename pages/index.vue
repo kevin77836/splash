@@ -392,7 +392,7 @@
                         scrub: true,
                         markers: false,
                         onUpdate: (self) => {
-                            updatePosition(0, -1, 30, 0, 0, -20, self.progress);
+                            updatePosition(0, -1, 30, 0, 0, -10, self.progress);
                         },
                         onLeave: () => {
                             // growingFunction()
@@ -422,7 +422,7 @@
                         scrub: true, // 平滑的滾動效果
                         markers: false,
                         onUpdate: (self) => {
-                            updatePosition(0, 0, -20, 0, 0, 27, self.progress);
+                            updatePosition(0, 0, -10, 0, 0, 27, self.progress);
                         },
                     }
                 });
