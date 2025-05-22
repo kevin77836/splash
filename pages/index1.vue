@@ -2,7 +2,6 @@
     <Splash
         ref="splashRef" 
         @resourcesLoaded="handleResourcesLoaded"
-        @stateChange="handleStateChange"
         @animationComplete="handleAnimationComplete"
     />
     <div :class="{'active': isStarted}" class="l-header">
@@ -79,7 +78,7 @@
             </div>
         </div>        
     </div>
-    <div class="main-container">
+    <div class="main-container-1">
         <div class="section main-section">
             <div v-if="loadComplete && !isStarted" class="startButton" @click="clickStart">
                 Start
@@ -278,7 +277,6 @@
         <button @click="shrinkingFunction">開始收合</button>
         <button @click="startAutoPlay">開始自動播放</button>
         <button @click="stopAutoPlay">停止自動播放</button>
-        <div class="status">狀態: {{ currentState }}</div>
         <div class="status">資源狀態: {{ loadComplete ? '已載入' : '載入中' }}</div>
         <div class="status">自動播放: {{ isAutoPlaying ? '進行中' : '停止' }}</div>
         </div> -->
@@ -297,7 +295,6 @@
     
     const splashRef = ref(null);
     const loadComplete = ref(false);
-    const currentState = ref('idle');
     const isAutoPlaying = ref(false);
     const isStarted = ref(false);
     const isMenuOpen = ref(false);
@@ -305,8 +302,39 @@
     let autoPlayTimer = null;
     let customEasing;
     
+    // 添加背景顏色配置
+    const backgroundColors = {
+        'water': '#ffffff',
+        'metallic': '#FCBD00',
+        'matte': '#239D89',
+        'gold': '#000000',
+        'neon': '#000814',
+        'ice': '#001419',
+        'holographic': '#14001a',
+        'cloud': '#1a1a1a',
+        'chameleon': '#001a14',
+        'galaxy': '#000033',
+        'wireframe': '#ffffff',
+    };
+    
+    // 添加字體顏色配置
+    const fontColors = {
+        'water': '#000000',
+        'metallic': '#000000',
+        'matte': '#000000',
+        'gold': '#ffffff',
+        'neon': '#ffffff',
+        'ice': '#ffffff',
+        'holographic': '#ffffff',
+        'cloud': '#ffffff',
+        'chameleon': '#ffffff',
+        'galaxy': '#ffffff',
+        'wireframe': '#000000',
+    };
+    
     // 設置 ScrollTrigger 動畫
     const setupScrollAnimations = () => {
+        // 確保所有區塊已經渲染
         if (process.client) {
             nextTick(() => {
                 gsap.timeline({
@@ -326,7 +354,6 @@
                         },
                     },              
                 });
-
                 gsap.timeline({
                     scrollTrigger: {
                         trigger: '.aboutUs-section',
@@ -384,6 +411,77 @@
                     ease: 'none'
                 });
                 
+                const itemCount = 15; // 元素總數
+
+                const desktopPositions = {
+                    // 右上區域
+                    1: {x: 50, y: -400, z: 3300},
+                    2: {x: 400, y: -200, z: 3400},
+                    3: {x: 580, y: 0, z: 3300},
+                    
+                    // 右下區域
+                    4: {x: 350, y: 200, z: 3400},
+                    5: {x: 220, y: -50, z: 3350},
+                    6: {x: 100, y: 250, z: 3400},
+                    
+                    // 左下區域
+                    7: {x: -180, y: 300, z: 3300},
+                    8: {x: -400, y: 150, z: 3400},
+                    9: {x: -390, y: 50, z: 3200},
+                    
+                    // 左上區域
+                    10: {x: -550, y: 0, z: 3300},
+                    11: {x: -500, y: -300, z: 3300},
+                    12: {x: -325, y: -250, z: 3200},
+                    
+                    // 中心區域（錯落分布）
+                    13: {x: 20, y: -300, z: 3200},
+                    14: {x: -100, y: 50, z: 3300},
+                    15: {x: 90, y: 0, z: 3200},
+                };
+                const mobilePositions = {
+                    // 上方區域
+                    1: {x: 250, y: -600, z: 1200},
+                    2: {x: -200, y: -500, z: 1400},
+                    3: {x: 150, y: -400, z: 1300},
+                    
+                    // 上中區域
+                    4: {x: -300, y: -300, z: 1500},
+                    5: {x: 200, y: -200, z: 1100},
+                    6: {x: -150, y: -100, z: 1200},
+                    
+                    // 中心區域
+                    7: {x: 300, y: 0, z: 1300},
+                    8: {x: -250, y: 100, z: 1400},
+                    9: {x: 200, y: 200, z: 1200},
+                    
+                    // 下中區域
+                    10: {x: -300, y: 300, z: 1500},
+                    11: {x: 200, y: 400, z: 1300},
+                    12: {x: -200, y: 500, z: 1400},
+                    
+                    // 下方區域
+                    13: {x: 300, y: 600, z: 1200},
+                    14: {x: -250, y: 700, z: 1100},
+                    15: {x: 200, y: 800, z: 1300},
+                };
+                function getMinAbsSum(positions) {
+                    let min = { key: null, sum: Infinity };
+
+                    for (const key in positions) {
+                        if (positions.hasOwnProperty(key)) {
+                            const { x, y, z } = positions[key];
+                            const sum = Math.abs(x) + Math.abs(y) + Math.abs(z);
+
+                            if (sum < min.sum) {
+                                min = { key, sum };
+                            }
+                        }
+                    }
+
+                    return min;
+                }
+                
                 gsap.timeline({
                     scrollTrigger: {
                         trigger: '.works-section',
@@ -392,121 +490,76 @@
                         scrub: true,
                         markers: false,
                         onUpdate: (self) => {
-                            updatePosition(0, -1, 30, 0, 0, -20, self.progress);
+                            updatePosition(0, -1, 30, 0, 0, -10, self.progress);
                         },
                         onLeave: () => {
-                            // growingFunction()
+                            // growingFunction();
+                            const tl = gsap.timeline();
+                            const position = width.value > 768 ? desktopPositions : mobilePositions;
+                            const minPosition = getMinAbsSum(position);
+
+                            for (let i = 1; i <= itemCount; i++) {
+                                tl.to(`.works-content-item-${i}`, {
+                                    '--transform-x': position[i].x,
+                                    '--transform-y': position[i].y,
+                                    '--transform-z': position[i].z,
+                                    opacity: 1,
+                                    duration: 0.5,
+                                    ease: customEasing
+                                }, (Math.abs(position[i].x) + Math.abs(position[i].y) + Math.abs(position[i].z - minPosition.sum) ) * 0.0002);
+                            }
                         },
                         onEnterBack: () => {
-                            // shrinkingFunction()
+                            shrinkingFunction();
+                            for (let i = 1; i <= itemCount; i++) {
+                                gsap.to(`.works-content-item-${i}`, {
+                                    '--transform-x': 0,
+                                    '--transform-y': 0,
+                                    '--transform-z': 0,
+                                    opacity: 0,
+                                    duration: 0.5,
+                                    ease: customEasing
+                                })
+                            }
                         },
                         onLeaveBack: () => {
+                            // for (let i = 1; i <= itemCount; i++) {
+                            //     gsap.set(`.works-content-item-${i}`, {
+                            //         '--transform-x': 0,
+                            //         '--transform-y': 0,
+                            //         '--transform-z': 0,
+                            //         opacity: 0,
+                            //         duration: 0
+                            //     });
+                            // }   
                             updatePosition(0, -15, 0)
                         }
                     },    
                 });
 
-                const itemCount = 15; // 元素總數
-                const totalDistance = 2000; // 元素移動的總直線距離
-                const zDistance = 10000; // Z軸最大移動距離
-                const baseStartPercent = 0; // 起始滾動百分比
-                const opacityDuration = 10; // 每個元素透明度動畫的滾動百分比
-                const moveDuration = 30; // 每個元素位移動畫的滾動百分比
-                const delayBetweenItems = 5; // 元素之間的延遲百分比
-                
-                const worksTimeline = gsap.timeline({
+
+                const worksSectionTimeline = gsap.timeline({
                     scrollTrigger: {
                         trigger: '.works-section',
-                        start: '0% top', // 從頁面頂部開始
-                        end: `${baseStartPercent + (itemCount-1) * delayBetweenItems + moveDuration}% bottom`, // 動態計算結束點
+                        start: 'top top', // 從頁面頂部開始
+                        end: 'bottom bottom', // 動態計算結束點
                         scrub: true, // 平滑的滾動效果
                         markers: false,
                         onUpdate: (self) => {
-                            updatePosition(0, 0, -20, 0, 0, 27, self.progress);
+                            updatePosition(0, 0, -10, 0, 0, 20, self.progress);
                         },
                     }
                 });
-
-                // // 使用種子算法生成固定的隨機角度集合
-                // // 這確保每次頁面加載時元素方向一致
-                // const generateRandomAngles = (count) => {
-                //     const angles = [];
-                //     for (let i = 0; i < count; i++) {
-                //         // 使用數學函數生成偽隨機數
-                //         const seed = Math.sin(i * 97.123) * 10000;
-                //         const random = Math.abs(seed - Math.floor(seed));
-                //         angles.push(random * 360); // 轉換為0-360度的角度
-                //     }
-                //     return angles;
-                // };
-                
-                const cornerData = {
-                    topLeft:    { angle: -150.255, vertical: 'top',    horizontal: 'left' },
-                    bottomRight:{ angle:   29.744, vertical: 'bottom', horizontal: 'right' },
-                    bottomLeft: { angle:  150.255, vertical: 'bottom', horizontal: 'left' },
-                    topRight:   { angle:  -29.744, vertical: 'top',    horizontal: 'right' }
-                };
-
-                const cornerOrder = ['topLeft', 'bottomRight', 'bottomLeft', 'topRight']; // 固定順序
-
-                const generateAngleSequence = (count) => {
-                    const sequence = [];
-
-                    for (let i = 0; i < count; i++) {
-                        const cornerKey = cornerOrder[i % cornerOrder.length];
-                        const baseAngle = cornerData[cornerKey].angle;
-
-                        const randomOffset = Math.random() * 40 - 20; // ±45 度
-                        const finalAngle = baseAngle + randomOffset;
-
-                        sequence.push(finalAngle);
-                    }
-
-                    return sequence;
-                };
-
-                // 使用方式
-                // const angles = generateAngleSequence(10);
-                // 預先生成所有角度
-                const randomAngles = generateAngleSequence(itemCount);
-                
-                // 為每個作品項目添加動畫
-                for (let i = 1; i <= itemCount; i++) {
-                    // 計算此元素在滾動過程中的延遲
-                    const itemDelay = (i - 1) * delayBetweenItems;
-                    
-                    // 根據預生成的角度計算方向
-                    const randomAngle = randomAngles[i-1];
-                    const rad = randomAngle * Math.PI / 180; // 轉換為弧度
-                    
-                    // 計算 x 和 y 坐標，形成放射狀分布
-                    const x = Math.round(totalDistance * Math.cos(rad));
-                    const y = Math.round(totalDistance * Math.sin(rad));
-                    
-                    // Z軸偏移計算，添加隨機變化
-                    // const zOffset = Math.round(zDistance * (0.8 + (i % 5) * zVariation / 5));
-                    
-                    // 計算動畫開始的相對位置
-                    // 這決定了每個元素何時開始動畫
-                    const startPosition = itemDelay / (moveDuration + (itemCount-1) * delayBetweenItems);
-                    
-                    // 添加到同一時間軸，使用相對位置控制時序
-                    // 首先控制透明度變化
-                    worksTimeline.to(`.works-content-item-${i}`, { 
-                        opacity: 1, // 從透明變為完全不透明
-                        duration: opacityDuration / moveDuration, // 計算相對持續時間
-                        ease: 'none' // 線性變化
-                    }, startPosition);
-                    
-                    // 然後控制位置變化（同時進行）
-                    worksTimeline.to(`.works-content-item-${i}`, {
-                        '--transform-x': x, // CSS變量控制X軸位置
-                        '--transform-y': y, // CSS變量控制Y軸位置
-                        '--transform-z': zDistance, // CSS變量控制Z軸位置
-                        ease: 'none', // 使用power2.in緩動函數
-                        duration: 1 // 相對持續時間
-                    }, startPosition); // 與透明度動畫同時開始
+                if(width.value > 768){
+                    worksSectionTimeline.to('.works-content-group', {
+                        '--transform-z': 400,
+                    });
+                }else{
+                    worksSectionTimeline.to('.works-content-group', {
+                        '--transform-z': 120,
+                    });
                 }
+
 
                 gsap.timeline({
                     scrollTrigger: {
@@ -519,7 +572,7 @@
                             shrinkingFunction()
                         },
                         onLeave: () => {
-                            changeMaterialType('wireframe');
+                            // changeMaterialType('wireframe');
                             growingFunction()
                         },
                         onEnterBack: () => {
@@ -530,9 +583,10 @@
                             // growingFunction()
                         },
                         onUpdate: (self) => {
-                            updatePosition(0, 0, 27, -8, 0, 0, self.progress);
+                            updatePosition(0, 0, 20, -12, 0, 0, self.progress);
+                            // console.log('width',width)
                             // if(width.value > 768){
-                            //     updatePosition(0, 0, 15, -4, 0, 15, self.progress);
+                            //     updatePosition(0, 0, 10, -4, 0, 0, self.progress);
                             // }else{
                             //     updatePosition(0, 0, 15, 0, -3, 0, self.progress);
                             // }
@@ -571,7 +625,7 @@
                                 }else if(i === 8){
                                     changeMaterialType('chameleon');
                                 }else if(i === 9){
-                                    changeMaterialType('galaxy');
+                                    changeMaterialType('wireframe');
                                 }
                             },
                             onEnterBack: () => {
@@ -580,7 +634,7 @@
                             onLeaveBack: () => {
                                 growingFunction()
                                 if(i === 1){
-                                    changeMaterialType('wireframe');
+                                    changeMaterialType('water');
                                 }else if(i === 2){
                                     changeMaterialType('metallic');
                                 }else if(i === 3){
@@ -660,6 +714,18 @@
     const changeMaterialType = (materialType) => {
         if (splashRef.value) {
             splashRef.value.changeMaterialType(materialType);
+            const color = backgroundColors[materialType];
+            const fontColor = fontColors[materialType];
+            if (color) {
+                document.documentElement.style.backgroundColor = color;
+                document.body.style.backgroundColor = color;
+            }
+            if (fontColor) {
+                const servicesContents = document.querySelectorAll('.services-content');
+                servicesContents.forEach(content => {
+                    content.style.setProperty('--font-color', fontColor);
+                });
+            }
         }
     }
     
@@ -669,28 +735,6 @@
             splashRef.value.updatePosition(0, 0, 10);
         }
         loadComplete.value = true;
-    }
-    
-    // 處理狀態變化
-    const handleStateChange = (state) => {
-        currentState.value = state;
-    }
-    
-    // 處理動畫完成事件
-    const handleAnimationComplete = (animationType) => {
-        if (!isAutoPlaying.value) return;
-        
-        if (animationType === 'growing') {
-        // 生長動畫完成，等待1秒後開始收縮
-        autoPlayTimer = setTimeout(() => {
-            shrinkingFunction();
-            }, 0);
-        } else if (animationType === 'shrinking') {
-            // 收縮動畫完成，等待2秒後開始生長
-        autoPlayTimer = setTimeout(() => {
-            growingFunction();
-            }, 1000);
-        }
     }
     
     const clickStart = () => {
@@ -714,7 +758,7 @@
             y: 0,
             z: 0,
             duration: 1,
-            ease: "customGrowEase", // 使用自定義緩動
+            ease: customEasing, // 使用自定義緩動
             onUpdate: function(self) {
                 // 動畫每一幀更新場景位置
                 if (splashRef.value) {
@@ -748,6 +792,23 @@
         
         // 執行收合動畫，使其回到起點
         shrinkingFunction();
+    }
+
+    // 處理動畫完成事件
+    const handleAnimationComplete = (animationType) => {
+        if (!isAutoPlaying.value) return;
+        
+        if (animationType === 'growing') {
+            // 生長動畫完成，等待1秒後開始收縮
+            autoPlayTimer = setTimeout(() => {
+                shrinkingFunction();
+            }, 0);
+        } else if (animationType === 'shrinking') {
+            // 收縮動畫完成，等待2秒後開始生長
+            autoPlayTimer = setTimeout(() => {
+                growingFunction();
+            }, 1000);
+        }
     }
     
     // 切換漢堡選單
@@ -806,14 +867,6 @@
 
     onMounted(() => {
         document.body.style.overflow = 'hidden';
-
-        gsap.registerEase("customGrowEase", function(x) {
-            return Math.pow(x, 0.15);
-        });
-
-        gsap.registerEase("customShrinkEase", function(x) {
-            return Math.pow(x, 2.5);
-  });
     });
     // 組件卸載時清理
     onUnmounted(() => {

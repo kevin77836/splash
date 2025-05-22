@@ -15,7 +15,6 @@ import Stats from 'stats.js';
 
 // 父組件事件
 const emit = defineEmits([
-  'stateChange',       // 狀態變化事件
   'animationComplete', // 動畫完成事件
   'resourcesLoaded'    // 資源載入完成事件
 ]);
@@ -47,7 +46,7 @@ const thParams = reactive({
 
 // --- 球體參數配置 ---
 const sphereParams = reactive({
-  count: 20,           // 球體數量
+  count: 25,           // 球體數量
   minRadius: 0.35,      // 最小半徑
   maxRadius: 0.5,      // 最大半徑
   minLength: 3.0,      // 最小目標長度
@@ -59,8 +58,8 @@ const sphereParams = reactive({
 // --- 流動動畫參數 ---
 const animParams = reactive({
   // 基本設定
-  mobileResolution: 80,
-  resolution: 80,                // Marching Cubes 解析度
+  mobileResolution: 100,
+  resolution: 100,                // Marching Cubes 解析度
   numSegments: 50,                // 每條線分段數量
   subtract: 20,                   // Metaball 減法參數
   
@@ -71,7 +70,7 @@ const animParams = reactive({
   shrinkEaseInPower: 2.5,         // 收縮緩動指數 (值越大開頭越快)
   
   // 波浪效果設定
-  flowWaveFrequency: 1.0,         // 波浪頻率
+  flowWaveFrequency: 0.1,         // 波浪頻率
   flowWaveAmplitudeFactor: 0.15,  // 波浪振幅因子
   flowWaveAmplitudeFactorAtStart: 0.5, // 原點狀態下的波浪振幅因子
   flowWavePhaseFactor: Math.PI * 4, // 波浪相位因子
@@ -169,22 +168,20 @@ function generateWaterMaterial() {
 }
 function generateMetallicMaterial() {
   return new THREE.MeshStandardMaterial({
-    color:0xffffff,
-    metalness:1.0,
-    roughness:0.05,
-    envMapIntensity:2.0,
+    color: 0x33E6FB,
+    metalness: 0.9,
+    roughness: 0.5,
+    envMapIntensity:1,
     side:THREE.DoubleSide
   });
 }
 function generateMatteMaterial() {
   return new THREE.MeshStandardMaterial({
-    metalness: 0.1,
+    metalness: 0,
     roughness: 0.9,
-    transparent: true,
-    opacity: 0.9,
-    color: 0xffffff,
+    color: 0xDD1D0C,
     side: THREE.DoubleSide,
-    envMapIntensity: 0.3,
+    envMapIntensity: 3
   });
 }
 function generateWireFrameMaterial(){
@@ -886,9 +883,9 @@ function animate() {
   //     sphereGroup.position.y = targetPositionY;
   //   }
   // }
-  effect.rotation.y += 0.0025;
+  effect.rotation.y += 0.0015;
   if (sphereGroup) {
-    sphereGroup.rotation.y += 0.0025;
+    sphereGroup.rotation.y += 0.0015;
   }
   
   // 結合滑鼠控制和滾動位移的最終位置
@@ -1075,7 +1072,6 @@ function initializeCollapsedState() {
 // 當狀態改變時通知父組件
 function updateFlowState(newState) {
   globalFlowState = newState;
-  emit('stateChange', newState);
   
   // 檢查是否完成特定狀態，通知父組件
   if (newState === 'pauseAtEnd') {

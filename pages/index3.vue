@@ -79,7 +79,7 @@
             </div>
         </div>        
     </div>
-    <div class="main-container">
+    <div class="main-container-3">
         <div class="section main-section">
             <div v-if="loadComplete && !isStarted" class="startButton" @click="clickStart">
                 Start
@@ -119,7 +119,7 @@
                         </div> -->
                         <span class="aboutUs-section-content-1-1">迸濺的</span>
                         <hr class="aboutUs-section-hr-1" color="black" size="1">
-                        <span class="aboutUs-section-content-1-2">創意</span>
+                        <span class="aboutUs-section-content-1-2">的創意</span>
                     </div>
                     <div class="aboutUs-section-content aboutUs-section-content-2">
                         <span class="aboutUs-section-content-2-1">結合</span>
@@ -140,13 +140,7 @@
                     <div class="aboutUs-section-content aboutUs-section-content-3">
                         <div class="section-content-3-group">
                             <span class="aboutUs-section-content-3-1">呈現</span>
-                            <span class="aboutUs-section-content-3-2">
-                                <div class="iconGroup">
-                                    <span>素晴らしい</span>
-                                    <img src="/images/volume.png" alt="">
-                                </div>
-                                <div class="underline"></div>
-                            </span>
+                            <span class="aboutUs-section-content-3-2">素晴らしい</span>
                         </div>
                         <span class="aboutUs-section-content-3-3">的體驗</span>
                     </div>
@@ -346,20 +340,19 @@
                         trigger: '.aboutUs-section',
                         start: '5% 80%',
                         end: '65% 70%',
-                        scrub: 1,
+                        scrub: true,
                         markers: false
                     }
                 });
                 aboutUsContentTimeline
-                    .to('.aboutUs-section-content-1-1', { opacity: 1, filter: 'blur(0px)', duration: 0.1 })
-                    .to('.aboutUs-section-hr-1', { width: '100%', duration: 0.2 })
-                    .to('.aboutUs-section-content-1-2', { opacity: 1, filter: 'blur(0px)', duration: 0.1 })
-                    .to('.aboutUs-section-content-2-1', { opacity: 1, filter: 'blur(0px)', duration: 0.1 })
-                    .to('.aboutUs-section-content-2-2', { width: '100%', duration: 0.2 })
-                    .to('.aboutUs-section-content-3-1', { opacity: 1, filter: 'blur(0px)', duration: 0.1 })
-                    .to('.aboutUs-section-content-3-2', { opacity: 1, filter: 'blur(0px)', duration: 0.1 })
-                    .to('.aboutUs-section-content-3-2 .underline', { width: '100%', duration: 0.2 })
-                    .to('.aboutUs-section-content-3-3', { opacity: 1, filter: 'blur(0px)', duration: 0.1 });
+                    .to('.aboutUs-section-content-1-1', { opacity: 1, filter: 'blur(0px)', duration: 0.1 }, 0)
+                    .to('.aboutUs-section-hr-1', { width: '100%', duration: 0.1 }, 0.1)
+                    .to('.aboutUs-section-content-1-2', { opacity: 1, filter: 'blur(0px)', duration: 0.1 }, 0.2)
+                    .to('.aboutUs-section-content-2-1', { opacity: 1, filter: 'blur(0px)', duration: 0.1 }, 0.3)
+                    .to('.aboutUs-section-content-2-2', { width: '100%', duration: 0.1 }, 0.4)
+                    .to('.aboutUs-section-content-3-1', { opacity: 1, filter: 'blur(0px)', duration: 0.1 }, 0.5)
+                    .to('.aboutUs-section-content-3-2', { opacity: 1, filter: 'blur(0px)', duration: 0.1 }, 0.6)
+                    .to('.aboutUs-section-content-3-3', { opacity: 1, filter: 'blur(0px)', duration: 0.1 }, 0.7);
 
                 gsap.to('.aboutUs-content-group', {
                     scrollTrigger: {
@@ -383,7 +376,7 @@
                     opacity: 0,
                     ease: 'none'
                 });
-                
+
                 gsap.timeline({
                     scrollTrigger: {
                         trigger: '.works-section',
@@ -395,10 +388,10 @@
                             updatePosition(0, -1, 30, 0, 0, -20, self.progress);
                         },
                         onLeave: () => {
-                            // growingFunction()
+                            growingFunction()
                         },
                         onEnterBack: () => {
-                            // shrinkingFunction()
+                            shrinkingFunction()
                         },
                         onLeaveBack: () => {
                             updatePosition(0, -15, 0)
@@ -407,10 +400,10 @@
                 });
 
                 const itemCount = 15; // 元素總數
-                const totalDistance = 2000; // 元素移動的總直線距離
-                const zDistance = 10000; // Z軸最大移動距離
+                const totalDistance = 600; // 元素移動的總直線距離
+                const zDistance = 6000; // Z軸最大移動距離
                 const baseStartPercent = 0; // 起始滾動百分比
-                const opacityDuration = 10; // 每個元素透明度動畫的滾動百分比
+                const opacityDuration = 2; // 每個元素透明度動畫的滾動百分比
                 const moveDuration = 30; // 每個元素位移動畫的滾動百分比
                 const delayBetweenItems = 5; // 元素之間的延遲百分比
                 
@@ -422,53 +415,26 @@
                         scrub: true, // 平滑的滾動效果
                         markers: false,
                         onUpdate: (self) => {
-                            updatePosition(0, 0, -20, 0, 0, 27, self.progress);
+                            updatePosition(0, 0, -15, 0, 0, 15, self.progress);
                         },
                     }
                 });
 
-                // // 使用種子算法生成固定的隨機角度集合
-                // // 這確保每次頁面加載時元素方向一致
-                // const generateRandomAngles = (count) => {
-                //     const angles = [];
-                //     for (let i = 0; i < count; i++) {
-                //         // 使用數學函數生成偽隨機數
-                //         const seed = Math.sin(i * 97.123) * 10000;
-                //         const random = Math.abs(seed - Math.floor(seed));
-                //         angles.push(random * 360); // 轉換為0-360度的角度
-                //     }
-                //     return angles;
-                // };
-                
-                const cornerData = {
-                    topLeft:    { angle: -150.255, vertical: 'top',    horizontal: 'left' },
-                    bottomRight:{ angle:   29.744, vertical: 'bottom', horizontal: 'right' },
-                    bottomLeft: { angle:  150.255, vertical: 'bottom', horizontal: 'left' },
-                    topRight:   { angle:  -29.744, vertical: 'top',    horizontal: 'right' }
-                };
-
-                const cornerOrder = ['topLeft', 'bottomRight', 'bottomLeft', 'topRight']; // 固定順序
-
-                const generateAngleSequence = (count) => {
-                    const sequence = [];
-
+                // 使用種子算法生成固定的隨機角度集合
+                // 這確保每次頁面加載時元素方向一致
+                const generateRandomAngles = (count) => {
+                    const angles = [];
                     for (let i = 0; i < count; i++) {
-                        const cornerKey = cornerOrder[i % cornerOrder.length];
-                        const baseAngle = cornerData[cornerKey].angle;
-
-                        const randomOffset = Math.random() * 40 - 20; // ±45 度
-                        const finalAngle = baseAngle + randomOffset;
-
-                        sequence.push(finalAngle);
+                        // 使用數學函數生成偽隨機數
+                        const seed = Math.sin(i * 97.123) * 10000;
+                        const random = Math.abs(seed - Math.floor(seed));
+                        angles.push(random * 360); // 轉換為0-360度的角度
                     }
-
-                    return sequence;
+                    return angles;
                 };
-
-                // 使用方式
-                // const angles = generateAngleSequence(10);
+                
                 // 預先生成所有角度
-                const randomAngles = generateAngleSequence(itemCount);
+                const randomAngles = generateRandomAngles(itemCount);
                 
                 // 為每個作品項目添加動畫
                 for (let i = 1; i <= itemCount; i++) {
@@ -503,7 +469,7 @@
                         '--transform-x': x, // CSS變量控制X軸位置
                         '--transform-y': y, // CSS變量控制Y軸位置
                         '--transform-z': zDistance, // CSS變量控制Z軸位置
-                        ease: 'none', // 使用power2.in緩動函數
+                        ease: 'power1.in', // 使用power2.in緩動函數
                         duration: 1 // 相對持續時間
                     }, startPosition); // 與透明度動畫同時開始
                 }
@@ -527,15 +493,15 @@
                             shrinkingFunction()
                         },
                         onLeaveBack: () => {
-                            // growingFunction()
+                            growingFunction()
                         },
                         onUpdate: (self) => {
-                            updatePosition(0, 0, 27, -8, 0, 0, self.progress);
-                            // if(width.value > 768){
-                            //     updatePosition(0, 0, 15, -4, 0, 15, self.progress);
-                            // }else{
-                            //     updatePosition(0, 0, 15, 0, -3, 0, self.progress);
-                            // }
+                            console.log('width',width)
+                            if(width.value > 768){
+                                updatePosition(0, 0, 0, -4, 0, 15, self.progress);
+                            }else{
+                                updatePosition(0, 0, 15, 0, -3, 0, self.progress);
+                            }
                         },
                     },   
                 });
