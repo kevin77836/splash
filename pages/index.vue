@@ -157,49 +157,49 @@
             <div class="works-content-container">
                 <div class="works-content-group">
                     <a href="#" class="works-content-item works-content-item-15 column">
-                        <img src="/works/works15.webp" alt="">
+                        <video src="/works/works15.mp4" autoplay muted loop></video>
                     </a>
                     <a href="#" class="works-content-item works-content-item-14 column">
-                        <img src="/works/works14.webp" alt="">
+                        <video src="/works/works14.mp4" autoplay muted loop></video>
                     </a>
                     <a href="#" class="works-content-item works-content-item-13">
-                        <img src="/works/works13.webp" alt="">
+                        <video src="/works/works13.mp4" autoplay muted loop></video>
                     </a>
                     <a href="#" class="works-content-item works-content-item-12">
                         <img src="/works/works12.webp" alt="">
                     </a>
                     <a href="#" class="works-content-item works-content-item-11 column">
-                        <img src="/works/works11.webp" alt="">
+                        <video src="/works/works11.mp4" autoplay muted loop></video>
                     </a>
                     <a href="#" class="works-content-item works-content-item-10">
-                        <img src="/works/works10.webp" alt="">
+                        <video src="/works/works10.mp4" autoplay muted loop></video>
                     </a>
                     <a href="#" class="works-content-item works-content-item-9 column">
-                        <img src="/works/works9.webp" alt="">
+                        <video src="/works/works9.mp4" autoplay muted loop></video>
                     </a>
                     <a href="#" class="works-content-item works-content-item-8">
                         <img src="/works/works8.webp" alt="">
                     </a>
                     <a href="#" class="works-content-item works-content-item-7">
-                        <img src="/works/works7.webp" alt="">
+                        <video src="/works/works7.mp4" autoplay muted loop></video>
                     </a>
                     <a href="#" class="works-content-item works-content-item-6 column">
-                        <img src="/works/works6.webp" alt="">
+                        <video src="/works/works6.mp4" autoplay muted loop></video>
                     </a>
                     <a href="#" class="works-content-item works-content-item-5 column">
-                        <img src="/works/works5.webp" alt="">
+                        <video src="/works/works5.mp4" autoplay muted loop></video>
                     </a>
                     <a href="#" class="works-content-item works-content-item-4">
                         <img src="/works/works4.webp" alt="">
                     </a>
                     <a href="#" class="works-content-item works-content-item-3">
-                        <img src="/works/works3.webp" alt="">
+                        <video src="/works/works3.mp4" autoplay muted loop></video>
                     </a>
                     <a href="#" class="works-content-item works-content-item-2">
-                        <img src="/works/works2.webp" alt="">
+                        <video src="/works/works2.mp4" autoplay muted loop></video>
                     </a>
                     <a href="#" class="works-content-item works-content-item-1">
-                        <img src="/works/works1.webp" alt="">
+                        <video src="/works/works1.mp4" autoplay muted loop></video>
                     </a>
                 </div>
             </div> 
@@ -383,7 +383,26 @@
                     opacity: 0,
                     ease: 'none'
                 });
-                
+
+                const itemCount = 15; // 元素總數
+                let totalDistance = 2000; // 元素移動的總直線距離
+                const zDistance = 10000; // Z軸最大移動距離
+                const baseStartPercent = 0; // 起始滾動百分比
+                const opacityDuration = 10; // 每個元素透明度動畫的滾動百分比
+                const moveDuration = 30; // 每個元素位移動畫的滾動百分比
+                const delayBetweenItems = 5; // 元素之間的延遲百分比
+
+                if(width.value > 1400){
+                    totalDistance = 3000;
+                }else if(width.value > 1200){
+                    totalDistance = 2500;
+                }else if(width.value > 992){
+                    totalDistance = 2000;
+                }else if(width.value > 768){
+                    totalDistance = 2000;
+                }else{
+                    totalDistance = 2000;
+                }
                 gsap.timeline({
                     scrollTrigger: {
                         trigger: '.works-section',
@@ -405,15 +424,6 @@
                         }
                     },    
                 });
-
-                const itemCount = 15; // 元素總數
-                const totalDistance = 2000; // 元素移動的總直線距離
-                const zDistance = 10000; // Z軸最大移動距離
-                const baseStartPercent = 0; // 起始滾動百分比
-                const opacityDuration = 10; // 每個元素透明度動畫的滾動百分比
-                const moveDuration = 30; // 每個元素位移動畫的滾動百分比
-                const delayBetweenItems = 5; // 元素之間的延遲百分比
-                
                 const worksTimeline = gsap.timeline({
                     scrollTrigger: {
                         trigger: '.works-section',
@@ -422,44 +432,78 @@
                         scrub: true, // 平滑的滾動效果
                         markers: false,
                         onUpdate: (self) => {
-                            updatePosition(0, 0, -10, 0, 0, 27, self.progress);
+                            updatePosition(0, 0, -10, 0, 0, 25, self.progress);
                         },
                     }
                 });
-
-                // // 使用種子算法生成固定的隨機角度集合
-                // // 這確保每次頁面加載時元素方向一致
-                // const generateRandomAngles = (count) => {
-                //     const angles = [];
-                //     for (let i = 0; i < count; i++) {
-                //         // 使用數學函數生成偽隨機數
-                //         const seed = Math.sin(i * 97.123) * 10000;
-                //         const random = Math.abs(seed - Math.floor(seed));
-                //         angles.push(random * 360); // 轉換為0-360度的角度
-                //     }
-                //     return angles;
-                // };
                 
-                const cornerData = {
-                    topLeft:    { angle: -150.255, vertical: 'top',    horizontal: 'left' },
-                    bottomRight:{ angle:   29.744, vertical: 'bottom', horizontal: 'right' },
-                    bottomLeft: { angle:  150.255, vertical: 'bottom', horizontal: 'left' },
-                    topRight:   { angle:  -29.744, vertical: 'top',    horizontal: 'right' }
+                const radToDeg = rad => rad * 180 / Math.PI;
+                const clampAngle = angle => ((angle % 360) + 360) % 360;
+
+                const getCornerDataFromScreen = () => {
+                    const halfW = width.value / 2;
+                    const halfH = height.value / 2;
+
+                    return {
+                        topLeft: {
+                            angle: clampAngle(radToDeg(Math.atan2(-halfH, -halfW))),
+                        },
+                        topRight: {
+                            angle: clampAngle(radToDeg(Math.atan2(-halfH, halfW))),
+                        },
+                        bottomLeft: {
+                            angle: clampAngle(radToDeg(Math.atan2(halfH, -halfW))),
+                        },
+                        bottomRight: {
+                            angle: clampAngle(radToDeg(Math.atan2(halfH, halfW))),
+                        },
+                        topCenter: {
+                            angle: clampAngle(radToDeg(Math.atan2(-halfH, 0))),
+                        },
+                        bottomCenter: {
+                            angle: clampAngle(radToDeg(Math.atan2(halfH, 0))),
+                        },
+                        leftCenter: {
+                            angle: clampAngle(radToDeg(Math.atan2(0, -halfW))),
+                        },
+                        rightCenter: {
+                            angle: clampAngle(radToDeg(Math.atan2(0, halfW))),
+                        }
+                    };
                 };
 
-                const cornerOrder = ['topLeft', 'bottomRight', 'bottomLeft', 'topRight']; // 固定順序
+                const cornerOrder = ['topLeft', 'bottomCenter', 'topRight', 'leftCenter', 'bottomRight', 'topCenter', 'bottomLeft', 'rightCenter']; // 固定順序
 
-                const generateAngleSequence = (count) => {
+                const generateSequence = (count) => {
+                    const cornerData = getCornerDataFromScreen();
                     const sequence = [];
 
                     for (let i = 0; i < count; i++) {
                         const cornerKey = cornerOrder[i % cornerOrder.length];
                         const baseAngle = cornerData[cornerKey].angle;
+                        let distance = totalDistance;
+
+                        if(cornerKey === 'bottomCenter' || cornerKey === 'topCenter'){
+                            if(width.value > height.value){
+                                distance = totalDistance * 0.6;
+                            }else{
+                                distance = totalDistance * 0.8;
+                            }
+                        }else if(cornerKey === 'leftCenter' || cornerKey === 'rightCenter'){
+                            if(width.value > height.value){
+                                distance = totalDistance * 0.8;
+                            }else{
+                                distance = totalDistance * 0.7;
+                            }
+                        }
 
                         const randomOffset = Math.random() * 40 - 20; // ±45 度
-                        const finalAngle = baseAngle + randomOffset;
+                        const finalAngle = baseAngle;
 
-                        sequence.push(finalAngle);
+                        sequence.push({
+                            angle: finalAngle,
+                            distance: distance
+                        });
                     }
 
                     return sequence;
@@ -468,7 +512,7 @@
                 // 使用方式
                 // const angles = generateAngleSequence(10);
                 // 預先生成所有角度
-                const randomAngles = generateAngleSequence(itemCount);
+                const worksAngleAndDistanceData = generateSequence(itemCount);
                 
                 // 為每個作品項目添加動畫
                 for (let i = 1; i <= itemCount; i++) {
@@ -476,12 +520,13 @@
                     const itemDelay = (i - 1) * delayBetweenItems;
                     
                     // 根據預生成的角度計算方向
-                    const randomAngle = randomAngles[i-1];
+                    const randomAngle = worksAngleAndDistanceData[i-1].angle;
                     const rad = randomAngle * Math.PI / 180; // 轉換為弧度
+                    const distance = worksAngleAndDistanceData[i-1];
                     
                     // 計算 x 和 y 坐標，形成放射狀分布
-                    const x = Math.round(totalDistance * Math.cos(rad));
-                    const y = Math.round(totalDistance * Math.sin(rad));
+                    const x = Math.round(distance.distance * Math.cos(rad));
+                    const y = Math.round(distance.distance * Math.sin(rad));
                     
                     // Z軸偏移計算，添加隨機變化
                     // const zOffset = Math.round(zDistance * (0.8 + (i % 5) * zVariation / 5));
@@ -530,7 +575,7 @@
                             // growingFunction()
                         },
                         onUpdate: (self) => {
-                            updatePosition(0, 0, 27, -8, 0, 0, self.progress);
+                            updatePosition(0, 0, 25, -8, 0, 0, self.progress);
                             // if(width.value > 768){
                             //     updatePosition(0, 0, 15, -4, 0, 15, self.progress);
                             // }else{
