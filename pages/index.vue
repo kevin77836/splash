@@ -277,7 +277,6 @@
         <button @click="shrinkingFunction">開始收合</button>
         <button @click="startAutoPlay">開始自動播放</button>
         <button @click="stopAutoPlay">停止自動播放</button>
-        <div class="status">狀態: {{ currentState }}</div>
         <div class="status">資源狀態: {{ loadComplete ? '已載入' : '載入中' }}</div>
         <div class="status">自動播放: {{ isAutoPlaying ? '進行中' : '停止' }}</div>
         </div> -->
@@ -288,28 +287,22 @@
     import { CustomEase } from 'gsap/CustomEase';
     import { useWindowSize } from '@vueuse/core'
     const { width, height } = useWindowSize();
-
-    watch(height, (newHeight) => {
-        const vh = newHeight * 0.01;
-        document.documentElement.style.setProperty('--vh', `${vh}px`);
-    })
     
-    // 註冊 ScrollTrigger 和 CustomEase 插件
     if (process.client) {
         gsap.registerPlugin(ScrollTrigger, CustomEase);
     }
     
     const splashRef = ref(null);
     const loadComplete = ref(false);
-    const currentState = ref('idle');
     const isAutoPlaying = ref(false);
     const isStarted = ref(false);
     const isMenuOpen = ref(false);
     const isLandingPage = ref(true);
     let autoPlayTimer = null;
     let customEasing;
+    let serviceMarqueeInterval = null;
     
-    // 設置 ScrollTrigger 動畫
+    // 動畫相關
     const setupScrollAnimations = () => {
         if (process.client) {
             nextTick(() => {
@@ -674,7 +667,6 @@
             });
         }
     }
-
     const updatePosition = (fromX, fromY, fromZ, toX, toY, toZ, progress) => {
         if (splashRef.value) {
             const x = (toX - fromX) * progress;
@@ -686,52 +678,41 @@
             splashRef.value.updatePosition(offsetX, offsetY, offsetZ);
         }
     }
-    
-    // 基本動畫控制函數
-    const growingFunction = () => {
-        if (splashRef.value) {
-        splashRef.value.startGrowingAnimation();
-        }
-    }
-    
-    const shrinkingFunction = () => {
-        if (splashRef.value) {
-        splashRef.value.startShrinkingAnimation();
-        }
-    }
-
-    const animateTextToTargetPosition = () => {
-        if (splashRef.value) {
-            splashRef.value.animateTextToTargetPosition();
-        }
-    }
-
-    const animateTextToOrigin = () => {
-        if (splashRef.value) {
-            splashRef.value.animateTextToOrigin();
-        }
-    }
-
     const changeMaterialType = (materialType) => {
         if (splashRef.value) {
             splashRef.value.changeMaterialType(materialType);
         }
     }
-    
-    // 處理資源載入完成事件
-    const handleResourcesLoaded = () => {
+    const startServiceMarquee = () => {
+        if(serviceMarqueeInterval) return;
+        const items = document.querySelectorAll('.service-group-item');
+        if (items.length === 0) return;
+        
+        let currentIndex = 0;
+        
+        items[0].classList.add('active');
+        
+        serviceMarqueeInterval = setInterval(() => {
+            items[currentIndex].classList.remove('active');
+            currentIndex = (currentIndex + 1) % items.length;
+            
+            // 顯示新的當前項目
+            items[currentIndex].classList.add('active');
+        }, 1000); // 每個項目顯示 1 秒
+    };
+
+    // 水花收合
+    const growingFunction = () => {
         if (splashRef.value) {
-            splashRef.value.updatePosition(0, 0, 10);
+        splashRef.value.startGrowingAnimation();
         }
-        loadComplete.value = true;
+    }  
+    const shrinkingFunction = () => {
+        if (splashRef.value) {
+        splashRef.value.startShrinkingAnimation();
+        }
     }
-    
-    // 處理狀態變化
-    const handleStateChange = (state) => {
-        currentState.value = state;
-    }
-    
-    // 處理動畫完成事件
+    // 控制自動播放
     const handleAnimationComplete = (animationType) => {
         if (!isAutoPlaying.value) return;
         
@@ -747,7 +728,41 @@
             }, 1000);
         }
     }
+    const startAutoPlay = () => {
+        if (isAutoPlaying.value) return;
+        isAutoPlaying.value = true;
+        growingFunction();
+    }
+    const stopAutoPlay = () => {
+        isAutoPlaying.value = false;
+        if (autoPlayTimer) {
+            clearTimeout(autoPlayTimer);
+            autoPlayTimer = null;
+        }
+        shrinkingFunction();
+    }
+
+    // 標準字收合
+    const animateTextToTargetPosition = () => {
+        if (splashRef.value) {
+            splashRef.value.animateTextToTargetPosition();
+        }
+    }
+    const animateTextToOrigin = () => {
+        if (splashRef.value) {
+            splashRef.value.animateTextToOrigin();
+        }
+    }
     
+    // 處理資源載入完成事件
+    const handleResourcesLoaded = () => {
+        if (splashRef.value) {
+            splashRef.value.updatePosition(0, 0, 10);
+        }
+        loadComplete.value = true;
+    }
+    
+    // 點擊開始按鈕
     const clickStart = () => {
         isStarted.value = true;
         startAutoPlay();
@@ -780,29 +795,6 @@
         
         // 啟用頁面滾動
         document.body.style.overflow = 'auto';
-    }
-    
-    // 開始自動播放
-    const startAutoPlay = () => {
-        if (isAutoPlaying.value) return; // 如果已經在播放則不執行
-        isAutoPlaying.value = true;
-        
-        // 從生長動畫開始
-        growingFunction();
-    }
-    
-    // 停止自動播放
-    const stopAutoPlay = () => {
-        isAutoPlaying.value = false;
-        
-        // 清除任何待執行的定時器
-        if (autoPlayTimer) {
-        clearTimeout(autoPlayTimer);
-        autoPlayTimer = null;
-        }
-        
-        // 執行收合動畫，使其回到起點
-        shrinkingFunction();
     }
     
     // 切換漢堡選單
@@ -838,26 +830,6 @@
             }
         }, 100);
     }
-    
-    // 服務項目跑馬燈效果
-    let serviceMarqueeInterval = null;
-    const startServiceMarquee = () => {
-        if(serviceMarqueeInterval) return;
-        const items = document.querySelectorAll('.service-group-item');
-        if (items.length === 0) return;
-        
-        let currentIndex = 0;
-        
-        items[0].classList.add('active');
-        
-        serviceMarqueeInterval = setInterval(() => {
-            items[currentIndex].classList.remove('active');
-            currentIndex = (currentIndex + 1) % items.length;
-            
-            // 顯示新的當前項目
-            items[currentIndex].classList.add('active');
-        }, 1000); // 每個項目顯示 1 秒
-    };
 
     onMounted(() => {
         document.body.style.overflow = 'hidden';
@@ -868,19 +840,6 @@
 
         gsap.registerEase("customShrinkEase", function(x) {
             return Math.pow(x, 2.5);
-  });
-    });
-    // 組件卸載時清理
-    onUnmounted(() => {
-        if (autoPlayTimer) {
-        clearTimeout(autoPlayTimer);
-        }
-        if (serviceMarqueeInterval) {
-            clearInterval(serviceMarqueeInterval);
-        }
-        isAutoPlaying.value = false;
-        
-        // 清理所有 ScrollTrigger 實例
-        ScrollTrigger.getAll().forEach(trigger => trigger.kill());
+        });
     });
 </script>
