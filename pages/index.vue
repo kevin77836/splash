@@ -298,9 +298,7 @@
     const isStarted = ref(false);
     const isMenuOpen = ref(false);
     const isLandingPage = ref(true);
-    let autoPlayTimer = null;
     let customEasing;
-    let serviceMarqueeInterval = null;
     
     // 動畫相關
     const setupScrollAnimations = () => {
@@ -678,11 +676,50 @@
             splashRef.value.updatePosition(offsetX, offsetY, offsetZ);
         }
     }
+    const backgroundColors = {
+        'water': '#ffffff',
+        'metallic': '#FCBD00',
+        'matte': '#239D89',
+        'gold': '#000000',
+        'neon': '#000814',
+        'ice': '#001419',
+        'holographic': '#14001a',
+        'cloud': '#1a1a1a',
+        'chameleon': '#001a14',
+        'galaxy': '#000033',
+        'wireframe': '#ffffff',
+    };
+    const fontColors = {
+        'water': '#000000',
+        'metallic': '#000000',
+        'matte': '#000000',
+        'gold': '#ffffff',
+        'neon': '#ffffff',
+        'ice': '#ffffff',
+        'holographic': '#ffffff',
+        'cloud': '#ffffff',
+        'chameleon': '#ffffff',
+        'galaxy': '#ffffff',
+        'wireframe': '#000000',
+    };
     const changeMaterialType = (materialType) => {
         if (splashRef.value) {
             splashRef.value.changeMaterialType(materialType);
+            const color = backgroundColors[materialType];
+            const fontColor = fontColors[materialType];
+            if (color) {
+                document.documentElement.style.backgroundColor = color;
+                document.body.style.backgroundColor = color;
+            }
+            if (fontColor) {
+                const servicesContents = document.querySelectorAll('.services-content');
+                servicesContents.forEach(content => {
+                    content.style.setProperty('--font-color', fontColor);
+                });
+            }
         }
     }
+    let serviceMarqueeInterval = null;
     const startServiceMarquee = () => {
         if(serviceMarqueeInterval) return;
         const items = document.querySelectorAll('.service-group-item');
@@ -712,7 +749,9 @@
         splashRef.value.startShrinkingAnimation();
         }
     }
+
     // 控制自動播放
+    let autoPlayTimer = null;
     const handleAnimationComplete = (animationType) => {
         if (!isAutoPlaying.value) return;
         
