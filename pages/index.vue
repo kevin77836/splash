@@ -93,7 +93,6 @@
                 </span>
             </h1> -->
         </div>
-        <div v-if="isStarted" class="section gap-section"></div>
         <div v-if="isStarted" class="section aboutUs-section">
             <div class="aboutUs-marquee">
                 <div class="aboutUs-marquee-content-group">
@@ -304,32 +303,12 @@
     const setupScrollAnimations = () => {
         if (process.client) {
             nextTick(() => {
-                gapSectionGsap();
                 aboutUsSectionGsap();
                 worksSectionGsap();
                 servicesSectionGsap();
             });
         }
     };
-    const gapSectionGsap = () => {
-        gsap.timeline({
-            scrollTrigger: {
-                trigger: '.gap-section',
-                start: '5% 80%',
-                markers: false,
-                onEnter: () => {
-                    stopAutoPlay();
-                    animateTextToOrigin();
-                    isLandingPage.value = false;
-                },
-                onLeaveBack: () => {
-                    startAutoPlay();
-                    animateTextToTargetPosition();
-                    isLandingPage.value = true;
-                },
-            },              
-        });        
-    }
     const aboutUsSectionGsap = () => {
         gsap.timeline({
             scrollTrigger: {
@@ -339,18 +318,28 @@
                 scrub: true,
                 markers: false,
                 onUpdate: (self) => {
-                    updatePosition(0, 0, 0, 0, -15, 0, self.progress);
+                    updatePosition(0, 0, 0, 0, -31, 0, self.progress);
                 },
-                onEnter: () => startServiceMarquee(),
+                onEnter: () =>{ 
+                    startServiceMarquee();
+                    stopAutoPlay();
+                    animateTextToOrigin();
+                    isLandingPage.value = false;
+                },
+                onLeaveBack: () => {
+                    startAutoPlay();
+                    animateTextToTargetPosition();
+                    isLandingPage.value = true;
+                },
             },
         });
 
         const aboutUsContentTimeline = gsap.timeline({
             scrollTrigger: {
                 trigger: '.aboutUs-section',
-                start: '5% 80%',
-                end: '65% 70%',
-                scrub: 1,
+                start: '10% bottom',
+                end: '65% bottom',
+                scrub: true,
                 markers: false
             }
         });
@@ -379,7 +368,7 @@
         gsap.to('.aboutUs-section', {
             scrollTrigger: {
                 trigger: '.aboutUs-section',
-                start: '70% 80%',
+                start: '70% bottom',
                 end: 'bottom bottom',
                 scrub: true,
                 markers: false,
@@ -389,14 +378,31 @@
         });
     }
     const worksSectionGsap = () => {
-        const itemCount = 15; // 元素總數
-        let totalDistance = 2000; // 元素移動的總直線距離
-        const zDistance = 10000; // Z軸最大移動距離
-        const baseStartPercent = 0; // 起始滾動百分比
-        const opacityDuration = 10; // 每個元素透明度動畫的滾動百分比
-        const moveDuration = 30; // 每個元素位移動畫的滾動百分比
-        const delayBetweenItems = 5; // 元素之間的延遲百分比
+        gsap.timeline({
+            scrollTrigger: {
+                trigger: '.works-section',
+                start: 'top bottom',
+                end: 'top top',
+                scrub: true,
+                markers: false,
+                onUpdate: (self) => {
+                    updatePosition(0, -1, 30, 0, 0, -10, self.progress);
+                },
+                onLeave: () => {
+                    growingFunction()
+                },
+                onEnterBack: () => {
+                    shrinkingFunction()
+                },
+                onLeaveBack: () => {
+                    updatePosition(0, -15, 0)
+                }
+            },    
+        });
 
+        const itemCount = 15;
+        const zDistance = 10000;
+        let totalDistance;
         if(width.value > 1400){
             totalDistance = 3500;
         }else if(width.value > 1200){
@@ -408,10 +414,8 @@
         }else{
             totalDistance = 2500;
         }
-
         const radToDeg = rad => rad * 180 / Math.PI;
         const clampAngle = angle => ((angle % 360) + 360) % 360;
-
         const getCornerDataFromScreen = () => {
             const halfW = width.value / 2;
             const halfH = height.value / 2;
@@ -429,131 +433,78 @@
                 bottomRight: {
                     angle: clampAngle(radToDeg(Math.atan2(halfH, halfW))),
                 },
-                topCenter: {
-                    angle: clampAngle(radToDeg(Math.atan2(-halfH, 0))),
-                },
-                bottomCenter: {
-                    angle: clampAngle(radToDeg(Math.atan2(halfH, 0))),
-                },
-                leftCenter: {
-                    angle: clampAngle(radToDeg(Math.atan2(0, -halfW))),
-                },
-                rightCenter: {
-                    angle: clampAngle(radToDeg(Math.atan2(0, halfW))),
-                }
             };
         };
-
-        const cornerOrder = ['topLeft', 'bottomCenter', 'topRight', 'leftCenter', 'bottomRight', 'topCenter', 'bottomLeft', 'rightCenter']; // 固定順序
-
-        const generateSequence = (count) => {
+        const cornerOrder = [
+            'topLeft', 
+            'topRight', 
+            'bottomRight', 
+            'bottomLeft'
+        ]; // 固定順序
+        const generateAngleSequence = (count) => {
             const cornerData = getCornerDataFromScreen();
             const sequence = [];
 
             for (let i = 0; i < count; i++) {
                 const cornerKey = cornerOrder[i % cornerOrder.length];
                 const baseAngle = cornerData[cornerKey].angle;
-                let distance = totalDistance;
-
-                if(cornerKey === 'bottomCenter' || cornerKey === 'topCenter'){
-                    if(width.value > height.value){
-                        distance = totalDistance * 0.6;
-                    }else{
-                        distance = totalDistance * 0.8;
-                    }
-                }else if(cornerKey === 'leftCenter' || cornerKey === 'rightCenter'){
-                    if(width.value > height.value){
-                        distance = totalDistance * 0.8;
-                    }else{
-                        distance = totalDistance * 0.7;
-                    }
-                }
-
                 const randomOffset = Math.random() * 40 - 20; // ±45 度
-                const finalAngle = baseAngle;
+                const finalAngle = baseAngle + randomOffset;
 
-                sequence.push({
-                    angle: finalAngle,
-                    distance: distance
-                });
+                sequence.push(finalAngle);
             }
 
             return sequence;
         };
-        
-        gsap.timeline({
-            scrollTrigger: {
-                trigger: '.works-section',
-                start: 'top bottom',
-                end: 'top top',
-                scrub: true,
-                markers: false,
-                onUpdate: (self) => {
-                    updatePosition(0, -1, 30, 0, 0, -10, self.progress);
-                },
-                onLeave: () => {
-                    // growingFunction()
-                },
-                onEnterBack: () => {
-                    // shrinkingFunction()
-                },
-                onLeaveBack: () => {
-                    updatePosition(0, -15, 0)
-                }
-            },    
-        });
-        const worksAngleAndDistanceData = generateSequence(itemCount);
+        const worksAngleData = generateAngleSequence(itemCount);
         
         const worksTimeline = gsap.timeline({
             scrollTrigger: {
                 trigger: '.works-section',
                 start: '0% top', // 從頁面頂部開始
-                end: `${baseStartPercent + (itemCount-1) * delayBetweenItems + moveDuration}% bottom`, // 動態計算結束點
+                end: `bottom bottom`, // 動態計算結束點
                 scrub: true, // 平滑的滾動效果
                 markers: false,
                 onUpdate: (self) => {
-                    updatePosition(0, 0, -10, 0, 0, 25, self.progress);
+                    updatePosition(0, 0, -10, 0, 0, 15, self.progress);
                 },
             }
         });
-        
-        for (let i = 1; i <= itemCount; i++) {
-            // 計算此元素在滾動過程中的延遲
-            const itemDelay = (i - 1) * delayBetweenItems;
+
+        function polarToCartesian(angleDeg, distance) {
+            const rad = angleDeg * Math.PI / 180;
+            return {
+                x: Math.round(distance * Math.cos(rad)),
+                y: Math.round(distance * Math.sin(rad)),
+            };
+        }
+
+        const durationTime = 1;
+        const opacityDuration = 0.3;
+        const delayPercent = 0.15;
+        for (let i = 0; i < itemCount; i++) {
+            const { x, y } = polarToCartesian(worksAngleData[i], totalDistance);
+
             
-            // 根據預生成的角度計算方向
-            const randomAngle = worksAngleAndDistanceData[i-1].angle;
-            const rad = randomAngle * Math.PI / 180; // 轉換為弧度
-            const distance = worksAngleAndDistanceData[i-1];
-            
-            // 計算 x 和 y 坐標，形成放射狀分布
-            const x = Math.round(distance.distance * Math.cos(rad));
-            const y = Math.round(distance.distance * Math.sin(rad));
-            
-            // Z軸偏移計算，添加隨機變化
-            // const zOffset = Math.round(zDistance * (0.8 + (i % 5) * zVariation / 5));
-            
-            // 計算動畫開始的相對位置
-            // 這決定了每個元素何時開始動畫
-            const startPosition = itemDelay / (moveDuration + (itemCount-1) * delayBetweenItems);
-            
-            // 添加到同一時間軸，使用相對位置控制時序
-            // 首先控制透明度變化
-            worksTimeline.to(`.works-content-item-${i}`, { 
-                opacity: 1, // 從透明變為完全不透明
-                duration: opacityDuration / moveDuration, // 計算相對持續時間
-                ease: 'none' // 線性變化
-            }, startPosition);
-            
-            // 然後控制位置變化（同時進行）
-            worksTimeline.to(`.works-content-item-${i}`, {
-                '--transform-x': x, // CSS變量控制X軸位置
-                '--transform-y': y, // CSS變量控制Y軸位置
-                '--transform-z': zDistance, // CSS變量控制Z軸位置
-                ease: 'none', // 使用power2.in緩動函數
-                duration: 1 // 相對持續時間
-            }, startPosition); // 與透明度動畫同時開始
-        }  
+            const itemSelector = `.works-content-item-${i + 1}`;
+            const start = (durationTime * delayPercent) * (i-1);
+
+            // 位移動畫
+            worksTimeline.to(itemSelector, {
+                '--transform-x': x,
+                '--transform-y': y,
+                '--transform-z': zDistance,
+                ease: 'none',
+                duration: durationTime,
+            }, start);
+
+            // 透明動畫（延遲 opacityDelayRatio 啟動）
+            worksTimeline.to(itemSelector, {
+                opacity: 1,
+                ease: 'none',
+                duration: opacityDuration / durationTime,
+            }, start);
+        }
     }
     const servicesSectionGsap = () => {
         gsap.timeline({
@@ -573,10 +524,10 @@
                     shrinkingFunction()
                 },
                 onLeaveBack: () => {
-                    // growingFunction()
+                    growingFunction()
                 },
                 onUpdate: (self) => {
-                    updatePosition(0, 0, 25, -8, 0, 0, self.progress);
+                    updatePosition(0, 0, 15, -10, 0, 0, self.progress);
                     // if(width.value > 768){
                     //     updatePosition(0, 0, 15, -4, 0, 15, self.progress);
                     // }else{
@@ -675,7 +626,7 @@
         }
     }
     const backgroundColors = {
-        'water': '#ffffff',
+        'water': '#F2F2F2',
         'metallic': '#FCBD00',
         'matte': '#239D89',
         'gold': '#000000',

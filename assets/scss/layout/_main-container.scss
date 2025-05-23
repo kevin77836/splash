@@ -23,12 +23,8 @@
         width: 100%;
         height: 100%;
     }
-    .gap-section{
-        height: 50%;
-    }
     .aboutUs-section{
         height: 500%;
-        background-color: rgba(#F2F2F2,0.75);
         .aboutUs-marquee{
             z-index: 10;
             width: 100%;
@@ -94,21 +90,32 @@
                 align-items: center;
                 justify-content: center;
                 flex-direction: column;
-                gap: 3rem;
-                --font-size: 2.5rem;
+                --font-size: 2rem;
+                --gap-main-size: 5rem;
+                --gap-sub-size: 1rem;
+
+                gap: var(--gap-main-size);
                 @include max-xxl{
-                    --font-size: 2rem;
+                    --font-size: 1.5rem;
+                    --gap-main-size: 4rem;
                 }
                 @include max-lg{
-                    --font-size: 1.5rem;
+                    --font-size: 1.25rem;
+                    --gap-main-size: 3rem;
                 }
                 @include max-md{
-                    gap: 2rem;
+                    --font-size: 1rem;
+                    --gap-sub-size: 0.5rem;
                 }
+                // @include max-md{
+                //     gap: 2rem;
+                // }
                 .aboutUs-section-content{
                     display: flex;
+                    align-items: center;
+                    height: var(--font-size);
                     width: 100%;
-                    gap: 1rem;
+                    gap: var(--gap-sub-size);
                     font-size: var(--font-size);
                     hr{
                         width: 0;
@@ -119,18 +126,14 @@
                         flex-wrap: wrap;
                         justify-content: center;
                         align-items: center;
-                        gap: 0.5rem;
                         background-color: black;
-                        height: var(--font-size);
+                        height: calc(var(--font-size) + 0.75rem);
                         width: 100%;
                         .service-group-item {
                             opacity: 0;
                             color: white;
                             display: none;
-                            font-size: calc(var(--font-size) - 1rem);
-                            @include max-lg{
-                                font-size: calc(var(--font-size) - 0.5rem);
-                            }
+                            font-size: var(--font-size);
                             letter-spacing: 1rem;
                             margin-left: 1rem;
                             &.active {
@@ -153,7 +156,6 @@
                         will-change: opacity, filter;
                         -webkit-font-smoothing: antialiased;
                         display: flex;
-                        // justify-content: center;
                         white-space:nowrap;
                     }
                     &-2-2{
@@ -170,20 +172,12 @@
                         height: var(--font-size);
                         .iconGroup{
                             display: flex;
-                            height: calc(var(--font-size) - 1rem);
-                            margin-top: 0.5rem;
-                            @include max-md{
-                                margin-top: 0.25rem;
-                                height: calc(var(--font-size) - 0.5rem);
-                            }
+                            height: var(--font-size);
                             position: relative;
                             padding: 0 0.5rem;
                             span{
                                 height: 100%;
-                                font-size: calc(var(--font-size) - 1rem);
-                                @include max-lg{
-                                    font-size: calc(var(--font-size) - 0.5rem);
-                                }
+                                font-size: var(--font-size);
                                 margin-right: 0.25rem;
                                 letter-spacing: 1rem;
                             }
@@ -192,26 +186,27 @@
                             }
                         }
                         .underline{
+                            position: absolute;
                             width: 0;
                             height: 1px;
                             background-color: black;
+                            top: calc(var(--font-size) + 0.5rem);
                         }
                     }
                     .section-content-3-group{
                         display: flex;
-                        gap: 1rem;
+                        gap: var(--gap-sub-size);
                     }
                     .section-content-1-group{
                         display: flex;
-                        gap: 1rem;
+                        gap: var(--gap-sub-size);
                     }
                 }
             }
         }
     } 
-
     .works-section{
-        height: 500%;
+        height: 1000%;
         .works-content-container{
             width: 100%;
             height: 100dvh;
@@ -222,7 +217,7 @@
             .works-content-group{
                 width: 100%;
                 height: 100%;
-                perspective: 200px;
+                perspective: 500px;
                 transform-style: preserve-3d;
                 .works-content-item{
                     position: absolute;
@@ -240,8 +235,8 @@
                         calc(-10000px + var(--transform-z, 0) * 1px)
                     );
                     &.column{
-                        width: calc(2000px * 9 / 16);
-                        height: 2000px;
+                        width: calc(2500px * 9 / 16);
+                        height: 2500px;
                     }
                     img,video{
                         width: 100%;
@@ -252,7 +247,6 @@
             }
         }
     }
-
     .services-section{
         overflow: hidden;
         position: relative;

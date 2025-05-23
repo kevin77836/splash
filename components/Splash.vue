@@ -393,15 +393,15 @@ function loadFontAndCreateText() {
     font = fontLoader.parse(json);
     
     // 儲存目標位置
-    textTargetPosition1 = new THREE.Vector3(-4, 0, -5);
-    textTargetPosition2 = new THREE.Vector3(4, 0, -5);
+    textTargetPosition1 = new THREE.Vector3(-4, 0, -2);
+    textTargetPosition2 = new THREE.Vector3(4, 0, -2);
     
     // 創建第一個文字 - 初始位置為原點
-    textMesh1 = createText('Splash', new THREE.Vector3(3, 0, -5),'left', 1);
+    textMesh1 = createText('Splash', new THREE.Vector3(3, 0, -2),'left', 1);
     scene.add(textMesh1);
     
     // 創建第二個文字 - 初始位置為原點
-    textMesh2 = createText('DigiLab', new THREE.Vector3(-3, 0, -5),'right', 1);
+    textMesh2 = createText('DigiLab', new THREE.Vector3(-3, 0, -2),'right', 1);
     scene.add(textMesh2);
   });
 }
@@ -519,14 +519,14 @@ function animateTextToOrigin() {
   
   // 設置動畫參數
   // const duration = animParams.shrinkSpeed;
-  const duration = 1;
+  const duration = 0.5;
   
   // 文字1位置動畫
   gsap.to(textMesh1.position, {
     x: textOriginPosition1.x,
     y: textOriginPosition1.y,
     z: textOriginPosition1.z,
-    duration: 1,
+    duration: duration,
     ease: "customShrinkEase" // 使用已註冊的自定義緩動函數
   });
   
