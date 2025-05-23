@@ -902,7 +902,6 @@ function handleResize() {
   if (!camera || !renderer) return;
   const width = canvasContainer.value?.clientWidth ?? window.innerWidth;
   const height = canvasContainer.value?.clientHeight ?? window.innerHeight;
-  document.documentElement.style.setProperty('--windowHeight', `${height}px`);
 
   camera.aspect = width / height;
   camera.updateProjectionMatrix();
