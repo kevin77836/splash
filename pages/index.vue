@@ -157,49 +157,49 @@
             <div class="works-content-container">
                 <div class="works-content-group">
                     <a href="#" class="works-content-item works-content-item-15 column">
-                        <video src="/works/works15.mp4" autoplay muted loop></video>
+                        <video src="/works/works15.mp4" autoplay muted loop playsinline></video>
                     </a>
                     <a href="#" class="works-content-item works-content-item-14 column">
-                        <video src="/works/works14.mp4" autoplay muted loop></video>
+                        <video src="/works/works14.mp4" autoplay muted loop playsinline></video>
                     </a>
                     <a href="#" class="works-content-item works-content-item-13">
-                        <video src="/works/works13.mp4" autoplay muted loop></video>
+                        <video src="/works/works13.mp4" autoplay muted loop playsinline></video>
                     </a>
                     <a href="#" class="works-content-item works-content-item-12">
                         <img src="/works/works12.webp" alt="">
                     </a>
                     <a href="#" class="works-content-item works-content-item-11 column">
-                        <video src="/works/works11.mp4" autoplay muted loop></video>
+                        <video src="/works/works11.mp4" autoplay muted loop playsinline></video>
                     </a>
                     <a href="#" class="works-content-item works-content-item-10">
-                        <video src="/works/works10.mp4" autoplay muted loop></video>
+                        <video src="/works/works10.mp4" autoplay muted loop playsinline></video>
                     </a>
                     <a href="#" class="works-content-item works-content-item-9 column">
-                        <video src="/works/works9.mp4" autoplay muted loop></video>
+                        <video src="/works/works9.mp4" autoplay muted loop playsinline></video>
                     </a>
                     <a href="#" class="works-content-item works-content-item-8">
                         <img src="/works/works8.webp" alt="">
                     </a>
                     <a href="#" class="works-content-item works-content-item-7">
-                        <video src="/works/works7.mp4" autoplay muted loop></video>
+                        <video src="/works/works7.mp4" autoplay muted loop playsinline></video>
                     </a>
                     <a href="#" class="works-content-item works-content-item-6 column">
-                        <video src="/works/works6.mp4" autoplay muted loop></video>
+                        <video src="/works/works6.mp4" autoplay muted loop playsinline></video>
                     </a>
                     <a href="#" class="works-content-item works-content-item-5 column">
-                        <video src="/works/works5.mp4" autoplay muted loop></video>
+                        <video src="/works/works5.mp4" autoplay muted loop playsinline></video>
                     </a>
                     <a href="#" class="works-content-item works-content-item-4">
                         <img src="/works/works4.webp" alt="">
                     </a>
                     <a href="#" class="works-content-item works-content-item-3">
-                        <video src="/works/works3.mp4" autoplay muted loop></video>
+                        <video src="/works/works3.mp4" autoplay muted loop playsinline></video>
                     </a>
                     <a href="#" class="works-content-item works-content-item-2">
-                        <video src="/works/works2.mp4" autoplay muted loop></video>
+                        <video src="/works/works2.mp4" autoplay muted loop playsinline></video>
                     </a>
                     <a href="#" class="works-content-item works-content-item-1">
-                        <video src="/works/works1.mp4" autoplay muted loop></video>
+                        <video src="/works/works1.mp4" autoplay muted loop playsinline></video>
                     </a>
                 </div>
             </div> 
