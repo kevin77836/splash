@@ -58,7 +58,7 @@ const sphereParams = reactive({
 // --- 流動動畫參數 ---
 const animParams = reactive({
   // 基本設定
-  mobileResolution: 100,
+  mobileResolution: 75,
   resolution: 100,                // Marching Cubes 解析度
   numSegments: 50,                // 每條線分段數量
   subtract: 20,                   // Metaball 減法參數
