@@ -212,10 +212,9 @@
 
     .works-section{
         height: 500%;
-        position: relative;
         .works-content-container{
             width: 100%;
-            height: calc(100% / 5);
+            height: var(--windowHeight);
             position: sticky;
             top: 0;
             left: 0;
@@ -258,6 +257,8 @@
         overflow: hidden;
         position: relative;
         height: 1000%;
+        mix-blend-mode: difference;
+        color: var(--font-color);
         .services-content-container{
             padding: 0 5rem;
             height: 100%;
