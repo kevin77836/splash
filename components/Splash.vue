@@ -393,15 +393,15 @@ function loadFontAndCreateText() {
     font = fontLoader.parse(json);
     
     // 儲存目標位置
-    textTargetPosition1 = new THREE.Vector3(-4, 0, -2);
-    textTargetPosition2 = new THREE.Vector3(4, 0, -2);
+    textTargetPosition1 = new THREE.Vector3(-4, 0, -3);
+    textTargetPosition2 = new THREE.Vector3(4, 0, -3);
     
     // 創建第一個文字 - 初始位置為原點
-    textMesh1 = createText('Splash', new THREE.Vector3(3, 0, -2),'left', 1);
+    textMesh1 = createText('Splash', new THREE.Vector3(3, 0, -3),'left', 1);
     scene.add(textMesh1);
     
     // 創建第二個文字 - 初始位置為原點
-    textMesh2 = createText('DigiLab', new THREE.Vector3(-3, 0, -2),'right', 1);
+    textMesh2 = createText('DigiLab', new THREE.Vector3(-3, 0, -3),'right', 1);
     scene.add(textMesh2);
   });
 }

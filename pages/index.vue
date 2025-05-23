@@ -466,7 +466,7 @@
                 scrub: true, // 平滑的滾動效果
                 markers: false,
                 onUpdate: (self) => {
-                    updatePosition(0, 0, -10, 0, 0, 15, self.progress);
+                    updatePosition(0, 0, -10, 0, 0, 10, self.progress);
                 },
             }
         });
@@ -527,7 +527,7 @@
                     growingFunction()
                 },
                 onUpdate: (self) => {
-                    updatePosition(0, 0, 15, -10, 0, 0, self.progress);
+                    updatePosition(0, 0, 10, -10, 0, 0, self.progress);
                     // if(width.value > 768){
                     //     updatePosition(0, 0, 15, -4, 0, 15, self.progress);
                     // }else{
