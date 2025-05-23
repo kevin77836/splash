@@ -2,7 +2,6 @@
     <Splash
         ref="splashRef" 
         @resourcesLoaded="handleResourcesLoaded"
-        @stateChange="handleStateChange"
         @animationComplete="handleAnimationComplete"
     />
     <div :class="{'active': isStarted}" class="l-header">
@@ -289,6 +288,11 @@
     import { CustomEase } from 'gsap/CustomEase';
     import { useWindowSize } from '@vueuse/core'
     const { width, height } = useWindowSize();
+
+    watch(height, (newHeight) => {
+        const vh = newHeight * 0.01;
+        document.documentElement.style.setProperty('--vh', `${vh}px`);
+    })
     
     // 註冊 ScrollTrigger 和 CustomEase 插件
     if (process.client) {
