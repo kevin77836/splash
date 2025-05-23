@@ -13,13 +13,13 @@ html, body{
   height: 100%;
   background-color: #F2F2F2;
   transition: background-color 0.5s ease-in-out;
-  --vh: 1dvh;
+  --windowHeight: 100%;
   // --font-color: black;
 }
 
 #__nuxt{
   width: 100%;
-  height: 100dvh;
+  height: var(--windowHeight);
 }
 
 .fade-enter-active,
