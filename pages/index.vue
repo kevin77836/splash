@@ -567,11 +567,9 @@
                     shrinkingFunction()
                 },
                 onLeave: () => {
-                    changeMaterialType('wireframe');
                     growingFunction()
                 },
                 onEnterBack: () => {
-                    changeMaterialType('water');
                     shrinkingFunction()
                 },
                 onLeaveBack: () => {
@@ -628,7 +626,7 @@
                     onLeaveBack: () => {
                         growingFunction()
                         if(i === 1){
-                            changeMaterialType('wireframe');
+                            changeMaterialType('water');
                         }else if(i === 2){
                             changeMaterialType('metallic');
                         }else if(i === 3){
