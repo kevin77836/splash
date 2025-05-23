@@ -848,7 +848,6 @@ function updateSpheres() {
 function animate() {
   stats.begin();
 
-  // 僅在需要時進行渲染，節省資源
   if (!effect || !material || !camera || !renderer || !scene) {
     return;
   }
@@ -857,7 +856,6 @@ function animate() {
   // 更新場景邏輯
   updateLineMetaball(effect);
   
-  // 更新球體
   updateSpheres();
   
   // 應用旋轉到場景
@@ -888,14 +886,10 @@ function animate() {
     sphereGroup.rotation.y += 0.0015;
   }
   
-  // 結合滑鼠控制和滾動位移的最終位置
   scene.position.set(targetScrollOffsetX, targetScrollOffsetY, targetScrollOffsetZ);
-  
-  // 渲染前確保所有矩陣已更新
   scene.updateMatrixWorld();
   
   stats.end();     
-  // 渲染場景
   renderer.render(scene, camera);
 
   requestAnimationFrame(animate);

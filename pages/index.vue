@@ -309,361 +309,367 @@
     const setupScrollAnimations = () => {
         if (process.client) {
             nextTick(() => {
-                gsap.timeline({
-                    scrollTrigger: {
-                        trigger: '.gap-section',
-                        start: '5% 80%',
-                        markers: false,
-                        onEnter: () => {
-                            stopAutoPlay();
-                            animateTextToOrigin();
-                            isLandingPage.value = false;
-                        },
-                        onLeaveBack: () => {
-                            startAutoPlay();
-                            animateTextToTargetPosition();
-                            isLandingPage.value = true;
-                        },
-                    },              
-                });
-
-                gsap.timeline({
-                    scrollTrigger: {
-                        trigger: '.aboutUs-section',
-                        start: 'top bottom',
-                        end: 'center bottom',
-                        scrub: true,
-                        markers: false,
-                        onUpdate: (self) => {
-                            updatePosition(0, 0, 0, 0, -15, 0, self.progress);
-                        },
-                        onEnter: () => startServiceMarquee(),
-                    },
-                });
-
-                const aboutUsContentTimeline = gsap.timeline({
-                    scrollTrigger: {
-                        trigger: '.aboutUs-section',
-                        start: '5% 80%',
-                        end: '65% 70%',
-                        scrub: 1,
-                        markers: false
-                    }
-                });
-                aboutUsContentTimeline
-                    .to('.aboutUs-section-content-1-1', { opacity: 1, filter: 'blur(0px)', duration: 0.1 })
-                    .to('.aboutUs-section-hr-1', { width: '100%', duration: 0.2 })
-                    .to('.aboutUs-section-content-1-2', { opacity: 1, filter: 'blur(0px)', duration: 0.1 })
-                    .to('.aboutUs-section-content-2-1', { opacity: 1, filter: 'blur(0px)', duration: 0.1 })
-                    .to('.aboutUs-section-content-2-2', { width: '100%', duration: 0.2 })
-                    .to('.aboutUs-section-content-3-1', { opacity: 1, filter: 'blur(0px)', duration: 0.1 })
-                    .to('.aboutUs-section-content-3-2', { opacity: 1, filter: 'blur(0px)', duration: 0.1 })
-                    .to('.aboutUs-section-content-3-2 .underline', { width: '100%', duration: 0.2 })
-                    .to('.aboutUs-section-content-3-3', { opacity: 1, filter: 'blur(0px)', duration: 0.1 });
-
-                gsap.to('.aboutUs-content-group', {
-                    scrollTrigger: {
-                        trigger: '.aboutUs-section',
-                        start: '70% 80%',
-                        end: 'bottom bottom',
-                        scrub: true,
-                        markers: false,
-                    },
-                    transform: 'scale(5)',
-                    ease: 'none'
-                });
-                gsap.to('.aboutUs-section', {
-                    scrollTrigger: {
-                        trigger: '.aboutUs-section',
-                        start: '70% 80%',
-                        end: 'bottom bottom',
-                        scrub: true,
-                        markers: false,
-                    },
-                    opacity: 0,
-                    ease: 'none'
-                });
-
-                const itemCount = 15; // 元素總數
-                let totalDistance = 2000; // 元素移動的總直線距離
-                const zDistance = 10000; // Z軸最大移動距離
-                const baseStartPercent = 0; // 起始滾動百分比
-                const opacityDuration = 10; // 每個元素透明度動畫的滾動百分比
-                const moveDuration = 30; // 每個元素位移動畫的滾動百分比
-                const delayBetweenItems = 5; // 元素之間的延遲百分比
-
-                if(width.value > 1400){
-                    totalDistance = 3000;
-                }else if(width.value > 1200){
-                    totalDistance = 2500;
-                }else if(width.value > 992){
-                    totalDistance = 2000;
-                }else if(width.value > 768){
-                    totalDistance = 2000;
-                }else{
-                    totalDistance = 2000;
-                }
-                gsap.timeline({
-                    scrollTrigger: {
-                        trigger: '.works-section',
-                        start: 'top bottom',
-                        end: 'top top',
-                        scrub: true,
-                        markers: false,
-                        onUpdate: (self) => {
-                            updatePosition(0, -1, 30, 0, 0, -10, self.progress);
-                        },
-                        onLeave: () => {
-                            // growingFunction()
-                        },
-                        onEnterBack: () => {
-                            // shrinkingFunction()
-                        },
-                        onLeaveBack: () => {
-                            updatePosition(0, -15, 0)
-                        }
-                    },    
-                });
-                const worksTimeline = gsap.timeline({
-                    scrollTrigger: {
-                        trigger: '.works-section',
-                        start: '0% top', // 從頁面頂部開始
-                        end: `${baseStartPercent + (itemCount-1) * delayBetweenItems + moveDuration}% bottom`, // 動態計算結束點
-                        scrub: true, // 平滑的滾動效果
-                        markers: false,
-                        onUpdate: (self) => {
-                            updatePosition(0, 0, -10, 0, 0, 25, self.progress);
-                        },
-                    }
-                });
-                
-                const radToDeg = rad => rad * 180 / Math.PI;
-                const clampAngle = angle => ((angle % 360) + 360) % 360;
-
-                const getCornerDataFromScreen = () => {
-                    const halfW = width.value / 2;
-                    const halfH = height.value / 2;
-
-                    return {
-                        topLeft: {
-                            angle: clampAngle(radToDeg(Math.atan2(-halfH, -halfW))),
-                        },
-                        topRight: {
-                            angle: clampAngle(radToDeg(Math.atan2(-halfH, halfW))),
-                        },
-                        bottomLeft: {
-                            angle: clampAngle(radToDeg(Math.atan2(halfH, -halfW))),
-                        },
-                        bottomRight: {
-                            angle: clampAngle(radToDeg(Math.atan2(halfH, halfW))),
-                        },
-                        topCenter: {
-                            angle: clampAngle(radToDeg(Math.atan2(-halfH, 0))),
-                        },
-                        bottomCenter: {
-                            angle: clampAngle(radToDeg(Math.atan2(halfH, 0))),
-                        },
-                        leftCenter: {
-                            angle: clampAngle(radToDeg(Math.atan2(0, -halfW))),
-                        },
-                        rightCenter: {
-                            angle: clampAngle(radToDeg(Math.atan2(0, halfW))),
-                        }
-                    };
-                };
-
-                const cornerOrder = ['topLeft', 'bottomCenter', 'topRight', 'leftCenter', 'bottomRight', 'topCenter', 'bottomLeft', 'rightCenter']; // 固定順序
-
-                const generateSequence = (count) => {
-                    const cornerData = getCornerDataFromScreen();
-                    const sequence = [];
-
-                    for (let i = 0; i < count; i++) {
-                        const cornerKey = cornerOrder[i % cornerOrder.length];
-                        const baseAngle = cornerData[cornerKey].angle;
-                        let distance = totalDistance;
-
-                        if(cornerKey === 'bottomCenter' || cornerKey === 'topCenter'){
-                            if(width.value > height.value){
-                                distance = totalDistance * 0.6;
-                            }else{
-                                distance = totalDistance * 0.8;
-                            }
-                        }else if(cornerKey === 'leftCenter' || cornerKey === 'rightCenter'){
-                            if(width.value > height.value){
-                                distance = totalDistance * 0.8;
-                            }else{
-                                distance = totalDistance * 0.7;
-                            }
-                        }
-
-                        const randomOffset = Math.random() * 40 - 20; // ±45 度
-                        const finalAngle = baseAngle;
-
-                        sequence.push({
-                            angle: finalAngle,
-                            distance: distance
-                        });
-                    }
-
-                    return sequence;
-                };
-
-                // 使用方式
-                // const angles = generateAngleSequence(10);
-                // 預先生成所有角度
-                const worksAngleAndDistanceData = generateSequence(itemCount);
-                
-                // 為每個作品項目添加動畫
-                for (let i = 1; i <= itemCount; i++) {
-                    // 計算此元素在滾動過程中的延遲
-                    const itemDelay = (i - 1) * delayBetweenItems;
-                    
-                    // 根據預生成的角度計算方向
-                    const randomAngle = worksAngleAndDistanceData[i-1].angle;
-                    const rad = randomAngle * Math.PI / 180; // 轉換為弧度
-                    const distance = worksAngleAndDistanceData[i-1];
-                    
-                    // 計算 x 和 y 坐標，形成放射狀分布
-                    const x = Math.round(distance.distance * Math.cos(rad));
-                    const y = Math.round(distance.distance * Math.sin(rad));
-                    
-                    // Z軸偏移計算，添加隨機變化
-                    // const zOffset = Math.round(zDistance * (0.8 + (i % 5) * zVariation / 5));
-                    
-                    // 計算動畫開始的相對位置
-                    // 這決定了每個元素何時開始動畫
-                    const startPosition = itemDelay / (moveDuration + (itemCount-1) * delayBetweenItems);
-                    
-                    // 添加到同一時間軸，使用相對位置控制時序
-                    // 首先控制透明度變化
-                    worksTimeline.to(`.works-content-item-${i}`, { 
-                        opacity: 1, // 從透明變為完全不透明
-                        duration: opacityDuration / moveDuration, // 計算相對持續時間
-                        ease: 'none' // 線性變化
-                    }, startPosition);
-                    
-                    // 然後控制位置變化（同時進行）
-                    worksTimeline.to(`.works-content-item-${i}`, {
-                        '--transform-x': x, // CSS變量控制X軸位置
-                        '--transform-y': y, // CSS變量控制Y軸位置
-                        '--transform-z': zDistance, // CSS變量控制Z軸位置
-                        ease: 'none', // 使用power2.in緩動函數
-                        duration: 1 // 相對持續時間
-                    }, startPosition); // 與透明度動畫同時開始
-                }
-
-                gsap.timeline({
-                    scrollTrigger: {
-                        trigger: '.title-content',
-                        start: 'top bottom',
-                        end: '80% bottom',
-                        scrub: true,
-                        markers: false,
-                        onEnter: () => {
-                            shrinkingFunction()
-                        },
-                        onLeave: () => {
-                            changeMaterialType('wireframe');
-                            growingFunction()
-                        },
-                        onEnterBack: () => {
-                            changeMaterialType('water');
-                            shrinkingFunction()
-                        },
-                        onLeaveBack: () => {
-                            // growingFunction()
-                        },
-                        onUpdate: (self) => {
-                            updatePosition(0, 0, 25, -8, 0, 0, self.progress);
-                            // if(width.value > 768){
-                            //     updatePosition(0, 0, 15, -4, 0, 15, self.progress);
-                            // }else{
-                            //     updatePosition(0, 0, 15, 0, -3, 0, self.progress);
-                            // }
-                        },
-                    },   
-                });
-
-                const servicesItemCount = 9;
-                for (let i = 1; i <= servicesItemCount; i++) {
-                    gsap.timeline({
-                        scrollTrigger: {
-                            trigger: `.services-content-${i}`,
-                            start: 'top 80%',
-                            end: '80% bottom',
-                            scrub: true,
-                            markers: false,
-                            onEnter: () => {
-                                shrinkingFunction()
-                            },
-                            onLeave: () => {
-                                growingFunction()
-                                if(i === 1){
-                                    changeMaterialType('metallic');
-                                }else if(i === 2){
-                                    changeMaterialType('matte');
-                                }else if(i === 3){
-                                    changeMaterialType('gold');
-                                }else if(i === 4){
-                                    changeMaterialType('neon');
-                                }else if(i === 5){
-                                    changeMaterialType('ice');
-                                }else if(i === 6){
-                                    changeMaterialType('holographic');
-                                }else if(i === 7){
-                                    changeMaterialType('cloud');
-                                }else if(i === 8){
-                                    changeMaterialType('chameleon');
-                                }else if(i === 9){
-                                    changeMaterialType('galaxy');
-                                }
-                            },
-                            onEnterBack: () => {
-                                shrinkingFunction()
-                            },
-                            onLeaveBack: () => {
-                                growingFunction()
-                                if(i === 1){
-                                    changeMaterialType('wireframe');
-                                }else if(i === 2){
-                                    changeMaterialType('metallic');
-                                }else if(i === 3){
-                                    changeMaterialType('matte');
-                                }else if(i === 4){
-                                    changeMaterialType('gold');
-                                }else if(i === 5){
-                                    changeMaterialType('neon');
-                                }else if(i === 6){
-                                    changeMaterialType('ice');
-                                }else if(i === 7){
-                                    changeMaterialType('holographic');
-                                }else if(i === 8){
-                                    changeMaterialType('cloud');
-                                }else if(i === 9){
-                                    changeMaterialType('chameleon');
-                                }
-                            },
-                            onUpdate: (self) => {
-                                // if(i === 0){
-                                //     updatePosition(10, 0, 20, -10, 0, 20, self.progress);
-                                // }
-                                // if(width.value > 768){
-                                //     if(i % 2 === 0){
-                                //         updatePosition(10, 0, 20, -10, 0, 20, self.progress);
-                                //     }else{
-                                //         updatePosition(-10, 0, 20, 10, 0, 20, self.progress);
-                                //     }
-                                // }else{
-                                //     splashRef.value.updatePosition(0, -3, 0);
-                                // }
-                            },
-                        },   
-                    });
-                }
+                gapSectionGsap();
+                aboutUsSectionGsap();
+                worksSectionGsap();
+                servicesSectionGsap();
             });
         }
     };
+    const gapSectionGsap = () => {
+        gsap.timeline({
+            scrollTrigger: {
+                trigger: '.gap-section',
+                start: '5% 80%',
+                markers: false,
+                onEnter: () => {
+                    stopAutoPlay();
+                    animateTextToOrigin();
+                    isLandingPage.value = false;
+                },
+                onLeaveBack: () => {
+                    startAutoPlay();
+                    animateTextToTargetPosition();
+                    isLandingPage.value = true;
+                },
+            },              
+        });        
+    }
+    const aboutUsSectionGsap = () => {
+        gsap.timeline({
+            scrollTrigger: {
+                trigger: '.aboutUs-section',
+                start: 'top bottom',
+                end: 'center bottom',
+                scrub: true,
+                markers: false,
+                onUpdate: (self) => {
+                    updatePosition(0, 0, 0, 0, -15, 0, self.progress);
+                },
+                onEnter: () => startServiceMarquee(),
+            },
+        });
+
+        const aboutUsContentTimeline = gsap.timeline({
+            scrollTrigger: {
+                trigger: '.aboutUs-section',
+                start: '5% 80%',
+                end: '65% 70%',
+                scrub: 1,
+                markers: false
+            }
+        });
+        aboutUsContentTimeline
+            .to('.aboutUs-section-content-1-1', { opacity: 1, filter: 'blur(0px)', duration: 0.1 })
+            .to('.aboutUs-section-hr-1', { width: '100%', duration: 0.2 })
+            .to('.aboutUs-section-content-1-2', { opacity: 1, filter: 'blur(0px)', duration: 0.1 })
+            .to('.aboutUs-section-content-2-1', { opacity: 1, filter: 'blur(0px)', duration: 0.1 })
+            .to('.aboutUs-section-content-2-2', { width: '100%', duration: 0.2 })
+            .to('.aboutUs-section-content-3-1', { opacity: 1, filter: 'blur(0px)', duration: 0.1 })
+            .to('.aboutUs-section-content-3-2', { opacity: 1, filter: 'blur(0px)', duration: 0.1 })
+            .to('.aboutUs-section-content-3-2 .underline', { width: '100%', duration: 0.2 })
+            .to('.aboutUs-section-content-3-3', { opacity: 1, filter: 'blur(0px)', duration: 0.1 });
+
+        gsap.to('.aboutUs-content-group', {
+            scrollTrigger: {
+                trigger: '.aboutUs-section',
+                start: '70% 80%',
+                end: 'bottom bottom',
+                scrub: true,
+                markers: false,
+            },
+            transform: 'scale(5)',
+            ease: 'none'
+        });
+        gsap.to('.aboutUs-section', {
+            scrollTrigger: {
+                trigger: '.aboutUs-section',
+                start: '70% 80%',
+                end: 'bottom bottom',
+                scrub: true,
+                markers: false,
+            },
+            opacity: 0,
+            ease: 'none'
+        });
+    }
+    const worksSectionGsap = () => {
+        const itemCount = 15; // 元素總數
+        let totalDistance = 2000; // 元素移動的總直線距離
+        const zDistance = 10000; // Z軸最大移動距離
+        const baseStartPercent = 0; // 起始滾動百分比
+        const opacityDuration = 10; // 每個元素透明度動畫的滾動百分比
+        const moveDuration = 30; // 每個元素位移動畫的滾動百分比
+        const delayBetweenItems = 5; // 元素之間的延遲百分比
+
+        if(width.value > 1400){
+            totalDistance = 3000;
+        }else if(width.value > 1200){
+            totalDistance = 2500;
+        }else if(width.value > 992){
+            totalDistance = 2000;
+        }else if(width.value > 768){
+            totalDistance = 2000;
+        }else{
+            totalDistance = 2000;
+        }
+
+        const radToDeg = rad => rad * 180 / Math.PI;
+        const clampAngle = angle => ((angle % 360) + 360) % 360;
+
+        const getCornerDataFromScreen = () => {
+            const halfW = width.value / 2;
+            const halfH = height.value / 2;
+
+            return {
+                topLeft: {
+                    angle: clampAngle(radToDeg(Math.atan2(-halfH, -halfW))),
+                },
+                topRight: {
+                    angle: clampAngle(radToDeg(Math.atan2(-halfH, halfW))),
+                },
+                bottomLeft: {
+                    angle: clampAngle(radToDeg(Math.atan2(halfH, -halfW))),
+                },
+                bottomRight: {
+                    angle: clampAngle(radToDeg(Math.atan2(halfH, halfW))),
+                },
+                topCenter: {
+                    angle: clampAngle(radToDeg(Math.atan2(-halfH, 0))),
+                },
+                bottomCenter: {
+                    angle: clampAngle(radToDeg(Math.atan2(halfH, 0))),
+                },
+                leftCenter: {
+                    angle: clampAngle(radToDeg(Math.atan2(0, -halfW))),
+                },
+                rightCenter: {
+                    angle: clampAngle(radToDeg(Math.atan2(0, halfW))),
+                }
+            };
+        };
+
+        const cornerOrder = ['topLeft', 'bottomCenter', 'topRight', 'leftCenter', 'bottomRight', 'topCenter', 'bottomLeft', 'rightCenter']; // 固定順序
+
+        const generateSequence = (count) => {
+            const cornerData = getCornerDataFromScreen();
+            const sequence = [];
+
+            for (let i = 0; i < count; i++) {
+                const cornerKey = cornerOrder[i % cornerOrder.length];
+                const baseAngle = cornerData[cornerKey].angle;
+                let distance = totalDistance;
+
+                if(cornerKey === 'bottomCenter' || cornerKey === 'topCenter'){
+                    if(width.value > height.value){
+                        distance = totalDistance * 0.6;
+                    }else{
+                        distance = totalDistance * 0.8;
+                    }
+                }else if(cornerKey === 'leftCenter' || cornerKey === 'rightCenter'){
+                    if(width.value > height.value){
+                        distance = totalDistance * 0.8;
+                    }else{
+                        distance = totalDistance * 0.7;
+                    }
+                }
+
+                const randomOffset = Math.random() * 40 - 20; // ±45 度
+                const finalAngle = baseAngle;
+
+                sequence.push({
+                    angle: finalAngle,
+                    distance: distance
+                });
+            }
+
+            return sequence;
+        };
+        
+        gsap.timeline({
+            scrollTrigger: {
+                trigger: '.works-section',
+                start: 'top bottom',
+                end: 'top top',
+                scrub: true,
+                markers: false,
+                onUpdate: (self) => {
+                    updatePosition(0, -1, 30, 0, 0, -10, self.progress);
+                },
+                onLeave: () => {
+                    // growingFunction()
+                },
+                onEnterBack: () => {
+                    // shrinkingFunction()
+                },
+                onLeaveBack: () => {
+                    updatePosition(0, -15, 0)
+                }
+            },    
+        });
+        const worksAngleAndDistanceData = generateSequence(itemCount);
+        
+        const worksTimeline = gsap.timeline({
+            scrollTrigger: {
+                trigger: '.works-section',
+                start: '0% top', // 從頁面頂部開始
+                end: `${baseStartPercent + (itemCount-1) * delayBetweenItems + moveDuration}% bottom`, // 動態計算結束點
+                scrub: true, // 平滑的滾動效果
+                markers: false,
+                onUpdate: (self) => {
+                    updatePosition(0, 0, -10, 0, 0, 25, self.progress);
+                },
+            }
+        });
+        
+        for (let i = 1; i <= itemCount; i++) {
+            // 計算此元素在滾動過程中的延遲
+            const itemDelay = (i - 1) * delayBetweenItems;
+            
+            // 根據預生成的角度計算方向
+            const randomAngle = worksAngleAndDistanceData[i-1].angle;
+            const rad = randomAngle * Math.PI / 180; // 轉換為弧度
+            const distance = worksAngleAndDistanceData[i-1];
+            
+            // 計算 x 和 y 坐標，形成放射狀分布
+            const x = Math.round(distance.distance * Math.cos(rad));
+            const y = Math.round(distance.distance * Math.sin(rad));
+            
+            // Z軸偏移計算，添加隨機變化
+            // const zOffset = Math.round(zDistance * (0.8 + (i % 5) * zVariation / 5));
+            
+            // 計算動畫開始的相對位置
+            // 這決定了每個元素何時開始動畫
+            const startPosition = itemDelay / (moveDuration + (itemCount-1) * delayBetweenItems);
+            
+            // 添加到同一時間軸，使用相對位置控制時序
+            // 首先控制透明度變化
+            worksTimeline.to(`.works-content-item-${i}`, { 
+                opacity: 1, // 從透明變為完全不透明
+                duration: opacityDuration / moveDuration, // 計算相對持續時間
+                ease: 'none' // 線性變化
+            }, startPosition);
+            
+            // 然後控制位置變化（同時進行）
+            worksTimeline.to(`.works-content-item-${i}`, {
+                '--transform-x': x, // CSS變量控制X軸位置
+                '--transform-y': y, // CSS變量控制Y軸位置
+                '--transform-z': zDistance, // CSS變量控制Z軸位置
+                ease: 'none', // 使用power2.in緩動函數
+                duration: 1 // 相對持續時間
+            }, startPosition); // 與透明度動畫同時開始
+        }  
+    }
+    const servicesSectionGsap = () => {
+        gsap.timeline({
+            scrollTrigger: {
+                trigger: '.title-content',
+                start: 'top bottom',
+                end: '80% bottom',
+                scrub: true,
+                markers: false,
+                onEnter: () => {
+                    shrinkingFunction()
+                },
+                onLeave: () => {
+                    changeMaterialType('wireframe');
+                    growingFunction()
+                },
+                onEnterBack: () => {
+                    changeMaterialType('water');
+                    shrinkingFunction()
+                },
+                onLeaveBack: () => {
+                    // growingFunction()
+                },
+                onUpdate: (self) => {
+                    updatePosition(0, 0, 25, -8, 0, 0, self.progress);
+                    // if(width.value > 768){
+                    //     updatePosition(0, 0, 15, -4, 0, 15, self.progress);
+                    // }else{
+                    //     updatePosition(0, 0, 15, 0, -3, 0, self.progress);
+                    // }
+                },
+            },   
+        });
+
+        const servicesItemCount = 9;
+        for (let i = 1; i <= servicesItemCount; i++) {
+            gsap.timeline({
+                scrollTrigger: {
+                    trigger: `.services-content-${i}`,
+                    start: 'top 80%',
+                    end: '80% bottom',
+                    scrub: true,
+                    markers: false,
+                    onEnter: () => {
+                        shrinkingFunction()
+                    },
+                    onLeave: () => {
+                        growingFunction()
+                        if(i === 1){
+                            changeMaterialType('metallic');
+                        }else if(i === 2){
+                            changeMaterialType('matte');
+                        }else if(i === 3){
+                            changeMaterialType('gold');
+                        }else if(i === 4){
+                            changeMaterialType('neon');
+                        }else if(i === 5){
+                            changeMaterialType('ice');
+                        }else if(i === 6){
+                            changeMaterialType('holographic');
+                        }else if(i === 7){
+                            changeMaterialType('cloud');
+                        }else if(i === 8){
+                            changeMaterialType('chameleon');
+                        }else if(i === 9){
+                            changeMaterialType('galaxy');
+                        }
+                    },
+                    onEnterBack: () => {
+                        shrinkingFunction()
+                    },
+                    onLeaveBack: () => {
+                        growingFunction()
+                        if(i === 1){
+                            changeMaterialType('wireframe');
+                        }else if(i === 2){
+                            changeMaterialType('metallic');
+                        }else if(i === 3){
+                            changeMaterialType('matte');
+                        }else if(i === 4){
+                            changeMaterialType('gold');
+                        }else if(i === 5){
+                            changeMaterialType('neon');
+                        }else if(i === 6){
+                            changeMaterialType('ice');
+                        }else if(i === 7){
+                            changeMaterialType('holographic');
+                        }else if(i === 8){
+                            changeMaterialType('cloud');
+                        }else if(i === 9){
+                            changeMaterialType('chameleon');
+                        }
+                    },
+                    onUpdate: (self) => {
+                        // if(i === 0){
+                        //     updatePosition(10, 0, 20, -10, 0, 20, self.progress);
+                        // }
+                        // if(width.value > 768){
+                        //     if(i % 2 === 0){
+                        //         updatePosition(10, 0, 20, -10, 0, 20, self.progress);
+                        //     }else{
+                        //         updatePosition(-10, 0, 20, 10, 0, 20, self.progress);
+                        //     }
+                        // }else{
+                        //     splashRef.value.updatePosition(0, -3, 0);
+                        // }
+                    },
+                },   
+            });
+        }
+    }
 
     const updatePosition = (fromX, fromY, fromZ, toX, toY, toZ, progress) => {
         if (splashRef.value) {
