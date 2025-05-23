@@ -400,15 +400,15 @@
         const delayBetweenItems = 5; // 元素之間的延遲百分比
 
         if(width.value > 1400){
-            totalDistance = 3000;
+            totalDistance = 3500;
         }else if(width.value > 1200){
-            totalDistance = 2500;
+            totalDistance = 3000;
         }else if(width.value > 992){
-            totalDistance = 2000;
+            totalDistance = 2500;
         }else if(width.value > 768){
-            totalDistance = 2000;
+            totalDistance = 2500;
         }else{
-            totalDistance = 2000;
+            totalDistance = 2500;
         }
 
         const radToDeg = rad => rad * 180 / Math.PI;
