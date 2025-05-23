@@ -318,7 +318,7 @@
                 scrub: true,
                 markers: false,
                 onUpdate: (self) => {
-                    updatePosition(0, 0, 0, 0, -31, 0, self.progress);
+                    updatePosition(0, 0, 0, 0, -35, 0, self.progress);
                 },
                 onEnter: () =>{ 
                     startServiceMarquee();
@@ -440,7 +440,7 @@
             'topRight', 
             'bottomRight', 
             'bottomLeft'
-        ]; // 固定順序
+        ];
         const generateAngleSequence = (count) => {
             const cornerData = getCornerDataFromScreen();
             const sequence = [];
@@ -692,13 +692,13 @@
         if (splashRef.value) {
         splashRef.value.startGrowingAnimation();
         }
-    }  
+    }
     const shrinkingFunction = () => {
         if (splashRef.value) {
         splashRef.value.startShrinkingAnimation();
         }
     }
-
+    
     // 控制自動播放
     let autoPlayTimer = null;
     const handleAnimationComplete = (animationType) => {
@@ -724,12 +724,12 @@
     const stopAutoPlay = () => {
         isAutoPlaying.value = false;
         if (autoPlayTimer) {
-            clearTimeout(autoPlayTimer);
-            autoPlayTimer = null;
+        clearTimeout(autoPlayTimer);
+        autoPlayTimer = null;
         }
         shrinkingFunction();
     }
-
+    
     // 標準字收合
     const animateTextToTargetPosition = () => {
         if (splashRef.value) {
