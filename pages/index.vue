@@ -384,7 +384,7 @@
         gsap.timeline({
             scrollTrigger: {
                 trigger: '.aboutUs-section',
-                start: 'top 90%',
+                start: 'top bottom',
                 end: 'center bottom',
                 scrub: true,
                 markers: true,

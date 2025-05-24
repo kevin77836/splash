@@ -10,7 +10,15 @@ html, body{
   font-family: "Orbitron", sans-serif;
   font-style: normal;
   width: 100%;
+  // For Edge
   height: 100%;
+  // WebKit-based browsers will ignore this
+  height: -moz-available;
+  // Mozilla-based browsers will ignore this.
+  height: -webkit-fill-available;  
+  // For WebKit-based browsers, Edge not support this
+  height: fill-available;
+
   background-color: #F2F2F2;
   transition: background-color 0.5s ease-in-out;
   // min-height: 100vh;
