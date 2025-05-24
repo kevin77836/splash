@@ -903,7 +903,7 @@ function handleResize() {
   const height = canvasContainer.value?.clientHeight ?? window.innerHeight;
 
   document.documentElement.style.setProperty('--windowHeight', `${height}px`);
-  
+
   camera.aspect = width / height;
   camera.updateProjectionMatrix();
   renderer.setSize(width, height);
@@ -1317,6 +1317,7 @@ onMounted(() => {
   });
 
   // 監聽視窗大小變化
+  handleResize();
   window.addEventListener('resize', handleResize);
 });
 
