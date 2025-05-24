@@ -171,7 +171,7 @@
                     <a href="#" class="works-content-item works-content-item-11 column">
                         <video src="/works/works11.mp4" autoplay muted loop playsinline></video>
                     </a>
-                    <a href="#" class="works-content-item works-content-item-10">
+                    <a href="#" class="works-content-item works-content-item-10 column">
                         <video src="/works/works10.mp4" autoplay muted loop playsinline></video>
                     </a>
                     <a href="#" class="works-content-item works-content-item-9 column">
@@ -288,7 +288,6 @@
     import { CustomEase } from 'gsap/CustomEase';
     import { useWindowSize } from '@vueuse/core'
     const { width, height } = useWindowSize();
-    
     if (process.client) {
         gsap.registerPlugin(ScrollTrigger, CustomEase);
     }
@@ -320,7 +319,6 @@
         { type: 'video', src: '/works/works2.mp4' },
         { type: 'video', src: '/works/works1.mp4' }
     ];
-
     // 新增：計算載入進度
     const loadingPercent = computed(() => {
         const percent = Math.floor((loadedItems.value / (mediaResources.length + 1)) * 100);
@@ -331,7 +329,6 @@
             return `${percent}%`;
         }
     });
-
     // 新增：預載入單個媒體資源
     const preloadMedia = (resource) => {
         return new Promise((resolve, reject) => {
@@ -356,7 +353,6 @@
             }
         });
     };
-
     // 新增：預載入所有媒體資源
     const preloadAllMedia = async () => {
         try {
@@ -366,6 +362,13 @@
             console.error('Error loading media:', error);
         }
     };
+    // 處理資源載入完成事件
+    const handleResourcesLoaded = () => {
+        loadedItems.value++;
+        if (splashRef.value) {
+            splashRef.value.updatePosition(0, 0, 10);
+        }
+    }
     
     // 動畫相關
     const setupScrollAnimations = () => {
@@ -807,14 +810,6 @@
     const animateTextToOrigin = () => {
         if (splashRef.value) {
             splashRef.value.animateTextToOrigin();
-        }
-    }
-    
-    // 處理資源載入完成事件
-    const handleResourcesLoaded = () => {
-        loadedItems.value++;
-        if (splashRef.value) {
-            splashRef.value.updatePosition(0, 0, 10);
         }
     }
     
