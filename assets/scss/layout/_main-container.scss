@@ -193,6 +193,9 @@
                             height: 1px;
                             background-color: black;
                             top: calc(var(--font-size) + 0.5rem);
+                            @include max-md{
+                                top: calc(var(--font-size) + 0.25rem);
+                            }
                         }
                     }
                     .section-content-3-group{
