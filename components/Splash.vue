@@ -88,7 +88,6 @@ let effect = null;
 let clock = null;
 let material = null;
 let pmremGenerator = null;
-let animationFrameId = null;
 let sphereGroup = null; // 新增球體群組物件
 
 let targetRotationX = 0;

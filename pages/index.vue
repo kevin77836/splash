@@ -387,7 +387,7 @@
                 start: 'top bottom',
                 end: 'center bottom',
                 scrub: true,
-                markers: false,
+                markers: true,
                 onUpdate: (self) => {
                     updatePosition(0, 0, 0, 0, -35, 0, self.progress);
                 },

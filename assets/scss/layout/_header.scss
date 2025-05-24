@@ -1,10 +1,10 @@
 .l-header{
-    mix-blend-mode: difference;
+    // mix-blend-mode: difference;
     position: fixed;
     top: 4rem;
     transition-duration: 1s;
     background-blend-mode: difference;
-    color: var(--font-color);
+    // color: var(--font-color);
     // transition-timing-function: cubic-bezier(0,0,.015,1);
     transition-timing-function: ease;
     opacity: 0;
@@ -65,7 +65,7 @@
             padding: 0 0.5rem;
         }
         .header-saparator-line{
-            border-top: 1px solid var(--font-color);
+            border-top: 1px solid black;
             width: 100%;
         }
         &.hidden{
@@ -108,7 +108,7 @@
                     position: absolute;
                     height: 1.5px;
                     width: 100%;
-                    background: var(--font-color);
+                    background: black;
                     opacity: 1;
                     left: 0;
                     transform: rotate(0deg);
@@ -173,10 +173,10 @@
             cursor: pointer;
             transition: all 0.2s ease;
             
-            &:hover {
-                transform: scale(1.1);
-                color: #666;
-            }
+            // &:hover {
+            //     transform: scale(1.1);
+            //     color: #666;
+            // }
         }
     }
 }
