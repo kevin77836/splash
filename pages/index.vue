@@ -80,8 +80,10 @@
     </div>
     <div class="main-container">
         <div class="section main-section">
-            <div v-if="loadComplete && !isStarted" class="startButton" @click="clickStart">
-                Start
+            <div v-if="!isStarted" 
+                 class="startButton" 
+                 @click="clickStart">
+                {{ loadingPercent }}
             </div>
       
             <!-- <h1 :class="{'hidden': !isLandingPage || (isLandingPage && !isStarted)}" class="company-name">
@@ -293,11 +295,77 @@
     
     const splashRef = ref(null);
     const loadComplete = ref(false);
+    const loadedItems = ref(0);
     const isAutoPlaying = ref(false);
     const isStarted = ref(false);
     const isMenuOpen = ref(false);
     const isLandingPage = ref(true);
     let customEasing;
+    
+    // 新增：媒體資源列表
+    const mediaResources = [
+        { type: 'video', src: '/works/works15.mp4' },
+        { type: 'video', src: '/works/works14.mp4' },
+        { type: 'video', src: '/works/works13.mp4' },
+        { type: 'image', src: '/works/works12.webp' },
+        { type: 'video', src: '/works/works11.mp4' },
+        { type: 'video', src: '/works/works10.mp4' },
+        { type: 'video', src: '/works/works9.mp4' },
+        { type: 'image', src: '/works/works8.webp' },
+        { type: 'video', src: '/works/works7.mp4' },
+        { type: 'video', src: '/works/works6.mp4' },
+        { type: 'video', src: '/works/works5.mp4' },
+        { type: 'image', src: '/works/works4.webp' },
+        { type: 'video', src: '/works/works3.mp4' },
+        { type: 'video', src: '/works/works2.mp4' },
+        { type: 'video', src: '/works/works1.mp4' }
+    ];
+
+    // 新增：計算載入進度
+    const loadingPercent = computed(() => {
+        const percent = Math.floor((loadedItems.value / (mediaResources.length + 1)) * 100);
+        if(percent == 100){
+            loadComplete.value = true;
+            return 'Start';
+        }else{
+            return `${percent}%`;
+        }
+    });
+
+    // 新增：預載入單個媒體資源
+    const preloadMedia = (resource) => {
+        return new Promise((resolve, reject) => {
+            if (resource.type === 'video') {
+                const video = document.createElement('video');
+                video.src = resource.src;
+                video.onloadeddata = () => {
+                    loadedItems.value++;
+                    resolve();
+                };
+                video.onerror = reject;
+                // 觸發載入
+                video.load();
+            } else if (resource.type === 'image') {
+                const img = new Image();
+                img.onload = () => {
+                    loadedItems.value++;
+                    resolve();
+                };
+                img.onerror = reject;
+                img.src = resource.src;
+            }
+        });
+    };
+
+    // 新增：預載入所有媒體資源
+    const preloadAllMedia = async () => {
+        try {
+            await Promise.all(mediaResources.map(resource => preloadMedia(resource)));
+            console.log('All media loaded successfully');
+        } catch (error) {
+            console.error('Error loading media:', error);
+        }
+    };
     
     // 動畫相關
     const setupScrollAnimations = () => {
@@ -744,14 +812,15 @@
     
     // 處理資源載入完成事件
     const handleResourcesLoaded = () => {
+        loadedItems.value++;
         if (splashRef.value) {
             splashRef.value.updatePosition(0, 0, 10);
         }
-        loadComplete.value = true;
     }
     
     // 點擊開始按鈕
     const clickStart = () => {
+        if (!loadComplete.value) return;
         isStarted.value = true;
         startAutoPlay();
         animateTextToTargetPosition();
@@ -829,5 +898,8 @@
         gsap.registerEase("customShrinkEase", function(x) {
             return Math.pow(x, 2.5);
         });
+
+        // 開始預載入媒體資源
+        preloadAllMedia();
     });
 </script>
