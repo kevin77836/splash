@@ -387,9 +387,9 @@
                 start: 'top 80%',
                 end: 'center bottom',
                 scrub: true,
-                markers: true,
+                markers: false,
                 onUpdate: (self) => {
-                    updatePosition(0, 0, 0, 0, -35, 0, self.progress);
+                    updatePosition(0, 0, 0, 0, -40, 0, self.progress);
                 },
                 onEnter: () =>{ 
                     startServiceMarquee();
