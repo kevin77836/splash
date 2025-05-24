@@ -83,10 +83,11 @@
             position: sticky;
             top: 0;
             overflow: hidden;
+            height: var(--windowHeight);
             .aboutUs-content-group{
                 width: fit-content;
+                height: 100%;
                 margin: 0 auto;
-                height: 100vh;
                 display: flex;
                 align-items: center;
                 justify-content: center;
@@ -210,7 +211,7 @@
         height: 1000%;
         .works-content-container{
             width: 100%;
-            height: 100dvh;
+            height: var(--windowHeight);
             position: sticky;
             top: 0;
             left: 0;
