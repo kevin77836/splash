@@ -6,32 +6,24 @@
 
 @import url('https://fonts.googleapis.com/css2?family=Noto+Sans:ital,wght@0,100..900;1,100..900&family=Noto+Serif+TC:wght@200..900&family=Orbitron:wght@400..900&family=Pixelify+Sans:wght@400..700&display=swap" rel="stylesheet');
 
+html{
+  --windowHeight: 100%;
+}
 html, body{
+  --font-color: white;
   font-family: "Orbitron", sans-serif;
   font-style: normal;
   width: 100%;
-  // For Edge
-  height: 100%;
-  // WebKit-based browsers will ignore this
-  height: -moz-available;
-  // Mozilla-based browsers will ignore this.
-  height: -webkit-fill-available;  
-  // For WebKit-based browsers, Edge not support this
-  height: fill-available;
-
+  height: var(--windowHeight);
   background-color: #F2F2F2;
   transition: background-color 0.5s ease-in-out;
-  // min-height: 100vh;
-  // min-height: -webkit-fill-available;
-  // --windowHeight: 100%;
-  --font-color: white;
   position: relative;
 }
 
 #__nuxt{
   position: relative;
   width: 100%;
-  height: 100%;
+  height: var(--windowHeight);
 }
 
 .fade-enter-active,
