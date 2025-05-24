@@ -1,11 +1,11 @@
 .main-container{
     width: 100%;
-    height: var(--windowHeight);
+    height: 100%;
     position: relative;
     .section{
         position: relative;
         width: 100%;
-        height: var(--windowHeight);
+        height: 100%;
     }
     .main-section{
         .startButton{
@@ -25,7 +25,7 @@
         }
     }
     .aboutUs-section{
-        height: calc(var(--windowHeight) * 5);
+        height: 500%;
         .aboutUs-marquee{
             z-index: 10;
             width: 100%;
@@ -86,7 +86,7 @@
             .aboutUs-content-group{
                 width: fit-content;
                 margin: 0 auto;
-                height: var(--windowHeight);
+                height: 100vh;
                 display: flex;
                 align-items: center;
                 justify-content: center;
@@ -207,17 +207,17 @@
         }
     } 
     .works-section{
-        height: calc(var(--windowHeight) * 10);
+        height: 1000%;
         .works-content-container{
             width: 100%;
-            height: var(--windowHeight);
+            height: 100dvh;
             position: sticky;
             top: 0;
             left: 0;
             overflow: hidden;
             .works-content-group{
                 width: 100%;
-                height: var(--windowHeight);
+                height: 100%;
                 perspective: 500px;
                 transform-style: preserve-3d;
                 .works-content-item{
@@ -251,12 +251,12 @@
     .services-section{
         overflow: hidden;
         position: relative;
-        height: calc(var(--windowHeight) * 10);
+        height: 1000%;
         mix-blend-mode: difference;
         color: var(--font-color);
         .services-content-container{
             padding: 0 5rem;
-            height: var(--windowHeight);
+            height: 100%;
             width: 100%;
             position: relative;
             @include max-md{
