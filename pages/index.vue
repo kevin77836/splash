@@ -113,10 +113,6 @@
             <div class="aboutUs-content-container">
                 <div class="aboutUs-content-group">
                     <div class="aboutUs-section-content aboutUs-section-content-1">
-                        <!-- <div class="section-content-1-group">
-                            <span class="aboutUs-section-content-1-1">Splash</span>
-                            <span class="aboutUs-section-content-1-2">DigiLab</span>
-                        </div> -->
                         <span class="aboutUs-section-content-1-1">迸濺的</span>
                         <hr class="aboutUs-section-hr-1" color="black" size="1">
                         <span class="aboutUs-section-content-1-2">創意</span>
@@ -382,7 +378,7 @@
                 scrub: true,
                 markers: false,
                 onUpdate: (self) => {
-                    updatePosition(0, 0, 0, 0, -25, 0, self.progress);
+                    updatePosition(0, 0, 0, 0, -30, 0, self.progress);
                 },
                 onEnter: () =>{ 
                     startServiceMarquee();
@@ -625,27 +621,42 @@
                         },
                         startTime+animParams.transitionDuration
                     )
-                    .to(
-                        `.services-content-${i}`,
-                        { 
-                            x: animParams.xStayTransform,
-                            y: -animParams.yStayTransform, 
-                            duration: (animParams.stayDuration / 2), 
-                            ease: 'none' 
-                        },
-                        startTime+animParams.transitionDuration + (animParams.stayDuration/2)
-                    )
-                    .to(
-                        `.services-content-${i}`,
-                        { 
-                            opacity: 0, 
-                            x: animParams.xTransform, 
-                            y: -animParams.yTransform, 
-                            duration: animParams.transitionDuration, 
-                            ease: 'none' 
-                        },
-                        endTime
-                    )
+                if(i!== animParams.totalCount){
+                    servicesTimeline
+                        .to(
+                            `.services-content-${i}`,
+                            { 
+                                x: animParams.xStayTransform,
+                                y: -animParams.yStayTransform, 
+                                duration: (animParams.stayDuration / 2), 
+                                ease: 'none' 
+                            },
+                            startTime+animParams.transitionDuration + (animParams.stayDuration/2)
+                        )
+                        .to(
+                            `.services-content-${i}`,
+                            { 
+                                opacity: 0, 
+                                x: animParams.xTransform, 
+                                y: -animParams.yTransform, 
+                                duration: animParams.transitionDuration, 
+                                ease: 'none' 
+                            },
+                            endTime
+                        )
+                }else{
+                    servicesTimeline
+                        .to(
+                            `.services-content-${i}`,
+                            { 
+                                x: 0,
+                                y: 0,
+                                duration: (animParams.stayDuration / 2) + animParams.transitionDuration, 
+                                ease: 'none' 
+                            },
+                            startTime+animParams.transitionDuration + (animParams.stayDuration/2)
+                        )
+                }
             }else{
                 servicesTimeline
                     .fromTo(
@@ -672,25 +683,40 @@
                         },
                         startTime+animParams.transitionDuration
                     )
-                    .to(
-                        `.services-content-${i}`,
-                        { 
-                            x: -animParams.mobileStayTransform,
-                            duration: (animParams.stayDuration / 2), 
-                            ease: 'none' 
-                        },
-                        startTime+animParams.transitionDuration + (animParams.stayDuration/2)
-                    )
-                    .to(
-                        `.services-content-${i}`,
-                        { 
-                            opacity: 0, 
-                            x: -animParams.mobileTransform, 
-                            duration: animParams.transitionDuration, 
-                            ease: 'none' 
-                        },
-                        endTime
-                    )
+                    if(i!== animParams.totalCount){
+                        servicesTimeline
+                            .to(
+                                `.services-content-${i}`,
+                                { 
+                                    x: -animParams.mobileStayTransform,
+                                    duration: (animParams.stayDuration / 2), 
+                                    ease: 'none' 
+                                },
+                                startTime+animParams.transitionDuration + (animParams.stayDuration/2)
+                            )
+                            .to(
+                                `.services-content-${i}`,
+                                { 
+                                    opacity: 0, 
+                                    x: -animParams.mobileTransform, 
+                                    duration: animParams.transitionDuration, 
+                                    ease: 'none' 
+                                },
+                                endTime
+                            )
+                    }else{
+                        servicesTimeline
+                            .to(
+                                `.services-content-${i}`,
+                                { 
+                                    x: 0,
+                                    y: 0,
+                                    duration: (animParams.stayDuration / 2) + animParams.transitionDuration, 
+                                    ease: 'none' 
+                                },
+                                startTime+animParams.transitionDuration + (animParams.stayDuration/2)
+                            )
+                    }
             }
 
             ScrollTrigger.create({
@@ -720,14 +746,14 @@
             scrollTrigger: {
                 trigger: '.contactUs-section',
                 start: 'top bottom',
-                end: `center bottom`,
+                end: `bottom bottom`,
                 scrub: true,
                 markers: false,
                 onUpdate: (self) => {
                     if(width.value>768){
-                        updatePosition(-8, 0, 0, -8, -15, 0, self.progress);
+                        updatePosition(-8, 0, 0, -8, -25, 0, self.progress);
                     }else{
-                        updatePosition(0, -2, 0, 0, -15, 0, self.progress);
+                        updatePosition(0, -2, 0, 0, -25, 0, self.progress);
                     }
                 },
                 onLeave:()=>{
