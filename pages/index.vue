@@ -241,6 +241,7 @@
             </div>
         </div>
         <div v-if="isStarted" class="section contactUs-section">
+            <h2 style="color: white;">contact us</h2>
         </div>
     </div>
     
@@ -349,6 +350,7 @@
                 aboutUsSectionGsap();
                 worksSectionGsap();
                 servicesSectionGsap();
+                contactUsSectionGsap();
             });
         }
     };
@@ -380,7 +382,7 @@
                 scrub: true,
                 markers: false,
                 onUpdate: (self) => {
-                    updatePosition(0, 0, 0, 0, -45, 0, self.progress);
+                    updatePosition(0, 0, 0, 0, -25, 0, self.progress);
                 },
                 onEnter: () =>{ 
                     startServiceMarquee();
@@ -414,6 +416,7 @@
             .to('.aboutUs-section-content-3-1', { opacity: 1, filter: 'blur(0px)', duration: 0.1 },0.7)
             .to('.aboutUs-section-content-3-2', { opacity: 1, filter: 'blur(0px)', duration: 0.1 },0.8)
             .to('.aboutUs-section-content-3-2 .underline', { width: '100%', duration: 0.2 },0.9)
+            .to('.aboutUs-section', { '--bg-opacity': 0, duration: 0 },0.9)
             .to('.aboutUs-section-content-3-3', { opacity: 1, filter: 'blur(0px)', duration: 0.1 },1.1)
             .to('.aboutUs-content-group', { opacity: 0, transform: 'scale(5)', duration: 0.2 },1.3)
     }
@@ -547,70 +550,18 @@
         }
     }
     const servicesSectionGsap = () => {
-        const materialData =[
-            {
-                value: 'water',
-                backgroundColor: '#F2F2F2',
-            },
-            {
-                value: 'metallic',
-                backgroundColor: '#F2F2F2',
-            },
-            {
-                value: 'wireframe',
-                backgroundColor: '#F2F2F2',
-            },
-            {
-                value: 'gold',
-                backgroundColor: '#F2F2F2',
-            },
-            {
-                value: 'neon',
-                backgroundColor: '#F2F2F2',
-            },
-            {
-                value: 'ice',
-                backgroundColor: '#F2F2F2',
-            },
-            {
-                value: 'holographic',
-                backgroundColor: '#F2F2F2',
-            },
-            {
-                value: 'cloud',
-                backgroundColor: '#F2F2F2',
-            },
-            {
-                value: 'chameleon',
-                backgroundColor: '#F2F2F2',
-            },
-            {
-                value: 'galaxy',
-                backgroundColor: '#F2F2F2',
-            },
-        ]
-        const changeMaterialType = (index) => {
-            if (splashRef.value) {
-                splashRef.value.changeMaterialType(materialData[index].value);
-                // const color = materialData[materialData[index].backgroundColor];
-                // if (color) {
-                //     document.documentElement.style.backgroundColor = color;
-                //     document.body.style.backgroundColor = color;
-                // }
-            }
-        }
         // 動畫時間參數
         const animParams = {
-            startTime: 0.2,          // 整體動畫開始時間
+            startTime: 0.8,          // 整體動畫開始時間
             transitionDuration: 0.1,  // 淡入淡出過渡時間
             stayDuration: 0.1,     // 內容停留時間
             totalCount: 6,
             xTransform: 40,
             yTransform: 250,
-            mobileTransform: 30,
+            mobileTransform: 300,
             xStayTransform: 2,
-            yStayTransform: 30,
-            mobileStayTransform: 1,
+            yStayTransform: 50,
+            mobileStayTransform: 50,
         }
 
         const contentDuration = animParams.transitionDuration + animParams.stayDuration;
@@ -764,6 +715,32 @@
             });
         }
     }
+    const contactUsSectionGsap = () => {
+        const contactUsTimeline = gsap.timeline({
+            scrollTrigger: {
+                trigger: '.contactUs-section',
+                start: 'top bottom',
+                end: `center bottom`,
+                scrub: true,
+                markers: false,
+                onUpdate: (self) => {
+                    if(width.value>768){
+                        updatePosition(-8, 0, 0, -8, -15, 0, self.progress);
+                    }else{
+                        updatePosition(0, -2, 0, 0, -15, 0, self.progress);
+                    }
+                },
+                onLeave:()=>{
+                    // changeMaterialType(0);
+                    // growingFunction();
+                },
+                onEnterBack:()=>{
+                    // changeMaterialType(materialData.length-1);
+                    // shrinkingFunction();
+                },
+            }
+        })
+    }
     const updatePosition = (fromX, fromY, fromZ, toX, toY, toZ, progress) => {
         if (splashRef.value) {
             const x = (toX - fromX) * progress;
@@ -773,6 +750,42 @@
             const offsetY = fromY + y;
             const offsetZ = fromZ + z;
             splashRef.value.updatePosition(offsetX, offsetY, offsetZ);
+        }
+    }
+    const materialData =[
+        {
+            value: 'default',
+            backgroundColor: '#F2F2F2',
+        },
+        {
+            value: 'arVrXr',
+            backgroundColor: '#F2F2F2',
+        },
+        {
+            value: 'digiArt',
+            backgroundColor: '#F2F2F2',
+        },
+        {
+            value: 'uiuxDev',
+            backgroundColor: '#F2F2F2',
+        },
+        {
+            value: 'animate',
+            backgroundColor: '#F2F2F2',
+        },
+        {
+            value: 'graphic',
+            backgroundColor: '#F2F2F2',
+        },
+    ]
+    const changeMaterialType = (index) => {
+        if (splashRef.value) {
+            splashRef.value.changeMaterialType(materialData[index].value);
+            // const color = materialData[materialData[index].backgroundColor];
+            // if (color) {
+            //     document.documentElement.style.backgroundColor = color;
+            //     document.body.style.backgroundColor = color;
+            // }
         }
     }
 

@@ -80,7 +80,8 @@
     }
     .aboutUs-section{
         height: 500%;
-        // background-color:rgba($color: blue, $alpha: 0.5);
+        --bg-opacity: 0.75;
+        background-color:rgba($color: #F2F2F2, $alpha: var(--bg-opacity));
         .aboutUs-content-container{
             position: sticky;
             top: 0;
@@ -108,7 +109,7 @@
                 }
                 @include max-md{
                     --font-size: 1rem;
-                    --gap-sub-size: 0.5rem;
+                    // --gap-sub-size: 0.5rem;
                 }
                 // @include max-md{
                 //     gap: 2rem;
@@ -181,8 +182,8 @@
                             span{
                                 height: 100%;
                                 font-size: var(--font-size);
-                                margin-right: 0.25rem;
-                                letter-spacing: 1rem;
+                                margin-right: 0.5rem;
+                                letter-spacing: 0.5rem;
                             }
                             img{
                                 height: 100%;
@@ -255,7 +256,10 @@
     }
     .services-section{
         // position: relative;
-        height: 1000%;
+        height: 300%;
+        // @include max-md{
+        //     height: 300%;
+        // }
         // mix-blend-mode: difference;
         color: var(--font-color);
         .services-content-container{
@@ -270,7 +274,7 @@
             position: absolute;
             width: 40%;
             top: 50%;
-            right: 12%;
+            right: 15%;
             transform: translateY(-50%);
             display: flex;
             flex-direction: column;
@@ -279,16 +283,19 @@
                 top: auto;
                 width: 90%;
                 right: 5%;
-                bottom: 3%;
+                bottom: 0;
             }
             .services-title{
                 font-weight: bold;
                 margin-bottom: 1rem;
                 font-size: 2rem;
-                letter-spacing: 1rem;
+                letter-spacing: 0.5rem;
                 color: black;
                 @include max-xl{
                     font-size: 1.5rem;
+                }
+                @include max-md{
+                    text-align: center;
                 }
             }
             .services-description{
@@ -297,9 +304,14 @@
                 color: black;
                 transform: rotate(-0.35deg);
                 @include max-md{
-                    transform: rotate(-0.55deg);
+                    transform: rotate(-0.1deg);
+                    text-align: center;
                 }   
             }
         }
+    }
+    .contactUs-section{
+        height: 100%;
+        background-color: black;
     }
 }

@@ -134,22 +134,28 @@ let textOriginPosition2 = null; // 儲存文字2的原點位置
 let stats = null;
 
 // --- 材質設定 ---
-const materialTypes = {
-  WATER: 'water',          // 水晶材質
-  METALLIC: 'metallic',    // 金屬材質
-  MATTE: 'matte',          // 霧面材質
-  WIREFRAME: 'wireframe',  // 線框材質
-  NEON: 'neon',            // 霓虹材質
-  GALAXY: 'galaxy',        // 星系材質
-  GOLD: 'gold',            // 金屬材質
-  ICE: 'ice',            // 冰晶材質
-  HOLOGRAPHIC: 'holographic',  // 全息圖材質
-  CLOUD: 'cloud',            // 雲彩材質
-  CHAMELEON: 'chameleon',    // 變色龍材質
-};
+// const materialTypes = {
+//   default: 'default',
+//   arVrXr: 'arVrXr',
+//   digiArt: 'digiArt',
+//   uiuxDev: 'uiuxDev',
+//   animate: 'animate',
+//   graphic: 'graphic',
+//   // WATER: 'water',          // 水晶材質
+//   // METALLIC: 'metallic',    // 金屬材質
+//   // MATTE: 'matte',          // 霧面材質
+//   // WIREFRAME: 'wireframe',  // 線框材質
+//   // NEON: 'neon',            // 霓虹材質
+//   // GALAXY: 'galaxy',        // 星系材質
+//   // GOLD: 'gold',            // 金屬材質
+//   // ICE: 'ice',            // 冰晶材質
+//   // HOLOGRAPHIC: 'holographic',  // 全息圖材質
+//   // CLOUD: 'cloud',            // 雲彩材質
+//   // CHAMELEON: 'chameleon',    // 變色龍材質
+// };
 
 // 當前材質類型
-let currentMaterialType = materialTypes.WATER;
+let currentMaterialType = 'default';
 
 function generateWaterMaterial() {
   return new THREE.MeshPhysicalMaterial({
@@ -165,89 +171,12 @@ function generateWaterMaterial() {
     dispersion: 2,
   });
 }
-function generateMetallicMaterial() {
-  return new THREE.MeshStandardMaterial({
-    color: 0x33E6FB,
-    metalness: 0.9,
-    roughness: 0.5,
-    envMapIntensity:1,
-    side:THREE.DoubleSide
-  });
-}
-function generateMatteMaterial() {
-  return new THREE.MeshStandardMaterial({
-    metalness: 0,
-    roughness: 0.9,
-    color: 0xDD1D0C,
-    side: THREE.DoubleSide,
-    envMapIntensity: 3
-  });
-}
 function generateWireFrameMaterial(){
   return new THREE.MeshBasicMaterial({
     color:0xffffff,
     transparent:true,
     opacity:0.2,
     wireframe:true
-  });
-}
-function generateNeonMaterial() {
-  // 創建霓虹效果著色器
-  const vertexShader = `
-  varying vec2 vUv;
-  varying vec3 vPosition;
-  
-  void main() {
-    vUv = uv;
-    vPosition = position;
-    gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
-  }
-  `;
-  
-  const fragmentShader = `
-  varying vec2 vUv;
-  varying vec3 vPosition;
-  uniform float time;
-  
-  void main() {
-    // 創建波紋效果
-    float distFromCenter = length(vPosition.xy);
-    float wave = sin(distFromCenter * 10.0 - time * 2.0) * 0.5 + 0.5;
-    
-    // 根據波紋選擇顏色
-    vec3 color1 = vec3(0.0, 1.0, 1.0); // 青色
-    vec3 color2 = vec3(1.0, 0.0, 1.0); // 品紅色
-    vec3 finalColor = mix(color1, color2, wave);
-    
-    // 添加發光效果
-    float glow = 0.6 + 0.4 * sin(time);
-    
-    gl_FragColor = vec4(finalColor * glow, 1.0);
-  }
-  `;
-  
-  // 創建材質
-  return new THREE.ShaderMaterial({
-    uniforms: {
-      time: { value: 0 }
-    },
-    vertexShader: vertexShader,
-    fragmentShader: fragmentShader,
-    side: THREE.DoubleSide,
-    transparent: true
-  });
-}
-function generateGoldMaterial() {
-  return new THREE.MeshPhysicalMaterial({
-    color: 0xFFD700,            // 金黃色
-    metalness: 1.0,             // 完全金屬
-    roughness: 0.2,             // 低粗糙度，光滑表面
-    envMapIntensity: 1.5,       // 環境映射強度
-    reflectivity: 0.9,          // 反射率，強化鏡面反射
-    clearcoat: 1.0,             // 外層清漆，增加光澤感
-    clearcoatRoughness: 0.1,    // 清漆層的粗糙度
-    transparent: false,
-    side: THREE.DoubleSide
   });
 }
 function generateIceMaterial() {
@@ -258,41 +187,6 @@ function generateIceMaterial() {
     transmission:0.8,
     clearcoat:0.5,
     side:THREE.DoubleSide
-  });
-}
-function generateHolographicMaterial() {
-  const vs=`varying vec3 vNormal; void main(){vNormal=normalize(normalMatrix*normal); gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.0);}`;
-  const fs=`varying vec3 vNormal; void main(){float f=abs(vNormal.y); vec3 col=mix(vec3(1.0,0.0,1.0),vec3(0.0,1.0,1.0),f); gl_FragColor=vec4(col,1.0);} `;
-  return new THREE.ShaderMaterial({ vertexShader:vs, fragmentShader:fs, side:THREE.DoubleSide });
-}
-function generateGalaxyMaterial() {
-  const vs=`varying vec3 vPos; void main(){vPos=position; gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.0);}`;
-  const fs=`varying vec3 vPos; void main(){float r=length(vPos.xy); float t=fract(r*10.0 - vPos.z); vec3 c=vec3(0.1,0.0,0.2) + 0.5*sin(vec3(1.0,2.0,3.0)*t*6.2831); gl_FragColor=vec4(c,1.0);} `;
-  return new THREE.ShaderMaterial({ vertexShader:vs, fragmentShader:fs, side:THREE.DoubleSide, transparent:true });
-}
-function generateCloudShaderMaterial() {
-  const vs = `varying vec3 vPos; void main(){vPos=position;gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.0);}`;
-  const fs = `varying vec3 vPos; void main(){float d=length(vPos.xy);float a=1.0 - smoothstep(0.4,0.5,d);gl_FragColor=vec4(vec3(1.0),a);} `;
-  return new THREE.ShaderMaterial({ vertexShader: vs, fragmentShader: fs, transparent: true });
-}
-function generateChameleonMaterial() {
-  const vs = `varying vec3 vPos; void main(){vPos=position;gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.0);}`;
-  const fs = `varying vec3 vPos; uniform float time; void main(){float t=sin(time+vPos.y);vec3 c=vec3(0.5+0.5*t,0.5-0.5*t,0.5);gl_FragColor=vec4(c,1.0);} `;
-  return new THREE.ShaderMaterial({ uniforms:{time:{value:0}}, vertexShader: vs, fragmentShader: fs });
-}
-function generateOilFilmMaterial() {
-  const vs = `varying vec3 vPos; void main(){vPos=position;gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.0);}`;
-  const fs = `varying vec3 vPos; uniform float time;
-    void main(){
-      float t = sin(time + vPos.y * 5.0) * 0.5 + 0.5;
-      vec3 color = vec3(t, 0.5 * (1.0 - t), 1.0 - t);
-      gl_FragColor = vec4(color, 0.8);
-    }`;
-  return new THREE.ShaderMaterial({
-    uniforms: { time: { value: 0 } },
-    vertexShader: vs,
-    fragmentShader: fs,
-    transparent: true,
   });
 }
 function generateMetalMaterial() {
@@ -307,43 +201,6 @@ function generateMetalMaterial() {
     thickness: 0.5,
   });
 }
-function generateRainbowMaterial() {
-  const vs = `varying vec3 vPos; void main(){vPos=position;gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.0);}`;
-  const fs = `varying vec3 vPos; uniform float time;
-    void main(){
-      vec3 color = vec3(
-        0.5 + 0.5 * sin(vPos.x * 10.0 + time),
-        0.5 + 0.5 * sin(vPos.y * 10.0 + time + 2.0),
-        0.5 + 0.5 * sin(vPos.z * 10.0 + time + 4.0)
-      );
-      gl_FragColor = vec4(color, 1.0);
-    }`;
-  return new THREE.ShaderMaterial({
-    uniforms: { time: { value: 0 } },
-    vertexShader: vs,
-    fragmentShader: fs,
-  });
-}
-function generateBlueGrowMaterial() {
-  return new THREE.MeshStandardMaterial({
-    color: 0x00ffff,
-    emissive: 0x00ffff,
-    emissiveIntensity: 2,
-    metalness: 0.5,
-    roughness: 0.2,
-  });
-}
-function generateCrystalMaterial() {
-  return new THREE.MeshPhysicalMaterial({
-    color: 0x99ccff,
-    transmission: 1.0,
-    roughness: 0,
-    metalness: 0,
-    thickness: 1.0,
-    ior: 2.4,
-    transparent: true,
-  });
-}
 function generatePlasticMaterial() {
   return new THREE.MeshStandardMaterial({
     color: 0xffc0cb,
@@ -351,53 +208,76 @@ function generatePlasticMaterial() {
     metalness: 0.1,
   });
 }
-function updateMaterialAnimate(){
-  const elapsedTime = clock.getElapsedTime();
-  
-  // 更新霓虹材質
-  if (currentMaterialType === materialTypes.NEON) {
-    if (material && material.uniforms && material.uniforms.time !== undefined) {
-      material.uniforms.time.value = elapsedTime;
-    }
-  }
+function generateLavaMaterial() {
+  return new THREE.ShaderMaterial({
+    uniforms: { time: { value: 0 } },
+    vertexShader: `varying vec3 vPos; void main(){ vPos=position; gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.0); }`,
+    fragmentShader: `uniform float time; varying vec3 vPos;
+      void main(){
+        float d = length(vPos.xy);
+        vec3 color = mix(vec3(0.8,0.1,0.0), vec3(1.0,0.5,0.0), sin(time*3.0 + d*5.0)*0.5+0.5);
+        gl_FragColor = vec4(color, 1.0);
+      }
+    `,
+    transparent: false
+  });
 }
+function generateMarbleBlackMaterial() {
+  return new THREE.MeshStandardMaterial({
+    color: 0x101010, roughness: 0.3, metalness: 0,
+    side: THREE.DoubleSide
+  });
+}
+function generateMarbleWhiteMaterial() {
+  return new THREE.MeshStandardMaterial({
+    color: 0xf0f0f0, roughness: 0.3, metalness: 0,
+    side: THREE.DoubleSide
+  });
+}
+function generatePorcelainMaterial() {
+  return new THREE.MeshPhysicalMaterial({
+    color: 0xfff8ee, roughness: 0.05, metalness: 0,
+    clearcoat: 1.0, clearcoatRoughness: 0.02,
+    side: THREE.DoubleSide
+  });
+}
+function generateAdvancedSteelMaterial() {
+  return new THREE.MeshPhysicalMaterial({
+    color: 0x888888, metalness: 1, roughness: 0.2,
+    clearcoat: 0.3, clearcoatRoughness: 0.1
+  });
+}
+
+
+// function updateMaterialAnimate(){
+//   const elapsedTime = clock.getElapsedTime();
+  
+//   // 更新霓虹材質
+//   if (currentMaterialType === materialTypes.NEON) {
+//     if (material && material.uniforms && material.uniforms.time !== undefined) {
+//       material.uniforms.time.value = elapsedTime;
+//     }
+//   }
+// }
 function generateMaterial() {
   switch(currentMaterialType) {
-    case materialTypes.WATER:
+    case 'default':
       return generateWaterMaterial();
-    case materialTypes.METALLIC:
-      return generateMetallicMaterial();
-    case materialTypes.MATTE:
-      return generateMatteMaterial();
-    case materialTypes.WIREFRAME:
+    case 'arVrXr':
+      return generateMarbleBlackMaterial();
+    case 'digiArt':
+      return generateMetalMaterial();
+    case 'uiuxDev':
       return generateWireFrameMaterial();
-    case materialTypes.NEON:
-      return generateNeonMaterial();
-    case materialTypes.GALAXY:
-      return generateGalaxyMaterial();
-    case materialTypes.GOLD:
-      return generateGoldMaterial();
-    case materialTypes.ICE:
+    case 'animate':
+      return generatePorcelainMaterial();
+    case 'graphic':
       return generateIceMaterial();
-    case materialTypes.HOLOGRAPHIC:
-      return generateHolographicMaterial();
-    case materialTypes.CLOUD:
-      return generateCloudShaderMaterial();
-    case materialTypes.CHAMELEON:
-      return generateChameleonMaterial();
     default:
       return generateWaterMaterial();
   }
 }
 function changeMaterialType(materialType) {
-  if (!Object.values(materialTypes).includes(materialType)) {
-    console.error(`無效的材質類型: ${materialType}`);
-    return;
-  }
-  
-  // 記錄舊材質類型
-  const oldMaterialType = currentMaterialType;
-  
   // 設置新材質類型
   currentMaterialType = materialType;
   
@@ -919,7 +799,7 @@ function animate() {
     return;
   }
 
-  updateMaterialAnimate();
+  // updateMaterialAnimate();
   // 更新場景邏輯
   updateLineMetaball(effect);
   
