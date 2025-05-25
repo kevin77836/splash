@@ -95,21 +95,21 @@
                 </span>
             </h1> -->
         </div>
-        <div v-if="isStarted" class="section aboutUs-section">
-            <div class="aboutUs-marquee">
-                <div class="aboutUs-marquee-content-group">
-                    <span class="aboutUs-marquee-content-group-item">Splash DigiLab</span>
-                    <span class="aboutUs-marquee-content-group-item">Splash DigiLab</span>
-                    <span class="aboutUs-marquee-content-group-item">Splash DigiLab</span>
-                    <span class="aboutUs-marquee-content-group-item">Splash DigiLab</span>
-                </div>
-                <div class="aboutUs-marquee-content-group2">
-                    <span class="aboutUs-marquee-content-group-item">Splash DigiLab</span>
-                    <span class="aboutUs-marquee-content-group-item">Splash DigiLab</span>
-                    <span class="aboutUs-marquee-content-group-item">Splash DigiLab</span>
-                    <span class="aboutUs-marquee-content-group-item">Splash DigiLab</span>
-                </div>
+        <div v-if="isStarted" class="aboutUs-marquee">
+            <div class="aboutUs-marquee-content-group">
+                <span class="aboutUs-marquee-content-group-item">Splash DigiLab</span>
+                <span class="aboutUs-marquee-content-group-item">Splash DigiLab</span>
+                <span class="aboutUs-marquee-content-group-item">Splash DigiLab</span>
+                <span class="aboutUs-marquee-content-group-item">Splash DigiLab</span>
             </div>
+            <div class="aboutUs-marquee-content-group2">
+                <span class="aboutUs-marquee-content-group-item">Splash DigiLab</span>
+                <span class="aboutUs-marquee-content-group-item">Splash DigiLab</span>
+                <span class="aboutUs-marquee-content-group-item">Splash DigiLab</span>
+                <span class="aboutUs-marquee-content-group-item">Splash DigiLab</span>
+            </div>
+        </div>
+        <div v-if="isStarted" class="section aboutUs-section">
             <div class="aboutUs-content-container">
                 <div class="aboutUs-content-group">
                     <div class="aboutUs-section-content aboutUs-section-content-1">
@@ -125,15 +125,11 @@
                         <span class="aboutUs-section-content-2-1">結合</span>
                         <span class="aboutUs-section-content-2-2">
                             <div class="service-group">
-                                <div class="service-group-item">XR策展</div>
-                                <div class="service-group-item">互動設計</div>
-                                <div class="service-group-item">數位藝術</div>
-                                <div class="service-group-item">網頁開發</div>
-                                <div class="service-group-item">AR/VR</div>
-                                <div class="service-group-item">UI/UX</div>
+                                <div class="service-group-item">AR/VR/XR策展</div>
+                                <div class="service-group-item">互動設計/數位藝術</div>
+                                <div class="service-group-item">UIUX/網頁開發</div>
                                 <div class="service-group-item">2D/3D動畫</div>
-                                <div class="service-group-item">平面設計</div>
-                                <div class="service-group-item">CIS</div>
+                                <div class="service-group-item">CIS/平面設計</div>
                             </div>
                         </span>
                     </div>
@@ -206,64 +202,40 @@
         </div>
         <div v-if="isStarted" class="section services-section">
             <div class="services-content-container">
-                <div class="services-content title-content">
+                <div class="services-content services-content-1">
                     <h2 class="services-title">Services</h2>
                     <div class="services-description">
-                        介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹
-                    </div>
-                </div>
-                <div class="services-content services-content-1">
-                    <h2 class="services-title">XR策展</h2>
-                    <div class="services-description">
-                        介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹
+                        介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹
                     </div>
                 </div>
                 <div class="services-content services-content-2">
-                    <h2 class="services-title">互動設計</h2>
+                    <h2 class="services-title">AR/VR/XR策展</h2>
                     <div class="services-description">
-                        介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹
+                        介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹
                     </div>
                 </div>
                 <div class="services-content services-content-3">
-                    <h2 class="services-title">數位藝術</h2>
+                    <h2 class="services-title">互動設計/數位藝術</h2>
                     <div class="services-description">
-                        介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹
+                        介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹
                     </div>
                 </div>
                 <div class="services-content services-content-4">
-                    <h2 class="services-title">網頁開發</h2>
+                    <h2 class="services-title">UIUX/網頁開發</h2>
                     <div class="services-description">
-                        介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹
+                        介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹
                     </div>
                 </div>
                 <div class="services-content services-content-5">
-                    <h2 class="services-title">AR/VR</h2>
+                    <h2 class="services-title">2D/3D動畫</h2>
                     <div class="services-description">
-                        介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹
+                        介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹
                     </div>
                 </div>
                 <div class="services-content services-content-6">
-                    <h2 class="services-title">UI/UX</h2>
+                    <h2 class="services-title">CIS/平面設計</h2>
                     <div class="services-description">
-                        介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹
-                    </div>
-                </div>
-                <div class="services-content services-content-7">
-                    <h2 class="services-title">2D/3D動畫</h2>
-                    <div class="services-description">
-                        介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹
-                    </div>
-                </div>
-                <div class="services-content services-content-8">
-                    <h2 class="services-title">平面設計</h2>
-                    <div class="services-description">
-                        介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹
-                    </div>
-                </div>
-                <div class="services-content services-content-9">
-                    <h2 class="services-title">CIS</h2>
-                    <div class="services-description">
-                        介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹
+                        介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹
                     </div>
                 </div>
             </div>
@@ -335,7 +307,7 @@
             if (resource.type === 'video') {
                 const video = document.createElement('video');
                 video.src = resource.src;
-                video.onloadeddata = () => {
+                video.onloadeddata = (res) => {
                     loadedItems.value++;
                     resolve();
                 };
@@ -381,15 +353,34 @@
         }
     };
     const aboutUsSectionGsap = () => {
+        let serviceMarqueeInterval = null;
+        const startServiceMarquee = () => {
+            if(serviceMarqueeInterval) return;
+            const items = document.querySelectorAll('.service-group-item');
+            if (items.length === 0) return;
+            
+            let currentIndex = 0;
+            
+            items[0].classList.add('active');
+            
+            serviceMarqueeInterval = setInterval(() => {
+                items[currentIndex].classList.remove('active');
+                currentIndex = (currentIndex + 1) % items.length;
+                
+                // 顯示新的當前項目
+                items[currentIndex].classList.add('active');
+            }, 1000); // 每個項目顯示 1 秒
+        };
+
         gsap.timeline({
             scrollTrigger: {
                 trigger: '.aboutUs-section',
-                start: 'top 80%',
-                end: 'center bottom',
+                start: '5% bottom',
+                end: `center bottom`,
                 scrub: true,
                 markers: false,
                 onUpdate: (self) => {
-                    updatePosition(0, 0, 0, 0, -40, 0, self.progress);
+                    updatePosition(0, 0, 0, 0, -45, 0, self.progress);
                 },
                 onEnter: () =>{ 
                     startServiceMarquee();
@@ -409,44 +400,22 @@
             scrollTrigger: {
                 trigger: '.aboutUs-section',
                 start: '10% bottom',
-                end: '65% bottom',
+                end: 'bottom bottom',
                 scrub: true,
                 markers: false
             }
         });
         aboutUsContentTimeline
-            .to('.aboutUs-section-content-1-1', { opacity: 1, filter: 'blur(0px)', duration: 0.1 })
-            .to('.aboutUs-section-hr-1', { width: '100%', duration: 0.2 })
-            .to('.aboutUs-section-content-1-2', { opacity: 1, filter: 'blur(0px)', duration: 0.1 })
-            .to('.aboutUs-section-content-2-1', { opacity: 1, filter: 'blur(0px)', duration: 0.1 })
-            .to('.aboutUs-section-content-2-2', { width: '100%', duration: 0.2 })
-            .to('.aboutUs-section-content-3-1', { opacity: 1, filter: 'blur(0px)', duration: 0.1 })
-            .to('.aboutUs-section-content-3-2', { opacity: 1, filter: 'blur(0px)', duration: 0.1 })
-            .to('.aboutUs-section-content-3-2 .underline', { width: '100%', duration: 0.2 })
-            .to('.aboutUs-section-content-3-3', { opacity: 1, filter: 'blur(0px)', duration: 0.1 });
-
-        gsap.to('.aboutUs-content-group', {
-            scrollTrigger: {
-                trigger: '.aboutUs-section',
-                start: '70% 80%',
-                end: 'bottom bottom',
-                scrub: true,
-                markers: false,
-            },
-            transform: 'scale(5)',
-            ease: 'none'
-        });
-        gsap.to('.aboutUs-section', {
-            scrollTrigger: {
-                trigger: '.aboutUs-section',
-                start: '70% bottom',
-                end: 'bottom bottom',
-                scrub: true,
-                markers: false,
-            },
-            opacity: 0,
-            ease: 'none'
-        });
+            .to('.aboutUs-section-content-1-1', { opacity: 1, filter: 'blur(0px)', duration: 0.1 },0)
+            .to('.aboutUs-section-hr-1', { width: '100%', duration: 0.2 },0.1)
+            .to('.aboutUs-section-content-1-2', { opacity: 1, filter: 'blur(0px)', duration: 0.1 },0.3)
+            .to('.aboutUs-section-content-2-1', { opacity: 1, filter: 'blur(0px)', duration: 0.1 },0.4)
+            .to('.aboutUs-section-content-2-2', { width: '100%', duration: 0.2 },0.5)
+            .to('.aboutUs-section-content-3-1', { opacity: 1, filter: 'blur(0px)', duration: 0.1 },0.7)
+            .to('.aboutUs-section-content-3-2', { opacity: 1, filter: 'blur(0px)', duration: 0.1 },0.8)
+            .to('.aboutUs-section-content-3-2 .underline', { width: '100%', duration: 0.2 },0.9)
+            .to('.aboutUs-section-content-3-3', { opacity: 1, filter: 'blur(0px)', duration: 0.1 },1.1)
+            .to('.aboutUs-content-group', { opacity: 0, transform: 'scale(5)', duration: 0.2 },1.3)
     }
     const worksSectionGsap = () => {
         gsap.timeline({
@@ -532,9 +501,9 @@
         const worksTimeline = gsap.timeline({
             scrollTrigger: {
                 trigger: '.works-section',
-                start: '0% top', // 從頁面頂部開始
-                end: `bottom bottom`, // 動態計算結束點
-                scrub: true, // 平滑的滾動效果
+                start: 'top top',
+                end: `bottom bottom`,
+                scrub: true,
                 markers: false,
                 onUpdate: (self) => {
                     updatePosition(0, 0, -10, 0, 0, 10, self.progress);
@@ -572,116 +541,226 @@
             // 透明動畫（延遲 opacityDelayRatio 啟動）
             worksTimeline.to(itemSelector, {
                 opacity: 1,
-                ease: 'none',
+                ease: 'power5.in',
                 duration: opacityDuration / durationTime,
             }, start);
         }
     }
     const servicesSectionGsap = () => {
-        gsap.timeline({
+        const materialData =[
+            {
+                value: 'water',
+                backgroundColor: '#F2F2F2',
+            },
+            {
+                value: 'metallic',
+                backgroundColor: '#F2F2F2',
+            },
+            {
+                value: 'wireframe',
+                backgroundColor: '#F2F2F2',
+            },
+            {
+                value: 'gold',
+                backgroundColor: '#F2F2F2',
+            },
+            {
+                value: 'neon',
+                backgroundColor: '#F2F2F2',
+            },
+            {
+                value: 'ice',
+                backgroundColor: '#F2F2F2',
+            },
+            {
+                value: 'holographic',
+                backgroundColor: '#F2F2F2',
+            },
+            {
+                value: 'cloud',
+                backgroundColor: '#F2F2F2',
+            },
+            {
+                value: 'chameleon',
+                backgroundColor: '#F2F2F2',
+            },
+            {
+                value: 'galaxy',
+                backgroundColor: '#F2F2F2',
+            },
+        ]
+        const changeMaterialType = (index) => {
+            if (splashRef.value) {
+                splashRef.value.changeMaterialType(materialData[index].value);
+                // const color = materialData[materialData[index].backgroundColor];
+                // if (color) {
+                //     document.documentElement.style.backgroundColor = color;
+                //     document.body.style.backgroundColor = color;
+                // }
+            }
+        }
+        // 動畫時間參數
+        const animParams = {
+            startTime: 0.2,          // 整體動畫開始時間
+            transitionDuration: 0.1,  // 淡入淡出過渡時間
+            stayDuration: 0.1,     // 內容停留時間
+            totalCount: 6,
+            xTransform: 40,
+            yTransform: 250,
+            mobileTransform: 30,
+            xStayTransform: 2,
+            yStayTransform: 30,
+            mobileStayTransform: 1,
+        }
+
+        const contentDuration = animParams.transitionDuration + animParams.stayDuration;
+        const timeLineDuration = (animParams.startTime + (animParams.totalCount - 1) * contentDuration) + contentDuration;
+
+        const servicesTimeline = gsap.timeline({
             scrollTrigger: {
-                trigger: '.title-content',
+                trigger: '.services-section',
                 start: 'top bottom',
-                end: '80% bottom',
+                end: `bottom bottom`,
                 scrub: true,
                 markers: false,
                 onEnter: () => {
-                    shrinkingFunction()
-                },
-                onLeave: () => {
-                    growingFunction()
-                },
-                onEnterBack: () => {
                     shrinkingFunction()
                 },
                 onLeaveBack: () => {
                     growingFunction()
                 },
                 onUpdate: (self) => {
-                    updatePosition(0, 0, 10, -10, 0, 0, self.progress);
-                    // if(width.value > 768){
-                    //     updatePosition(0, 0, 15, -4, 0, 15, self.progress);
-                    // }else{
-                    //     updatePosition(0, 0, 15, 0, -3, 0, self.progress);
-                    // }
+                    if (self.progress <= ((animParams.startTime + animParams.transitionDuration) / timeLineDuration)) {
+                        if(width.value>768){
+                            updatePosition(0, 0, 10, -8, 0, 0, self.progress / ((animParams.startTime + animParams.transitionDuration) / timeLineDuration));
+                        }else{
+                            updatePosition(0, 0, 10, 0, -2, 0, self.progress / ((animParams.startTime + animParams.transitionDuration) / timeLineDuration));
+                        }
+                        
+                    }
                 },
-            },   
+            },
         });
 
-        const servicesItemCount = 9;
-        for (let i = 1; i <= servicesItemCount; i++) {
-            gsap.timeline({
-                scrollTrigger: {
-                    trigger: `.services-content-${i}`,
-                    start: 'top 80%',
-                    end: '80% bottom',
-                    scrub: true,
-                    markers: false,
-                    onEnter: () => {
-                        shrinkingFunction()
-                    },
-                    onLeave: () => {
-                        growingFunction()
-                        if(i === 1){
-                            changeMaterialType('metallic');
-                        }else if(i === 2){
-                            changeMaterialType('matte');
-                        }else if(i === 3){
-                            changeMaterialType('gold');
-                        }else if(i === 4){
-                            changeMaterialType('neon');
-                        }else if(i === 5){
-                            changeMaterialType('ice');
-                        }else if(i === 6){
-                            changeMaterialType('holographic');
-                        }else if(i === 7){
-                            changeMaterialType('cloud');
-                        }else if(i === 8){
-                            changeMaterialType('chameleon');
-                        }else if(i === 9){
-                            changeMaterialType('galaxy');
-                        }
-                    },
-                    onEnterBack: () => {
-                        shrinkingFunction()
-                    },
-                    onLeaveBack: () => {
-                        growingFunction()
-                        if(i === 1){
-                            changeMaterialType('water');
-                        }else if(i === 2){
-                            changeMaterialType('metallic');
-                        }else if(i === 3){
-                            changeMaterialType('matte');
-                        }else if(i === 4){
-                            changeMaterialType('gold');
-                        }else if(i === 5){
-                            changeMaterialType('neon');
-                        }else if(i === 6){
-                            changeMaterialType('ice');
-                        }else if(i === 7){
-                            changeMaterialType('holographic');
-                        }else if(i === 8){
-                            changeMaterialType('cloud');
-                        }else if(i === 9){
-                            changeMaterialType('chameleon');
-                        }
-                    },
-                    onUpdate: (self) => {
-                        // if(i === 0){
-                        //     updatePosition(10, 0, 20, -10, 0, 20, self.progress);
-                        // }
-                        // if(width.value > 768){
-                        //     if(i % 2 === 0){
-                        //         updatePosition(10, 0, 20, -10, 0, 20, self.progress);
-                        //     }else{
-                        //         updatePosition(-10, 0, 20, 10, 0, 20, self.progress);
-                        //     }
-                        // }else{
-                        //     splashRef.value.updatePosition(0, -3, 0);
-                        // }
-                    },
-                },   
+        // 使用迴圈建立動畫序列
+        for (let i = 1; i <= animParams.totalCount; i++) {
+            const startTime = animParams.startTime + (i - 1) * contentDuration;
+            const endTime = startTime + contentDuration;
+            if(width.value > 768){
+                servicesTimeline
+                    .fromTo(
+                        `.services-content-${i}`,
+                        { 
+                            opacity: 0, 
+                            x: animParams.xTransform, 
+                            y: animParams.yTransform 
+                        },
+                        { 
+                            opacity: 1, 
+                            x: animParams.xStayTransform,
+                            y: animParams.yStayTransform, 
+                            duration: animParams.transitionDuration, 
+                            ease: 'none' 
+                        },
+                        startTime
+                    )
+                    .to(
+                        `.services-content-${i}`,
+                        { 
+                            x: 0,
+                            y: 0, 
+                            duration: (animParams.stayDuration / 2), 
+                            ease: 'none' 
+                        },
+                        startTime+animParams.transitionDuration
+                    )
+                    .to(
+                        `.services-content-${i}`,
+                        { 
+                            x: animParams.xStayTransform,
+                            y: -animParams.yStayTransform, 
+                            duration: (animParams.stayDuration / 2), 
+                            ease: 'none' 
+                        },
+                        startTime+animParams.transitionDuration + (animParams.stayDuration/2)
+                    )
+                    .to(
+                        `.services-content-${i}`,
+                        { 
+                            opacity: 0, 
+                            x: animParams.xTransform, 
+                            y: -animParams.yTransform, 
+                            duration: animParams.transitionDuration, 
+                            ease: 'none' 
+                        },
+                        endTime
+                    )
+            }else{
+                servicesTimeline
+                    .fromTo(
+                        `.services-content-${i}`,
+                        { 
+                            opacity: 0, 
+                            x: animParams.mobileTransform, 
+                        },
+                        { 
+                            opacity: 1, 
+                            x: animParams.mobileStayTransform, 
+                            duration: animParams.transitionDuration, 
+                            ease: 'none' 
+                        },
+                        startTime
+                    )
+                    .to(
+                        `.services-content-${i}`,
+                        { 
+                            x: 0,
+                            y: 0, 
+                            duration: (animParams.stayDuration / 2), 
+                            ease: 'none' 
+                        },
+                        startTime+animParams.transitionDuration
+                    )
+                    .to(
+                        `.services-content-${i}`,
+                        { 
+                            x: -animParams.mobileStayTransform,
+                            duration: (animParams.stayDuration / 2), 
+                            ease: 'none' 
+                        },
+                        startTime+animParams.transitionDuration + (animParams.stayDuration/2)
+                    )
+                    .to(
+                        `.services-content-${i}`,
+                        { 
+                            opacity: 0, 
+                            x: -animParams.mobileTransform, 
+                            duration: animParams.transitionDuration, 
+                            ease: 'none' 
+                        },
+                        endTime
+                    )
+            }
+
+            ScrollTrigger.create({
+                trigger: `.services-section`,
+                start: `${((startTime + (animParams.stayDuration/2)) / timeLineDuration) * 100}% bottom`,
+                end: `${(endTime - (animParams.stayDuration/2)) / timeLineDuration * 100}% bottom`,
+                onEnter: () => {
+                    growingFunction();
+                    changeMaterialType(i-1);
+                },
+                onLeave: () => {
+                    shrinkingFunction();
+                },
+                onEnterBack: () => {
+                    growingFunction();
+                    changeMaterialType(i-1);
+                },
+                onLeaveBack: () => {
+                    shrinkingFunction();
+                },
+                markers: false
             });
         }
     }
@@ -696,67 +775,6 @@
             splashRef.value.updatePosition(offsetX, offsetY, offsetZ);
         }
     }
-    const backgroundColors = {
-        'water': '#F2F2F2',
-        'metallic': '#FCBD00',
-        'matte': '#239D89',
-        'gold': '#000000',
-        'neon': '#000814',
-        'ice': '#001419',
-        'holographic': '#14001a',
-        'cloud': '#1a1a1a',
-        'chameleon': '#001a14',
-        'galaxy': '#000033',
-        'wireframe': '#ffffff',
-    };
-    const fontColors = {
-        'water': '#000000',
-        'metallic': '#000000',
-        'matte': '#000000',
-        'gold': '#ffffff',
-        'neon': '#ffffff',
-        'ice': '#ffffff',
-        'holographic': '#ffffff',
-        'cloud': '#ffffff',
-        'chameleon': '#ffffff',
-        'galaxy': '#ffffff',
-        'wireframe': '#000000',
-    };
-    const changeMaterialType = (materialType) => {
-        if (splashRef.value) {
-            splashRef.value.changeMaterialType(materialType);
-            const color = backgroundColors[materialType];
-            const fontColor = fontColors[materialType];
-            if (color) {
-                document.documentElement.style.backgroundColor = color;
-                document.body.style.backgroundColor = color;
-            }
-            if (fontColor) {
-                const servicesContents = document.querySelectorAll('.services-content');
-                servicesContents.forEach(content => {
-                    content.style.setProperty('--font-color', fontColor);
-                });
-            }
-        }
-    }
-    let serviceMarqueeInterval = null;
-    const startServiceMarquee = () => {
-        if(serviceMarqueeInterval) return;
-        const items = document.querySelectorAll('.service-group-item');
-        if (items.length === 0) return;
-        
-        let currentIndex = 0;
-        
-        items[0].classList.add('active');
-        
-        serviceMarqueeInterval = setInterval(() => {
-            items[currentIndex].classList.remove('active');
-            currentIndex = (currentIndex + 1) % items.length;
-            
-            // 顯示新的當前項目
-            items[currentIndex].classList.add('active');
-        }, 1000); // 每個項目顯示 1 秒
-    };
 
     // 水花收合
     const growingFunction = () => {

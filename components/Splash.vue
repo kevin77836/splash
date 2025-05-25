@@ -280,7 +280,77 @@ function generateChameleonMaterial() {
   const fs = `varying vec3 vPos; uniform float time; void main(){float t=sin(time+vPos.y);vec3 c=vec3(0.5+0.5*t,0.5-0.5*t,0.5);gl_FragColor=vec4(c,1.0);} `;
   return new THREE.ShaderMaterial({ uniforms:{time:{value:0}}, vertexShader: vs, fragmentShader: fs });
 }
-
+function generateOilFilmMaterial() {
+  const vs = `varying vec3 vPos; void main(){vPos=position;gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.0);}`;
+  const fs = `varying vec3 vPos; uniform float time;
+    void main(){
+      float t = sin(time + vPos.y * 5.0) * 0.5 + 0.5;
+      vec3 color = vec3(t, 0.5 * (1.0 - t), 1.0 - t);
+      gl_FragColor = vec4(color, 0.8);
+    }`;
+  return new THREE.ShaderMaterial({
+    uniforms: { time: { value: 0 } },
+    vertexShader: vs,
+    fragmentShader: fs,
+    transparent: true,
+  });
+}
+function generateMetalMaterial() {
+  return new THREE.MeshPhysicalMaterial({
+    color: 0xffffff,
+    metalness: 1,
+    roughness: 0.1,
+    transparent: true,
+    transmission: 0.7,
+    iridescence: 1.0,
+    iridescenceIOR: 1.3,
+    thickness: 0.5,
+  });
+}
+function generateRainbowMaterial() {
+  const vs = `varying vec3 vPos; void main(){vPos=position;gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.0);}`;
+  const fs = `varying vec3 vPos; uniform float time;
+    void main(){
+      vec3 color = vec3(
+        0.5 + 0.5 * sin(vPos.x * 10.0 + time),
+        0.5 + 0.5 * sin(vPos.y * 10.0 + time + 2.0),
+        0.5 + 0.5 * sin(vPos.z * 10.0 + time + 4.0)
+      );
+      gl_FragColor = vec4(color, 1.0);
+    }`;
+  return new THREE.ShaderMaterial({
+    uniforms: { time: { value: 0 } },
+    vertexShader: vs,
+    fragmentShader: fs,
+  });
+}
+function generateBlueGrowMaterial() {
+  return new THREE.MeshStandardMaterial({
+    color: 0x00ffff,
+    emissive: 0x00ffff,
+    emissiveIntensity: 2,
+    metalness: 0.5,
+    roughness: 0.2,
+  });
+}
+function generateCrystalMaterial() {
+  return new THREE.MeshPhysicalMaterial({
+    color: 0x99ccff,
+    transmission: 1.0,
+    roughness: 0,
+    metalness: 0,
+    thickness: 1.0,
+    ior: 2.4,
+    transparent: true,
+  });
+}
+function generatePlasticMaterial() {
+  return new THREE.MeshStandardMaterial({
+    color: 0xffc0cb,
+    roughness: 0.5,
+    metalness: 0.1,
+  });
+}
 function updateMaterialAnimate(){
   const elapsedTime = clock.getElapsedTime();
   
@@ -291,7 +361,6 @@ function updateMaterialAnimate(){
     }
   }
 }
-
 function generateMaterial() {
   switch(currentMaterialType) {
     case materialTypes.WATER:
@@ -320,7 +389,6 @@ function generateMaterial() {
       return generateWaterMaterial();
   }
 }
-
 function changeMaterialType(materialType) {
   if (!Object.values(materialTypes).includes(materialType)) {
     console.error(`無效的材質類型: ${materialType}`);
