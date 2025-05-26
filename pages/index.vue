@@ -594,33 +594,54 @@
             const startTime = animParams.startTime + (i - 1) * contentDuration;
             const endTime = startTime + contentDuration;
             if(width.value > 768){
-                servicesTimeline
-                    .fromTo(
-                        `.services-content-${i}`,
-                        { 
-                            opacity: 0, 
-                            x: animParams.xTransform, 
-                            y: animParams.yTransform 
-                        },
-                        { 
-                            opacity: 1, 
-                            x: animParams.xStayTransform,
-                            y: animParams.yStayTransform, 
-                            duration: animParams.transitionDuration, 
-                            ease: 'none' 
-                        },
-                        startTime
-                    )
-                    .to(
-                        `.services-content-${i}`,
-                        { 
-                            x: 0,
-                            y: 0, 
-                            duration: (animParams.stayDuration / 2), 
-                            ease: 'none' 
-                        },
-                        startTime+animParams.transitionDuration
-                    )
+                if(i !== 1){
+                    servicesTimeline
+                        .fromTo(
+                            `.services-content-${i}`,
+                            { 
+                                opacity: 0, 
+                                x: animParams.xTransform, 
+                                y: animParams.yTransform 
+                            },
+                            { 
+                                opacity: 1, 
+                                x: animParams.xStayTransform,
+                                y: animParams.yStayTransform, 
+                                duration: animParams.transitionDuration, 
+                                ease: 'none' 
+                            },
+                            startTime
+                        )
+                        .to(
+                            `.services-content-${i}`,
+                            { 
+                                x: 0,
+                                y: 0, 
+                                duration: (animParams.stayDuration / 2), 
+                                ease: 'none' 
+                            },
+                            startTime+animParams.transitionDuration
+                        )
+                }else{
+                    servicesTimeline
+                        .fromTo(
+                            `.services-content-${i}`,
+                            { 
+                                opacity: 0,
+                                x: animParams.xTransform, 
+                                y: 0 
+                            },
+                            { 
+                                opacity: 1,
+                                x: 0,
+                                y: 0, 
+                                duration: animParams.transitionDuration + (animParams.stayDuration / 2), 
+                                ease: 'none' 
+                            },
+                            startTime
+                        )
+                }
+
                 if(i!== animParams.totalCount){
                     servicesTimeline
                         .to(
@@ -658,65 +679,82 @@
                         )
                 }
             }else{
-                servicesTimeline
-                    .fromTo(
-                        `.services-content-${i}`,
-                        { 
-                            opacity: 0, 
-                            x: animParams.mobileTransform, 
-                        },
-                        { 
-                            opacity: 1, 
-                            x: animParams.mobileStayTransform, 
-                            duration: animParams.transitionDuration, 
-                            ease: 'none' 
-                        },
-                        startTime
-                    )
-                    .to(
-                        `.services-content-${i}`,
-                        { 
-                            x: 0,
-                            y: 0, 
-                            duration: (animParams.stayDuration / 2), 
-                            ease: 'none' 
-                        },
-                        startTime+animParams.transitionDuration
-                    )
-                    if(i!== animParams.totalCount){
-                        servicesTimeline
-                            .to(
-                                `.services-content-${i}`,
-                                { 
-                                    x: -animParams.mobileStayTransform,
-                                    duration: (animParams.stayDuration / 2), 
-                                    ease: 'none' 
-                                },
-                                startTime+animParams.transitionDuration + (animParams.stayDuration/2)
-                            )
-                            .to(
-                                `.services-content-${i}`,
-                                { 
-                                    opacity: 0, 
-                                    x: -animParams.mobileTransform, 
-                                    duration: animParams.transitionDuration, 
-                                    ease: 'none' 
-                                },
-                                endTime
-                            )
-                    }else{
-                        servicesTimeline
-                            .to(
-                                `.services-content-${i}`,
-                                { 
-                                    x: 0,
-                                    y: 0,
-                                    duration: (animParams.stayDuration / 2) + animParams.transitionDuration, 
-                                    ease: 'none' 
-                                },
-                                startTime+animParams.transitionDuration + (animParams.stayDuration/2)
-                            )
-                    }
+                if(i!==1){
+                    servicesTimeline
+                        .fromTo(
+                            `.services-content-${i}`,
+                            { 
+                                opacity: 0, 
+                                x: animParams.mobileTransform, 
+                            },
+                            { 
+                                opacity: 1, 
+                                x: animParams.mobileStayTransform, 
+                                duration: animParams.transitionDuration, 
+                                ease: 'none' 
+                            },
+                            startTime
+                        )
+                        .to(
+                            `.services-content-${i}`,
+                            { 
+                                x: 0,
+                                duration: (animParams.stayDuration / 2), 
+                                ease: 'none' 
+                            },
+                            startTime+animParams.transitionDuration
+                        )
+                }else{
+                    servicesTimeline
+                        .fromTo(`.services-content-${i}`,
+                            { 
+                                opacity: 1, 
+                                x: 0,
+                            },
+                            { 
+                                opacity: 1, 
+                                x: 0,
+                                duration: animParams.transitionDuration + (animParams.stayDuration / 2), 
+                                ease: 'none' 
+                            },
+                            startTime
+                        )
+                }
+
+                if(i!== animParams.totalCount){
+                    servicesTimeline
+                        .to(
+                            `.services-content-${i}`,
+                            { 
+                                x: -animParams.mobileStayTransform,
+                                duration: (animParams.stayDuration / 2), 
+                                ease: 'none' 
+                            },
+                            startTime+animParams.transitionDuration + (animParams.stayDuration/2)
+                        )
+                        .to(
+                            `.services-content-${i}`,
+                            { 
+                                opacity: 0, 
+                                x: -animParams.mobileTransform, 
+                                duration: animParams.transitionDuration, 
+                                ease: 'none' 
+                            },
+                            endTime
+                        )
+                }else{
+                    servicesTimeline
+                        .to(
+                            `.services-content-${i}`,
+                            { 
+                                x: 0,
+                                y: 0,
+                                duration: (animParams.stayDuration / 2) + animParams.transitionDuration, 
+                                ease: 'none' 
+                            },
+                            startTime+animParams.transitionDuration + (animParams.stayDuration/2)
+                        )
+                }
             }
 
             ScrollTrigger.create({
