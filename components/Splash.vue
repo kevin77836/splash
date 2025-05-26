@@ -146,12 +146,51 @@ const materialTypes = [
 // --- 材質緩存系統 ---
 const materialCache = {
   materials: {},
+  isInitialized: false,
 
   initialize() {
-    Object.values(materialTypes).forEach(material => {
-      this.getMaterial(material);
-      this.materials[material].envMap = scene.environment;
-    })
+    if (this.isInitialized) return;
+
+    console.log('開始初始化材質...');
+
+    // 預先創建所有材質
+    materialTypes.forEach(type => {
+      this.getMaterial(type);
+      if (scene?.environment) {
+        this.materials[type].envMap = scene.environment;
+      }
+    });
+
+    // 創建預編譯用的幾何體
+    const precompileGeometries = [
+      new THREE.SphereGeometry(1, 32, 32),  // 用於球體
+      new THREE.BoxGeometry(1, 1, 1),       // 用於立方體
+      effect.geometry                        // 用於 Marching Cubes
+    ];
+
+    // 為每個材質和幾何體組合進行預編譯
+    Object.values(this.materials).forEach(material => {
+      precompileGeometries.forEach(geometry => {
+        const tempMesh = new THREE.Mesh(geometry, material);
+        // 添加到場景進行預編譯
+        scene.add(tempMesh);
+        renderer.compile(scene, camera);
+        scene.remove(tempMesh);
+      });
+      
+      // 確保材質更新
+      material.needsUpdate = true;
+    });
+
+    // 清理預編譯用的幾何體
+    precompileGeometries.forEach(geometry => {
+      if (geometry !== effect.geometry) {  // 不要清理 effect 的幾何體
+        geometry.dispose();
+      }
+    });
+
+    this.isInitialized = true;
+    console.log('材質初始化和預編譯完成');
   },
 
   getMaterial(type) {
@@ -160,11 +199,12 @@ const materialCache = {
     }
     return this.materials[type];
   },
-  
+
   createMaterial(type) {
+    let material;
     switch(type) {
       case 'default':
-        return new THREE.MeshPhysicalMaterial({
+        material = new THREE.MeshPhysicalMaterial({
           metalness: 0,
           roughness: 0,
           transparent: true,
@@ -175,16 +215,18 @@ const materialCache = {
           envMapIntensity: 5.0,
           side: THREE.DoubleSide
         });
+        break;
       case 'arVrXr':
-        return new THREE.MeshStandardMaterial({
+        material = new THREE.MeshStandardMaterial({
           color: 0x101010,
           roughness: 0.3,
           metalness: 0,
           side: THREE.DoubleSide,
           envMapIntensity: 1.0
         });
+        break;
       case 'digiArt':
-        return new THREE.MeshPhysicalMaterial({
+        material = new THREE.MeshPhysicalMaterial({
           color: 0xffffff,
           metalness: 1,
           roughness: 0.1,
@@ -192,15 +234,17 @@ const materialCache = {
           transmission: 0.7,
           envMapIntensity: 2.0
         });
+        break;
       case 'uiuxDev':
-        return new THREE.MeshBasicMaterial({
+        material = new THREE.MeshBasicMaterial({
           color: 0x000000,
           transparent: true,
           opacity: 0.2,
           wireframe: true
         });
+        break;
       case 'animate':
-        return new THREE.MeshPhysicalMaterial({
+        material = new THREE.MeshPhysicalMaterial({
           color: 0xfff8ee,
           roughness: 0.05,
           metalness: 0,
@@ -209,8 +253,9 @@ const materialCache = {
           side: THREE.DoubleSide,
           envMapIntensity: 2.0
         });
+        break;
       case 'graphic':
-        return new THREE.MeshPhysicalMaterial({
+        material = new THREE.MeshPhysicalMaterial({
           color: 0xffffff,
           metalness: 0.1,
           roughness: 0.2,
@@ -220,20 +265,34 @@ const materialCache = {
           transparent: true,
           envMapIntensity: 3.0
         });
+        break;
       default:
         return this.createMaterial('default');
     }
+
+    // 如果場景已經有環境貼圖，立即應用
+    if (scene?.environment) {
+      material.envMap = scene.environment;
+      material.needsUpdate = true;
+    }
+
+    return material;
   },
-  
-  // updateEnvironmentMaps(envMap) {
-  //   Object.values(materialTypes).forEach(material => {
-  //     console.log('material', material.envMap)
-  //     if (material.envMap !== undefined) {
-  //       material.envMap = envMap;
-  //       material.needsUpdate = true;
-  //     }
-  //   });
-  // },
+
+  updateEnvironmentMaps(envMap) {
+    Object.values(this.materials).forEach(material => {
+      if (material.envMap !== undefined) {
+        material.envMap = envMap;
+        material.needsUpdate = true;
+      }
+    });
+  },
+
+  dispose() {
+    Object.values(this.materials).forEach(material => material.dispose());
+    this.materials = {};
+    this.isInitialized = false;
+  }
 };
 
 // 當前材質類型
@@ -1207,26 +1266,25 @@ function onMouseMove(event) {
   targetRotationY = Math.max(-Math.PI, Math.min(Math.PI, targetRotationY));
 }
 
-onMounted(() => {
-  // 初始化場景
-  if (!initializeScene()) return;
+onMounted(async () => {
+  try {
+    // 初始化場景
+    if (!await initializeScene()) return;
 
-  // 開始動畫循環（但不啟動流動）
-  animate();
-  
-  // 載入環境貼圖
-  loadEnvironmentMap().then(() => {
+    // 載入環境貼圖
+    await loadEnvironmentMap();
     
     // 初始化為收合狀態
     initializeCollapsedState();
-    materialCache.initialize();
+    
+    // 開始動畫循環
+    animate();
     
     // 通知父組件資源已載入
     emit('resourcesLoaded', true);
-    
-  }).catch(error => {
-    console.error('環境貼圖載入失敗:', error);
-  });
+  } catch (error) {
+    console.error('初始化失敗:', error);
+  }
 
   // 監聽視窗大小變化
   handleResize();
