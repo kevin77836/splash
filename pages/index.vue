@@ -337,11 +337,11 @@
             for(let i=1;i<5;i++){
                 setTimeout(() => {
                     changeMaterialType(i);
-                },(i-1)*10)
+                },(i-1)*100)
             }
             setTimeout(() => {
                 changeMaterialType(0);
-            },5*10)
+            },5*100)
             splashRef.value.updatePosition(0, 0, 10);
         }
         loadedItems.value++;
