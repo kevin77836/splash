@@ -181,12 +181,13 @@ function generateWireFrameMaterial(){
 }
 function generateIceMaterial() {
   return new THREE.MeshPhysicalMaterial({
-    color:0xb3e5fc,
+    color:0xffffff,
     metalness:0.1,
     roughness:0.2,
     transmission:0.8,
     clearcoat:0.5,
-    side:THREE.DoubleSide
+    side:THREE.DoubleSide,
+    transparent:true,
   });
 }
 function generateMetalMaterial() {

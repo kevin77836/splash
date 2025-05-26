@@ -554,10 +554,10 @@
             totalCount: 6,
             xTransform: 40,
             yTransform: 250,
-            mobileTransform: 300,
+            mobileTransform: 400,
             xStayTransform: 2,
             yStayTransform: 50,
-            mobileStayTransform: 50,
+            mobileStayTransform: 200,
         }
 
         const contentDuration = animParams.transitionDuration + animParams.stayDuration;
