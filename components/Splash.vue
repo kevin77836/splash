@@ -147,6 +147,13 @@ const materialTypes = [
 const materialCache = {
   materials: {},
 
+  initialize() {
+    Object.values(materialTypes).forEach(material => {
+      this.getMaterial(material);
+      this.materials[material].envMap = scene.environment;
+    })
+  },
+
   getMaterial(type) {
     if (!this.materials[type]) {
       this.materials[type] = this.createMaterial(type);
@@ -218,14 +225,15 @@ const materialCache = {
     }
   },
   
-  updateEnvironmentMaps(envMap) {
-    Object.values(materialTypes).forEach(material => {
-      if (material.envMap !== undefined) {
-        material.envMap = envMap;
-        material.needsUpdate = true;
-      }
-    });
-  },
+  // updateEnvironmentMaps(envMap) {
+  //   Object.values(materialTypes).forEach(material => {
+  //     console.log('material', material.envMap)
+  //     if (material.envMap !== undefined) {
+  //       material.envMap = envMap;
+  //       material.needsUpdate = true;
+  //     }
+  //   });
+  // },
 };
 
 // 當前材質類型
@@ -1211,6 +1219,7 @@ onMounted(() => {
     
     // 初始化為收合狀態
     initializeCollapsedState();
+    materialCache.initialize();
     
     // 通知父組件資源已載入
     emit('resourcesLoaded', true);
