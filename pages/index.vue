@@ -560,7 +560,7 @@
             mobileStayTransform: 125,
         }
         if(width.value <= 768){
-            animParams.startTime = 0.4;
+            animParams.startTime = 0.2;
         }
 
         const contentDuration = animParams.transitionDuration + animParams.stayDuration;
@@ -750,8 +750,8 @@
                         .to(
                             `.services-content-${i}`,
                             { 
-                                x: 0,
-                                y: 0,
+                                opacity: 0,
+                                x: -animParams.mobileTransform,
                                 duration: (animParams.stayDuration / 2) + animParams.transitionDuration, 
                                 ease: 'none' 
                             },
