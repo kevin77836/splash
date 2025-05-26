@@ -389,6 +389,7 @@
                 onLeaveBack: () => {
                     startAutoPlay();
                     animateTextToTargetPosition();
+                    splashRef.value.updatePosition(0, 0, 0);
                     isLandingPage.value = true;
                 },
             },
