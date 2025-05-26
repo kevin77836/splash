@@ -143,28 +143,24 @@ const materialTypes = [
   'graphic'
 ];
 
-// --- 材質緩存系統 ---
-const materialCache = {
-  materials: {},
+// --- 材質管理器 ---
+class MaterialManager {
+  constructor() {
+    this.materials = new Map();
+    this.isInitialized = false;
+  }
 
-  // initialize() {
-  //   Object.values(materialTypes).forEach(material => {
-  //     this.getMaterial(material);
-  //     this.materials[material].envMap = scene.environment;
-  //   })
-  // },
-
-  getMaterial(type) {
-    if (!this.materials[type]) {
-      this.materials[type] = this.createMaterial(type);
-    }
-    return this.materials[type];
-  },
-  
-  createMaterial(type) {
-    switch(type) {
-      case 'default':
-        return new THREE.MeshPhysicalMaterial({
+  // 初始化所有材質
+  initialize(envMap) {
+    if (this.isInitialized) return;
+    
+    console.log('開始初始化材質...');
+    
+    // 定義所有材質配置
+    const configs = {
+      default: {
+        type: 'physical',
+        props: {
           metalness: 0,
           roughness: 0,
           transparent: true,
@@ -174,33 +170,41 @@ const materialCache = {
           thickness: 2,
           envMapIntensity: 5.0,
           side: THREE.DoubleSide
-        });
-      case 'arVrXr':
-        return new THREE.MeshStandardMaterial({
+        }
+      },
+      arVrXr: {
+        type: 'standard',
+        props: {
           color: 0x101010,
           roughness: 0.3,
           metalness: 0,
           side: THREE.DoubleSide,
           envMapIntensity: 1.0
-        });
-      case 'digiArt':
-        return new THREE.MeshPhysicalMaterial({
+        }
+      },
+      digiArt: {
+        type: 'physical',
+        props: {
           color: 0xffffff,
           metalness: 1,
           roughness: 0.1,
           transparent: true,
           transmission: 0.7,
           envMapIntensity: 2.0
-        });
-      case 'uiuxDev':
-        return new THREE.MeshBasicMaterial({
+        }
+      },
+      uiuxDev: {
+        type: 'basic',
+        props: {
           color: 0x000000,
           transparent: true,
           opacity: 0.2,
           wireframe: true
-        });
-      case 'animate':
-        return new THREE.MeshPhysicalMaterial({
+        }
+      },
+      animate: {
+        type: 'physical',
+        props: {
           color: 0xfff8ee,
           roughness: 0.05,
           metalness: 0,
@@ -208,9 +212,11 @@ const materialCache = {
           clearcoatRoughness: 0.02,
           side: THREE.DoubleSide,
           envMapIntensity: 2.0
-        });
-      case 'graphic':
-        return new THREE.MeshPhysicalMaterial({
+        }
+      },
+      graphic: {
+        type: 'physical',
+        props: {
           color: 0xffffff,
           metalness: 0.1,
           roughness: 0.2,
@@ -219,37 +225,139 @@ const materialCache = {
           side: THREE.DoubleSide,
           transparent: true,
           envMapIntensity: 3.0
-        });
-      default:
-        return this.createMaterial('default');
+        }
+      }
+    };
+
+    // 創建所有材質
+    for (const [name, config] of Object.entries(configs)) {
+      const material = this.createMaterial(config.type, config.props);
+      if (envMap) {
+        material.envMap = envMap;
+        material.needsUpdate = true;
+      }
+      this.materials.set(name, material);
     }
-  },
-};
+
+    this.isInitialized = true;
+    console.log('材質初始化完成');
+  }
+
+  // 創建材質
+  createMaterial(type, props) {
+    let material;
+    switch (type) {
+      case 'physical':
+        material = new THREE.MeshPhysicalMaterial(props);
+        break;
+      case 'standard':
+        material = new THREE.MeshStandardMaterial(props);
+        break;
+      case 'basic':
+        material = new THREE.MeshBasicMaterial(props);
+        break;
+      default:
+        material = new THREE.MeshPhysicalMaterial(props);
+    }
+    return material;
+  }
+
+  // 獲取材質
+  getMaterial(type) {
+    return this.materials.get(type) || this.materials.get('default');
+  }
+
+  // 更新環境貼圖
+  updateEnvironmentMaps(envMap) {
+    for (const material of this.materials.values()) {
+      if (material.envMap !== undefined) {
+        material.envMap = envMap;
+        material.needsUpdate = true;
+      }
+    }
+  }
+
+  // 預編譯所有材質
+  precompileMaterials(scene, camera, renderer) {
+    console.log('開始預編譯材質...');
+    
+    // 創建預編譯用的幾何體
+    const geometries = [
+      new THREE.SphereGeometry(1, 32, 32),
+      new THREE.BoxGeometry(1, 1, 1)
+    ];
+    
+    // 創建預編譯用的場景
+    const precompileScene = new THREE.Scene();
+    const group = new THREE.Group();
+    precompileScene.add(group);
+    
+    // 為每個材質創建測試物件
+    let offset = 0;
+    for (const material of this.materials.values()) {
+      geometries.forEach((geometry, index) => {
+        const mesh = new THREE.Mesh(geometry, material);
+        mesh.position.set(offset * 2, index * 2, 0);
+        group.add(mesh);
+      });
+      offset++;
+    }
+    
+    // 強制預編譯
+    renderer.compile(precompileScene, camera);
+    
+    // 進行幾次測試渲染
+    for (let i = 0; i < 3; i++) {
+      renderer.render(precompileScene, camera);
+    }
+    
+    // 清理資源
+    geometries.forEach(geometry => geometry.dispose());
+    group.clear();
+    
+    console.log('材質預編譯完成');
+  }
+
+  // 釋放資源
+  dispose() {
+    for (const material of this.materials.values()) {
+      material.dispose();
+    }
+    this.materials.clear();
+    this.isInitialized = false;
+  }
+}
+
+// 創建材質管理器實例
+const materialManager = new MaterialManager();
 
 // 當前材質類型
 let currentMaterialType = 'default';
 
 function changeMaterialType(materialType) {
   if (!effect) return;
-  
-  // 如果是相同的材質類型，不進行切換
-  if (currentMaterialType === materialType) return;
-  
-  // 使用預加載的材質
-  const newMaterial = materialCache.getMaterial(materialType);
-  if (!newMaterial) {
-    console.warn(`材質類型 ${materialType} 不存在`);
+
+  // 檢查材質類型是否有效
+  if (!materialTypes.includes(materialType)) {
+    console.warn(`無效的材質類型: ${materialType}`);
     return;
   }
-  
+
+  // 如果是相同的材質類型，不進行切換
+  if (currentMaterialType === materialType) return;
+
+  console.log(`切換材質: ${materialType}`);
+
+  // 獲取預編譯的材質
+  const newMaterial = materialManager.getMaterial(materialType);
+  if (!newMaterial) return;
+
   // 更新當前材質
   material = newMaterial;
   currentMaterialType = materialType;
-  
-  // 批量更新所有物件的材質引用
+
+  // 更新場景中的材質引用
   effect.material = material;
-  
-  // 使用 Object3D.traverse 進行批量更新
   if (sphereGroup) {
     sphereGroup.traverse((object) => {
       if (object.isMesh) {
@@ -263,21 +371,30 @@ function loadEnvironmentMap() {
   return new Promise((resolve, reject) => {
     new EXRLoader()
       .setPath('/hdr/')
-      .load('HDR_Light_Studio_Free_HDRI_Design_04.exr', (texture) => {
-        texture.mapping = THREE.EquirectangularReflectionMapping;
-        const envMap = pmremGenerator.fromEquirectangular(texture).texture;
-        pmremGenerator.dispose();
-        texture.dispose();
+      .load('HDR_Light_Studio_Free_HDRI_Design_04.exr', async (texture) => {
+        try {
+          texture.mapping = THREE.EquirectangularReflectionMapping;
+          const envMap = pmremGenerator.fromEquirectangular(texture).texture;
+          pmremGenerator.dispose();
+          texture.dispose();
 
-        scene.environment = envMap;
-        
-        // 更新主材質
-        if (material) {
-          material.envMap = envMap;
-          material.needsUpdate = true;
+          scene.environment = envMap;
+          
+          // 初始化材質
+          materialManager.initialize(envMap);
+          
+          // 預編譯材質
+          materialManager.precompileMaterials(scene, camera, renderer);
+          
+          // 設置初始材質
+          material = materialManager.getMaterial('default');
+          currentMaterialType = 'default';
+          
+          resolve(envMap);
+        } catch (error) {
+          console.error('環境貼圖處理失敗:', error);
+          reject(error);
         }
-        
-        resolve(envMap);
       }, undefined, (error) => {
         console.error('無法載入環境貼圖:', error);
         reject(error);
@@ -847,7 +964,7 @@ function initializeScene() {
   pmremGenerator.compileEquirectangularShader();
 
   // 材質
-  material = materialCache.getMaterial('default');
+  material = materialManager.getMaterial('default');
 
   // Marching Cubes
   let resolution;
