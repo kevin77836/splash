@@ -560,7 +560,7 @@
             mobileStayTransform: 125,
         }
         if(width.value <= 768){
-            animParams.startTime = 0.2;
+            animParams.startTime = 0.3;
         }
 
         const contentDuration = animParams.transitionDuration + animParams.stayDuration;
