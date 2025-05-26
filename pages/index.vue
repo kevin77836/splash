@@ -341,10 +341,10 @@
             }
             setTimeout(() => {
                 changeMaterialType(0);
+                loadedItems.value++;
             },5*100)
             splashRef.value.updatePosition(0, 0, 10);
         }
-        loadedItems.value++;
     }
     
     // 動畫相關
