@@ -554,10 +554,10 @@
             totalCount: 6,
             xTransform: 40,
             yTransform: 250,
-            mobileTransform: 250,
+            mobileTransform: 100,
             xStayTransform: 2,
             yStayTransform: 50,
-            mobileStayTransform: 125,
+            mobileStayTransform: 50,
         }
         if(width.value <= 768){
             animParams.startTime = 0.3;
@@ -688,11 +688,11 @@
                             `.services-content-${i}`,
                             { 
                                 opacity: 0, 
-                                x: animParams.mobileTransform, 
+                                y: animParams.mobileTransform, 
                             },
                             { 
                                 opacity: 1, 
-                                x: animParams.mobileStayTransform, 
+                                y: animParams.mobileStayTransform, 
                                 duration: animParams.transitionDuration, 
                                 ease: 'none' 
                             },
@@ -701,7 +701,7 @@
                         .to(
                             `.services-content-${i}`,
                             { 
-                                x: 0,
+                                y: 0,
                                 duration: (animParams.stayDuration / 2), 
                                 ease: 'none' 
                             },
@@ -712,11 +712,11 @@
                         .fromTo(`.services-content-${i}`,
                             { 
                                 opacity: 1, 
-                                x: 0,
+                                y: 0,
                             },
                             { 
                                 opacity: 1, 
-                                x: 0,
+                                y: 0,
                                 duration: animParams.transitionDuration + (animParams.stayDuration / 2), 
                                 ease: 'none' 
                             },
@@ -729,7 +729,7 @@
                         .to(
                             `.services-content-${i}`,
                             { 
-                                x: -animParams.mobileStayTransform,
+                                y: -animParams.mobileStayTransform,
                                 duration: (animParams.stayDuration / 2), 
                                 ease: 'none' 
                             },
@@ -739,7 +739,7 @@
                             `.services-content-${i}`,
                             { 
                                 opacity: 0, 
-                                x: -animParams.mobileTransform, 
+                                y: -animParams.mobileTransform, 
                                 duration: animParams.transitionDuration, 
                                 ease: 'none' 
                             },
@@ -751,7 +751,7 @@
                             `.services-content-${i}`,
                             { 
                                 opacity: 0,
-                                x: -animParams.mobileTransform,
+                                y: -animParams.mobileTransform,
                                 duration: (animParams.stayDuration / 2) + animParams.transitionDuration, 
                                 ease: 'none' 
                             },
