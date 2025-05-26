@@ -917,7 +917,7 @@
         isStarted.value = true;
         startAutoPlay();
         animateTextToTargetPosition();
-        splashRef.value.addMouseControlEvents();
+        // splashRef.value.addMouseControlEvents();
         
         // 設置滾動動畫
         setupScrollAnimations();
@@ -994,5 +994,10 @@
 
         // 開始預載入媒體資源
         preloadAllMedia();
+
+        for(let i=0;i<5;i++){
+            changeMaterialType(i);
+        }
+        changeMaterialType(0)
     });
 </script>
