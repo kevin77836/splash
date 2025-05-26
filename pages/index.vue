@@ -333,10 +333,14 @@
     };
     // 處理資源載入完成事件
     const handleResourcesLoaded = () => {
-        loadedItems.value++;
         if (splashRef.value) {
+            for(let i=0;i<5;i++){
+                changeMaterialType(i);
+            }
+            changeMaterialType(0)
             splashRef.value.updatePosition(0, 0, 10);
         }
+        loadedItems.value++;
     }
     
     // 動畫相關
@@ -994,10 +998,5 @@
 
         // 開始預載入媒體資源
         preloadAllMedia();
-
-        for(let i=0;i<5;i++){
-            changeMaterialType(i);
-        }
-        changeMaterialType(0)
     });
 </script>

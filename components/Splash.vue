@@ -147,12 +147,12 @@ const materialTypes = [
 const materialCache = {
   materials: {},
 
-  initialize() {
-    Object.values(materialTypes).forEach(material => {
-      this.getMaterial(material);
-      this.materials[material].envMap = scene.environment;
-    })
-  },
+  // initialize() {
+  //   Object.values(materialTypes).forEach(material => {
+  //     this.getMaterial(material);
+  //     this.materials[material].envMap = scene.environment;
+  //   })
+  // },
 
   getMaterial(type) {
     if (!this.materials[type]) {
