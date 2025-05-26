@@ -766,14 +766,14 @@
                 end: `${(endTime - (animParams.stayDuration/2)) / timeLineDuration * 100}% bottom`,
                 onEnter: () => {
                     growingFunction();
-                    changeMaterialType(i-1);
+                    // changeMaterialType(i-1);
                 },
                 onLeave: () => {
                     shrinkingFunction();
                 },
                 onEnterBack: () => {
                     growingFunction();
-                    changeMaterialType(i-1);
+                    // changeMaterialType(i-1);
                 },
                 onLeaveBack: () => {
                     shrinkingFunction();
