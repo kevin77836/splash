@@ -334,10 +334,14 @@
     // 處理資源載入完成事件
     const handleResourcesLoaded = () => {
         if (splashRef.value) {
-            for(let i=0;i<5;i++){
-                changeMaterialType(i);
+            for(let i=1;i<5;i++){
+                setTimeout(() => {
+                    changeMaterialType(i);
+                },(i-1)*10)
             }
-            changeMaterialType(0)
+            setTimeout(() => {
+                changeMaterialType(0);
+            },5*10)
             splashRef.value.updatePosition(0, 0, 10);
         }
         loadedItems.value++;
