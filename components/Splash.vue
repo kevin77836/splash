@@ -127,17 +127,26 @@ let textTargetPosition1 = null; // 儲存文字1的目標位置
 let textTargetPosition2 = null; // 儲存文字2的目標位置
 let textOriginPosition1 = null; // 儲存文字1的原點位置
 let textOriginPosition2 = null; // 儲存文字2的原點位置
-
 // =========================================
 // 3. 材質和環境設定
 // =========================================
 
 let stats = null;
 
-// --- 材質設定 ---
+// --- 材質類型定義 ---
+const materialTypes = [
+  'default',
+  'arVrXr',
+  'digiArt',
+  'uiuxDev',
+  'animate',
+  'graphic'
+];
+
+// --- 材質緩存系統 ---
 const materialCache = {
   materials: {},
-  
+
   getMaterial(type) {
     if (!this.materials[type]) {
       this.materials[type] = this.createMaterial(type);
@@ -178,7 +187,7 @@ const materialCache = {
         });
       case 'uiuxDev':
         return new THREE.MeshBasicMaterial({
-          color: 0xffffff,
+          color: 0x000000,
           transparent: true,
           opacity: 0.2,
           wireframe: true
@@ -210,7 +219,7 @@ const materialCache = {
   },
   
   updateEnvironmentMaps(envMap) {
-    Object.values(this.materials).forEach(material => {
+    Object.values(materialTypes).forEach(material => {
       if (material.envMap !== undefined) {
         material.envMap = envMap;
         material.needsUpdate = true;
@@ -228,20 +237,24 @@ function changeMaterialType(materialType) {
   // 如果是相同的材質類型，不進行切換
   if (currentMaterialType === materialType) return;
   
-  // 獲取緩存的材質
+  // 使用預加載的材質
   const newMaterial = materialCache.getMaterial(materialType);
+  if (!newMaterial) {
+    console.warn(`材質類型 ${materialType} 不存在`);
+    return;
+  }
   
   // 更新當前材質
   material = newMaterial;
   currentMaterialType = materialType;
   
-  // 更新 Marching Cubes 材質
+  // 批量更新所有物件的材質引用
   effect.material = material;
   
-  // 批量更新所有球體的材質引用
+  // 使用 Object3D.traverse 進行批量更新
   if (sphereGroup) {
     sphereGroup.traverse((object) => {
-      if (object instanceof THREE.Mesh) {
+      if (object.isMesh) {
         object.material = material;
       }
     });
@@ -265,9 +278,6 @@ function loadEnvironmentMap() {
           material.envMap = envMap;
           material.needsUpdate = true;
         }
-        
-        // 更新材質緩存中的所有材質
-        materialCache.updateEnvironmentMaps(envMap);
         
         resolve(envMap);
       }, undefined, (error) => {
@@ -738,32 +748,48 @@ function updateSpheres() {
  * 動畫主循環
  */
 function animate() {
+  stats.begin();
+
   if (!effect || !material || !camera || !renderer || !scene) {
     return;
   }
 
-  stats.begin();
-
+  // updateMaterialAnimate();
   // 更新場景邏輯
   updateLineMetaball(effect);
   
-  // 只在需要時更新球體
-  if (globalFlowState !== 'pauseAtStart' && globalFlowState !== 'pauseAtEnd') {
-    updateSpheres();
-  }
+  updateSpheres();
   
-  // 簡化旋轉邏輯，使用較小的旋轉速度
-  const rotationSpeed = isMobileDevice() ? 0.0005 : 0.001;
-  effect.rotation.y += rotationSpeed;
+  // 應用旋轉到場景
+  // if(isMobileDevice()){
+  //   effect.rotation.y += 0.0025;
+  //   if (sphereGroup) {
+  //     sphereGroup.rotation.y += 0.0025;
+  //   }
+  // }else{
+  //   // 平滑過渡到目標旋轉角度
+  //   modelRotationX += (targetRotationX - modelRotationX) * 0.05;/*  */
+  //   modelRotationY += (targetRotationY - modelRotationY) * 0.05;
+
+  //   effect.rotation.y = modelRotationY;
+  //   effect.rotation.x = modelRotationX;
+  //   // 更新 effect 和球體群組位置
+  //   effect.position.x = targetPositionX;
+  //   effect.position.y = targetPositionY;
+  //   if (sphereGroup) {
+  //     sphereGroup.rotation.x = modelRotationX;
+  //     sphereGroup.rotation.y = modelRotationY;
+  //     sphereGroup.position.x = targetPositionX;
+  //     sphereGroup.position.y = targetPositionY;
+  //   }
+  // }
+  effect.rotation.y += 0.0015;
   if (sphereGroup) {
-    sphereGroup.rotation.y += rotationSpeed;
+    sphereGroup.rotation.y += 0.0015;
   }
   
-  // 只在位置發生變化時更新
-  if (targetScrollOffsetX !== 0 || targetScrollOffsetY !== 0 || targetScrollOffsetZ !== 0) {
-    scene.position.set(targetScrollOffsetX, targetScrollOffsetY, targetScrollOffsetZ);
-    scene.updateMatrixWorld();
-  }
+  scene.position.set(targetScrollOffsetX, targetScrollOffsetY, targetScrollOffsetZ);
+  scene.updateMatrixWorld();
   
   stats.end();     
   renderer.render(scene, camera);
@@ -823,7 +849,7 @@ function initializeScene() {
   pmremGenerator.compileEquirectangularShader();
 
   // 材質
-  material = materialCache.getMaterial(currentMaterialType);
+  material = materialCache.getMaterial('default');
 
   // Marching Cubes
   let resolution;

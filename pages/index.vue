@@ -241,7 +241,7 @@
         </div>
     </div>
     
-
+        
         <!-- <div class="button-group" style="top: 1rem; position: fixed;">
         <button @click="growingFunction">開始生長</button>
         <button @click="shrinkingFunction">開始收合</button>
@@ -389,7 +389,6 @@
                 onLeaveBack: () => {
                     startAutoPlay();
                     animateTextToTargetPosition();
-                    splashRef.value.updatePosition(0, 0, 0);
                     isLandingPage.value = true;
                 },
             },
