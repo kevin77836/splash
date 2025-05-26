@@ -554,10 +554,13 @@
             totalCount: 6,
             xTransform: 40,
             yTransform: 250,
-            mobileTransform: 400,
+            mobileTransform: 250,
             xStayTransform: 2,
             yStayTransform: 50,
-            mobileStayTransform: 200,
+            mobileStayTransform: 125,
+        }
+        if(width.value <= 768){
+            animParams.startTime = 0.4;
         }
 
         const contentDuration = animParams.transitionDuration + animParams.stayDuration;

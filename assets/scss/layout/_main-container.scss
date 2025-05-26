@@ -296,7 +296,7 @@
                     font-size: 1.5rem;
                 }
                 @include max-md{
-                    text-align: center;
+                    // text-align: center;
                 }
             }
             .services-description{
@@ -306,7 +306,7 @@
                 transform: rotate(-0.35deg);
                 @include max-md{
                     transform: rotate(-0.1deg);
-                    text-align: center;
+                    // text-align: center;
                 }   
             }
         }
