@@ -127,6 +127,7 @@ let textTargetPosition1 = null; // 儲存文字1的目標位置
 let textTargetPosition2 = null; // 儲存文字2的目標位置
 let textOriginPosition1 = null; // 儲存文字1的原點位置
 let textOriginPosition2 = null; // 儲存文字2的原點位置
+
 // =========================================
 // 3. 材質和環境設定
 // =========================================
@@ -134,176 +135,121 @@ let textOriginPosition2 = null; // 儲存文字2的原點位置
 let stats = null;
 
 // --- 材質設定 ---
-// const materialTypes = {
-//   default: 'default',
-//   arVrXr: 'arVrXr',
-//   digiArt: 'digiArt',
-//   uiuxDev: 'uiuxDev',
-//   animate: 'animate',
-//   graphic: 'graphic',
-//   // WATER: 'water',          // 水晶材質
-//   // METALLIC: 'metallic',    // 金屬材質
-//   // MATTE: 'matte',          // 霧面材質
-//   // WIREFRAME: 'wireframe',  // 線框材質
-//   // NEON: 'neon',            // 霓虹材質
-//   // GALAXY: 'galaxy',        // 星系材質
-//   // GOLD: 'gold',            // 金屬材質
-//   // ICE: 'ice',            // 冰晶材質
-//   // HOLOGRAPHIC: 'holographic',  // 全息圖材質
-//   // CLOUD: 'cloud',            // 雲彩材質
-//   // CHAMELEON: 'chameleon',    // 變色龍材質
-// };
+const materialCache = {
+  materials: {},
+  
+  getMaterial(type) {
+    if (!this.materials[type]) {
+      this.materials[type] = this.createMaterial(type);
+    }
+    return this.materials[type];
+  },
+  
+  createMaterial(type) {
+    switch(type) {
+      case 'default':
+        return new THREE.MeshPhysicalMaterial({
+          metalness: 0,
+          roughness: 0,
+          transparent: true,
+          opacity: 0.75,
+          transmission: 1.0,
+          ior: 1.5,
+          thickness: 2,
+          envMapIntensity: 5.0,
+          side: THREE.DoubleSide
+        });
+      case 'arVrXr':
+        return new THREE.MeshStandardMaterial({
+          color: 0x101010,
+          roughness: 0.3,
+          metalness: 0,
+          side: THREE.DoubleSide,
+          envMapIntensity: 1.0
+        });
+      case 'digiArt':
+        return new THREE.MeshPhysicalMaterial({
+          color: 0xffffff,
+          metalness: 1,
+          roughness: 0.1,
+          transparent: true,
+          transmission: 0.7,
+          envMapIntensity: 2.0
+        });
+      case 'uiuxDev':
+        return new THREE.MeshBasicMaterial({
+          color: 0xffffff,
+          transparent: true,
+          opacity: 0.2,
+          wireframe: true
+        });
+      case 'animate':
+        return new THREE.MeshPhysicalMaterial({
+          color: 0xfff8ee,
+          roughness: 0.05,
+          metalness: 0,
+          clearcoat: 1.0,
+          clearcoatRoughness: 0.02,
+          side: THREE.DoubleSide,
+          envMapIntensity: 2.0
+        });
+      case 'graphic':
+        return new THREE.MeshPhysicalMaterial({
+          color: 0xffffff,
+          metalness: 0.1,
+          roughness: 0.2,
+          transmission: 0.8,
+          clearcoat: 0.5,
+          side: THREE.DoubleSide,
+          transparent: true,
+          envMapIntensity: 3.0
+        });
+      default:
+        return this.createMaterial('default');
+    }
+  },
+  
+  updateEnvironmentMaps(envMap) {
+    Object.values(this.materials).forEach(material => {
+      if (material.envMap !== undefined) {
+        material.envMap = envMap;
+        material.needsUpdate = true;
+      }
+    });
+  },
+  
+  dispose() {
+    Object.values(this.materials).forEach(material => material.dispose());
+    this.materials = {};
+  }
+};
 
 // 當前材質類型
 let currentMaterialType = 'default';
 
-function generateWaterMaterial() {
-  return new THREE.MeshPhysicalMaterial({
-    metalness: 0,
-    roughness: 0,
-    transparent: true,
-    opacity: 0.75,
-    transmission: 1.0,   // 增加透光性
-    ior: 1.5,          // 折射率
-    thickness: 2,    // 材質厚度
-    envMapIntensity: 10.0,
-    side: THREE.DoubleSide,
-    dispersion: 2,
-  });
-}
-function generateWireFrameMaterial(){
-  return new THREE.MeshBasicMaterial({
-    color:0xffffff,
-    transparent:true,
-    opacity:0.2,
-    wireframe:true
-  });
-}
-function generateIceMaterial() {
-  return new THREE.MeshPhysicalMaterial({
-    color:0xffffff,
-    metalness:0.1,
-    roughness:0.2,
-    transmission:0.8,
-    clearcoat:0.5,
-    side:THREE.DoubleSide,
-    transparent:true,
-  });
-}
-function generateMetalMaterial() {
-  return new THREE.MeshPhysicalMaterial({
-    color: 0xffffff,
-    metalness: 1,
-    roughness: 0.1,
-    transparent: true,
-    transmission: 0.7,
-    iridescence: 1.0,
-    iridescenceIOR: 1.3,
-    thickness: 0.5,
-  });
-}
-function generatePlasticMaterial() {
-  return new THREE.MeshStandardMaterial({
-    color: 0xffc0cb,
-    roughness: 0.5,
-    metalness: 0.1,
-  });
-}
-function generateLavaMaterial() {
-  return new THREE.ShaderMaterial({
-    uniforms: { time: { value: 0 } },
-    vertexShader: `varying vec3 vPos; void main(){ vPos=position; gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.0); }`,
-    fragmentShader: `uniform float time; varying vec3 vPos;
-      void main(){
-        float d = length(vPos.xy);
-        vec3 color = mix(vec3(0.8,0.1,0.0), vec3(1.0,0.5,0.0), sin(time*3.0 + d*5.0)*0.5+0.5);
-        gl_FragColor = vec4(color, 1.0);
-      }
-    `,
-    transparent: false
-  });
-}
-function generateMarbleBlackMaterial() {
-  return new THREE.MeshStandardMaterial({
-    color: 0x101010, roughness: 0.3, metalness: 0,
-    side: THREE.DoubleSide
-  });
-}
-function generateMarbleWhiteMaterial() {
-  return new THREE.MeshStandardMaterial({
-    color: 0xf0f0f0, roughness: 0.3, metalness: 0,
-    side: THREE.DoubleSide
-  });
-}
-function generatePorcelainMaterial() {
-  return new THREE.MeshPhysicalMaterial({
-    color: 0xfff8ee, roughness: 0.05, metalness: 0,
-    clearcoat: 1.0, clearcoatRoughness: 0.02,
-    side: THREE.DoubleSide
-  });
-}
-function generateAdvancedSteelMaterial() {
-  return new THREE.MeshPhysicalMaterial({
-    color: 0x888888, metalness: 1, roughness: 0.2,
-    clearcoat: 0.3, clearcoatRoughness: 0.1
-  });
-}
-
-
-// function updateMaterialAnimate(){
-//   const elapsedTime = clock.getElapsedTime();
-  
-//   // 更新霓虹材質
-//   if (currentMaterialType === materialTypes.NEON) {
-//     if (material && material.uniforms && material.uniforms.time !== undefined) {
-//       material.uniforms.time.value = elapsedTime;
-//     }
-//   }
-// }
-function generateMaterial() {
-  switch(currentMaterialType) {
-    case 'default':
-      return generateWaterMaterial();
-    case 'arVrXr':
-      return generateMarbleBlackMaterial();
-    case 'digiArt':
-      return generateMetalMaterial();
-    case 'uiuxDev':
-      return generateWireFrameMaterial();
-    case 'animate':
-      return generatePorcelainMaterial();
-    case 'graphic':
-      return generateIceMaterial();
-    default:
-      return generateWaterMaterial();
-  }
-}
 function changeMaterialType(materialType) {
-  // 設置新材質類型
+  if (!effect) return;
+  
+  // 如果是相同的材質類型，不進行切換
+  if (currentMaterialType === materialType) return;
+  
+  // 獲取緩存的材質
+  const newMaterial = materialCache.getMaterial(materialType);
+  
+  // 更新當前材質
+  material = newMaterial;
   currentMaterialType = materialType;
   
-  // 更新 Marching Cubes 的材質
-  if (effect && material) {
-    // 釋放舊材質資源
-    material.dispose();
-    
-    // 生成新材質
-    material = generateMaterial();
-    
-    // 更新環境貼圖
-    if (scene && scene.environment) {
-      material.envMap = scene.environment;
-      material.needsUpdate = true;
-    }
-    
-    // 更新 Marching Cubes 材質
-    effect.material = material;
-
-    for (let i = 0; i < spheres.length; i++) {
-      if (spheres[i].mesh) {
-        spheres[i].mesh.material = material;
+  // 更新 Marching Cubes 材質
+  effect.material = material;
+  
+  // 批量更新所有球體的材質引用
+  if (sphereGroup) {
+    sphereGroup.traverse((object) => {
+      if (object instanceof THREE.Mesh) {
+        object.material = material;
       }
-    }
+    });
   }
 }
 
@@ -324,6 +270,9 @@ function loadEnvironmentMap() {
           material.envMap = envMap;
           material.needsUpdate = true;
         }
+        
+        // 更新材質緩存中的所有材質
+        materialCache.updateEnvironmentMaps(envMap);
         
         resolve(envMap);
       }, undefined, (error) => {
@@ -794,48 +743,32 @@ function updateSpheres() {
  * 動畫主循環
  */
 function animate() {
-  stats.begin();
-
   if (!effect || !material || !camera || !renderer || !scene) {
     return;
   }
 
-  // updateMaterialAnimate();
+  stats.begin();
+
   // 更新場景邏輯
   updateLineMetaball(effect);
   
-  updateSpheres();
-  
-  // 應用旋轉到場景
-  // if(isMobileDevice()){
-  //   effect.rotation.y += 0.0025;
-  //   if (sphereGroup) {
-  //     sphereGroup.rotation.y += 0.0025;
-  //   }
-  // }else{
-  //   // 平滑過渡到目標旋轉角度
-  //   modelRotationX += (targetRotationX - modelRotationX) * 0.05;/*  */
-  //   modelRotationY += (targetRotationY - modelRotationY) * 0.05;
-
-  //   effect.rotation.y = modelRotationY;
-  //   effect.rotation.x = modelRotationX;
-  //   // 更新 effect 和球體群組位置
-  //   effect.position.x = targetPositionX;
-  //   effect.position.y = targetPositionY;
-  //   if (sphereGroup) {
-  //     sphereGroup.rotation.x = modelRotationX;
-  //     sphereGroup.rotation.y = modelRotationY;
-  //     sphereGroup.position.x = targetPositionX;
-  //     sphereGroup.position.y = targetPositionY;
-  //   }
-  // }
-  effect.rotation.y += 0.0015;
-  if (sphereGroup) {
-    sphereGroup.rotation.y += 0.0015;
+  // 只在需要時更新球體
+  if (globalFlowState !== 'pauseAtStart' && globalFlowState !== 'pauseAtEnd') {
+    updateSpheres();
   }
   
-  scene.position.set(targetScrollOffsetX, targetScrollOffsetY, targetScrollOffsetZ);
-  scene.updateMatrixWorld();
+  // 簡化旋轉邏輯，使用較小的旋轉速度
+  const rotationSpeed = isMobileDevice() ? 0.0005 : 0.001;
+  effect.rotation.y += rotationSpeed;
+  if (sphereGroup) {
+    sphereGroup.rotation.y += rotationSpeed;
+  }
+  
+  // 只在位置發生變化時更新
+  if (targetScrollOffsetX !== 0 || targetScrollOffsetY !== 0 || targetScrollOffsetZ !== 0) {
+    scene.position.set(targetScrollOffsetX, targetScrollOffsetY, targetScrollOffsetZ);
+    scene.updateMatrixWorld();
+  }
   
   stats.end();     
   renderer.render(scene, camera);
@@ -895,7 +828,7 @@ function initializeScene() {
   pmremGenerator.compileEquirectangularShader();
 
   // 材質
-  material = generateMaterial();
+  material = materialCache.getMaterial(currentMaterialType);
 
   // Marching Cubes
   let resolution;
