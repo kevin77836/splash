@@ -178,7 +178,7 @@ const materialCache = {
         });
       case 'uiuxDev':
         return new THREE.MeshBasicMaterial({
-          color: 0xffffff,
+          color: 0x000000,
           transparent: true,
           opacity: 0.2,
           wireframe: true

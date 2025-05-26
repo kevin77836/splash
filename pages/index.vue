@@ -554,10 +554,10 @@
             totalCount: 6,
             xTransform: 40,
             yTransform: 250,
-            mobileTransform: 100,
+            mobileTransform: 50,
             xStayTransform: 2,
             yStayTransform: 50,
-            mobileStayTransform: 50,
+            mobileStayTransform: 25,
         }
         if(width.value <= 768){
             animParams.startTime = 0.3;
@@ -750,8 +750,8 @@
                         .to(
                             `.services-content-${i}`,
                             { 
-                                opacity: 0,
-                                y: -animParams.mobileTransform,
+                                opacity: 1,
+                                y: -animParams.mobileStayTransform,
                                 duration: (animParams.stayDuration / 2) + animParams.transitionDuration, 
                                 ease: 'none' 
                             },
