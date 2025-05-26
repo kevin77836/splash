@@ -134,28 +134,9 @@ let textOriginPosition2 = null; // 儲存文字2的原點位置
 
 let stats = null;
 
-// --- 材質類型定義 ---
-const materialTypes = [
-  'default',
-  'arVrXr',
-  'digiArt',
-  'uiuxDev',
-  'animate',
-  'graphic'
-];
-
-// --- 材質緩存系統 ---
+// --- 材質設定 ---
 const materialCache = {
   materials: {},
-  
-  // 預加載所有材質
-  preloadMaterials() {
-    console.log('開始預加載材質...');
-    materialTypes.forEach(type => {
-      this.getMaterial(type);
-    });
-    console.log('材質預加載完成');
-  },
   
   getMaterial(type) {
     if (!this.materials[type]) {
@@ -197,7 +178,7 @@ const materialCache = {
         });
       case 'uiuxDev':
         return new THREE.MeshBasicMaterial({
-          color: 0x000000,
+          color: 0xffffff,
           transparent: true,
           opacity: 0.2,
           wireframe: true
@@ -236,11 +217,6 @@ const materialCache = {
       }
     });
   },
-  
-  dispose() {
-    Object.values(this.materials).forEach(material => material.dispose());
-    this.materials = {};
-  }
 };
 
 // 當前材質類型
@@ -252,24 +228,20 @@ function changeMaterialType(materialType) {
   // 如果是相同的材質類型，不進行切換
   if (currentMaterialType === materialType) return;
   
-  // 使用預加載的材質
+  // 獲取緩存的材質
   const newMaterial = materialCache.getMaterial(materialType);
-  if (!newMaterial) {
-    console.warn(`材質類型 ${materialType} 不存在`);
-    return;
-  }
   
   // 更新當前材質
   material = newMaterial;
   currentMaterialType = materialType;
   
-  // 批量更新所有物件的材質引用
+  // 更新 Marching Cubes 材質
   effect.material = material;
   
-  // 使用 Object3D.traverse 進行批量更新
+  // 批量更新所有球體的材質引用
   if (sphereGroup) {
     sphereGroup.traverse((object) => {
-      if (object.isMesh) {
+      if (object instanceof THREE.Mesh) {
         object.material = material;
       }
     });
@@ -288,7 +260,13 @@ function loadEnvironmentMap() {
 
         scene.environment = envMap;
         
-        // 更新所有緩存材質的環境貼圖
+        // 更新主材質
+        if (material) {
+          material.envMap = envMap;
+          material.needsUpdate = true;
+        }
+        
+        // 更新材質緩存中的所有材質
         materialCache.updateEnvironmentMaps(envMap);
         
         resolve(envMap);
@@ -835,11 +813,7 @@ function initializeScene() {
   camera.lookAt(scene.position);
 
   // 渲染器
-  renderer = new THREE.WebGLRenderer({ 
-    antialias: true, 
-    alpha: true,
-    powerPreference: 'high-performance'
-  });
+  renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
   renderer.setSize(width, height);
   renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.5));
   container.appendChild(renderer.domElement);
@@ -848,15 +822,16 @@ function initializeScene() {
   pmremGenerator = new THREE.PMREMGenerator(renderer);
   pmremGenerator.compileEquirectangularShader();
 
-  // 預加載所有材質
-  materialCache.preloadMaterials();
-  
-  // 初始化材質
-  material = materialCache.getMaterial('default');
-  currentMaterialType = 'default';
+  // 材質
+  material = materialCache.getMaterial(currentMaterialType);
 
   // Marching Cubes
-  let resolution = isMobileDevice() ? animParams.mobileResolution : animParams.resolution;
+  let resolution;
+  if (!isMobileDevice()){
+    resolution = animParams.resolution;
+  }else{
+    resolution = animParams.mobileResolution;
+  }
   const derivedIsolation = resolution * 1.5;
   effect = new MarchingCubes(resolution, material, true, true, 100000);
   effect.isolation = derivedIsolation;
@@ -864,10 +839,14 @@ function initializeScene() {
   effect.enableUvs = false;
   effect.enableColors = false;
   
+  // 設置線條的渲染順序，確保可以對文字進行折射
+  effect.renderOrder = 2;
+  
   scene.add(effect);
   
   // 創建球體群組
   sphereGroup = new THREE.Group();
+  // 設置球體群組的渲染順序
   sphereGroup.renderOrder = 2;
   scene.add(sphereGroup);
 
@@ -882,16 +861,33 @@ function initializeScene() {
   // 載入字體並創建文字
   loadFontAndCreateText();
 
-  // 性能監控
   stats = new Stats();
-  stats.showPanel(0);
+  stats.showPanel(0);               // 0: fps, 1: ms, 2: mb, 3+: custom
   stats.dom.style.position = 'fixed';
   stats.dom.style.top = '0px';
   document.body.appendChild(stats.dom);
 
-  // 註冊自定義緩動函數
-  gsap.registerEase("customGrowEase", x => Math.pow(x, animParams.growthEaseOutPower));
-  gsap.registerEase("customShrinkEase", x => Math.pow(x, animParams.shrinkEaseInPower));
+  // const textureLoader = new THREE.TextureLoader();
+  // textureLoader.setPath('/works/');
+  // const bgTexture = textureLoader.load('works1.jpg', () => {
+  //   console.log('背景紋理加載完成');
+  // });
+  
+  // const bgGeometry = new THREE.PlaneGeometry(19.2, 14.4);
+  // const bgMaterial = new THREE.MeshBasicMaterial({ map: bgTexture });
+  // const bgMesh = new THREE.Mesh(bgGeometry, bgMaterial);
+  // bgMesh.position.set(0, 0, -1);
+  // scene.add(bgMesh);
+
+  // 註冊自定義緩動函數（只註冊一次）
+  gsap.registerEase("customGrowEase", function(x) {
+    return Math.pow(x, animParams.growthEaseOutPower);
+  });
+  
+  // 自定義緩動函數，完全匹配線條使用的 Math.pow(x, shrinkEaseInPower)
+  gsap.registerEase("customShrinkEase", function(x) {
+    return Math.pow(x, animParams.shrinkEaseInPower);
+  });
   
   return true;
 }
@@ -997,6 +993,16 @@ function startSyncGrowing() {
         currentPosition: sphere.targetLength,
         duration: growDuration,
         ease: "customGrowEase",
+        // onUpdate: function() {
+        //   // 確保狀態一致
+        //   if (globalFlowState !== 'growing' && globalFlowState !== 'pauseAtEnd') {
+        //     sphere.currentPosition = sphere.targetLength;
+        //   }
+        // },
+        // onComplete: function() {
+        //   // 確保完全到位
+        //   sphere.currentPosition = sphere.targetLength;
+        // }
       });
     }
   }
@@ -1071,6 +1077,16 @@ function startSyncShrinking() {
         currentPosition: 0,
         duration: shrinkDuration,
         ease: "customShrinkEase",
+        // onUpdate: function() {
+        //   // 確保狀態一致
+        //   if (globalFlowState !== 'shrinking' && globalFlowState !== 'pauseAtStart') {
+        //     sphere.currentPosition = 0;
+        //   }
+        // },
+        // onComplete: function() {
+        //   // 確保完全歸零
+        //   sphere.currentPosition = 0;
+        // }
       });
     }
   }
@@ -1116,6 +1132,17 @@ function addMouseControlEvents() {
   //   window.addEventListener('mousemove', onMouseMove);
   // }
 }
+
+/**
+ * 移除滑鼠控制事件
+ */
+// function removeMouseControlEvents() {
+//   const container = canvasContainer.value;
+//   if (!container) return;
+  
+//   // 無論是否為行動裝置，都應移除事件以防止內存洩漏
+//   window.removeEventListener('mousemove', onMouseMove);
+// }
 
 /**
  * 滑鼠移動事件處理
