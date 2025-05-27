@@ -286,6 +286,10 @@
                 right: 5%;
                 bottom: 0;
             }
+            &-1{
+                opacity: 1;
+                transform: translate(0, -50%)
+            }
             .services-title{
                 font-weight: bold;
                 margin-bottom: 1rem;

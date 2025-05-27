@@ -513,7 +513,7 @@
                 scrub: true,
                 markers: false,
                 onUpdate: (self) => {
-                    updatePosition(0, 0, -10, 0, 0, 10, self.progress);
+                    updatePosition(0, 0, -10, 0, 0, 20, self.progress);
                 },
             }
         });
@@ -556,235 +556,201 @@
     const servicesSectionGsap = () => {
         // 動畫時間參數
         const animParams = {
-            startTime: 0.8,          // 整體動畫開始時間
             transitionDuration: 0.1,  // 淡入淡出過渡時間
             stayDuration: 0.1,     // 內容停留時間
             totalCount: 6,
             xTransform: 40,
             yTransform: 250,
-            mobileTransform: 50,
             xStayTransform: 2,
             yStayTransform: 50,
-            mobileStayTransform: 25,
         }
         if(width.value <= 768){
-            animParams.startTime = 0.3;
+            animParams.xTransform = 0;
+            animParams.xStayTransform = 0;
         }
-
-        const contentDuration = animParams.transitionDuration + animParams.stayDuration;
-        const timeLineDuration = (animParams.startTime + (animParams.totalCount - 1) * contentDuration) + contentDuration;
-
-        const servicesTimeline = gsap.timeline({
+        gsap.timeline({
             scrollTrigger: {
                 trigger: '.services-section',
                 start: 'top bottom',
-                end: `bottom bottom`,
+                end: `top top`,
                 scrub: true,
                 markers: false,
                 onEnter: () => {
+                    shrinkingFunction()
+                },
+                onLeave: () => {
+                    growingFunction()
+                },
+                onEnterBack: () => {
                     shrinkingFunction()
                 },
                 onLeaveBack: () => {
                     growingFunction()
                 },
                 onUpdate: (self) => {
-                    if (self.progress <= ((animParams.startTime + animParams.transitionDuration) / timeLineDuration)) {
-                        if(width.value>768){
-                            updatePosition(0, 0, 10, -8, 0, 0, self.progress / ((animParams.startTime + animParams.transitionDuration) / timeLineDuration));
-                        }else{
-                            updatePosition(0, 0, 10, 0, -2, 0, self.progress / ((animParams.startTime + animParams.transitionDuration) / timeLineDuration));
-                        }
-                        
+                    if(width.value>768){
+                        updatePosition(0, 0, 20, -8, 0, 0, self.progress);
+                    }else{
+                        updatePosition(0, 0, 20, 0, -2, 0, self.progress);
                     }
                 },
             },
-        });
+        })
 
+        const halfStayDuration = animParams.stayDuration / 2;
+        const contentDuration = animParams.transitionDuration + animParams.stayDuration;
+        const timeLineDuration = halfStayDuration + animParams.transitionDuration + (animParams.totalCount - 2) * contentDuration + halfStayDuration;
+        
+        const servicesTimeline = gsap.timeline({
+            scrollTrigger: {
+                trigger: '.services-section',
+                start: 'top top',
+                end: `bottom bottom`,
+                scrub: true,
+                markers: false,
+            },
+        });
         // 使用迴圈建立動畫序列
         for (let i = 1; i <= animParams.totalCount; i++) {
-            const startTime = animParams.startTime + (i - 1) * contentDuration;
-            const endTime = startTime + contentDuration;
-            if(width.value > 768){
-                if(i !== 1){
-                    servicesTimeline
-                        .fromTo(
-                            `.services-content-${i}`,
-                            { 
-                                opacity: 0, 
-                                x: animParams.xTransform, 
-                                y: animParams.yTransform 
-                            },
-                            { 
-                                opacity: 1, 
-                                x: animParams.xStayTransform,
-                                y: animParams.yStayTransform, 
-                                duration: animParams.transitionDuration, 
-                                ease: 'none' 
-                            },
-                            startTime
-                        )
-                        .to(
-                            `.services-content-${i}`,
-                            { 
-                                x: 0,
-                                y: 0, 
-                                duration: (animParams.stayDuration / 2), 
-                                ease: 'none' 
-                            },
-                            startTime+animParams.transitionDuration
-                        )
-                }else{
-                    servicesTimeline
-                        .fromTo(
-                            `.services-content-${i}`,
-                            { 
-                                opacity: 0,
-                                x: animParams.xTransform, 
-                                y: 0 
-                            },
-                            { 
-                                opacity: 1,
-                                x: 0,
-                                y: 0, 
-                                duration: animParams.transitionDuration + (animParams.stayDuration / 2), 
-                                ease: 'none' 
-                            },
-                            startTime
-                        )
-                }
-
-                if(i!== animParams.totalCount){
-                    servicesTimeline
-                        .to(
-                            `.services-content-${i}`,
-                            { 
-                                x: animParams.xStayTransform,
-                                y: -animParams.yStayTransform, 
-                                duration: (animParams.stayDuration / 2), 
-                                ease: 'none' 
-                            },
-                            startTime+animParams.transitionDuration + (animParams.stayDuration/2)
-                        )
-                        .to(
-                            `.services-content-${i}`,
-                            { 
-                                opacity: 0, 
-                                x: animParams.xTransform, 
-                                y: -animParams.yTransform, 
-                                duration: animParams.transitionDuration, 
-                                ease: 'none' 
-                            },
-                            endTime
-                        )
-                }else{
-                    servicesTimeline
-                        .to(
-                            `.services-content-${i}`,
-                            { 
-                                x: 0,
-                                y: 0,
-                                duration: (animParams.stayDuration / 2) + animParams.transitionDuration, 
-                                ease: 'none' 
-                            },
-                            startTime+animParams.transitionDuration + (animParams.stayDuration/2)
-                        )
-                }
+            let startTime;
+            let startPercentage;
+            let endPercentage;
+            if(i==1){
+                startTime = 0;
             }else{
-                if(i!==1){
-                    servicesTimeline
-                        .fromTo(
-                            `.services-content-${i}`,
-                            { 
-                                opacity: 0, 
-                                y: animParams.mobileTransform, 
-                            },
-                            { 
-                                opacity: 1, 
-                                y: animParams.mobileStayTransform, 
-                                duration: animParams.transitionDuration, 
-                                ease: 'none' 
-                            },
-                            startTime
-                        )
-                        .to(
-                            `.services-content-${i}`,
-                            { 
-                                y: 0,
-                                duration: (animParams.stayDuration / 2), 
-                                ease: 'none' 
-                            },
-                            startTime+animParams.transitionDuration
-                        )
-                }else{
-                    servicesTimeline
-                        .fromTo(`.services-content-${i}`,
-                            { 
-                                opacity: 1, 
-                                y: 0,
-                            },
-                            { 
-                                opacity: 1, 
-                                y: 0,
-                                duration: animParams.transitionDuration + (animParams.stayDuration / 2), 
-                                ease: 'none' 
-                            },
-                            startTime
-                        )
-                }
+                startTime = halfStayDuration + (i - 2) * contentDuration;
+            }
+            startPercentage = `${(i-1) * 0.16 / timeLineDuration * 100}%`;
+            endPercentage = `${((i-1) * 0.16 + 0.1 )/ timeLineDuration * 100}%`;
 
-                if(i!== animParams.totalCount){
-                    servicesTimeline
-                        .to(
-                            `.services-content-${i}`,
-                            { 
-                                y: -animParams.mobileStayTransform,
-                                duration: (animParams.stayDuration / 2), 
-                                ease: 'none' 
-                            },
-                            startTime+animParams.transitionDuration + (animParams.stayDuration/2)
-                        )
-                        .to(
-                            `.services-content-${i}`,
-                            { 
-                                opacity: 0, 
-                                y: -animParams.mobileTransform, 
-                                duration: animParams.transitionDuration, 
-                                ease: 'none' 
-                            },
-                            endTime
-                        )
-                }else{
-                    servicesTimeline
-                        .to(
-                            `.services-content-${i}`,
-                            { 
-                                opacity: 1,
-                                y: -animParams.mobileStayTransform,
-                                duration: (animParams.stayDuration / 2) + animParams.transitionDuration, 
-                                ease: 'none' 
-                            },
-                            startTime+animParams.transitionDuration + (animParams.stayDuration/2)
-                        )
-                }
+            if(i==1){
+                servicesTimeline
+                    .to(
+                        `.services-content-${i}`,
+                        {
+                            opacity: 1,
+                            x: animParams.xStayTransform,
+                            y: -animParams.yStayTransform, 
+                            duration: halfStayDuration, 
+                            ease: 'none' 
+                        },
+                        startTime
+                    )
+                    .to(
+                        `.services-content-${i}`,
+                        { 
+                            opacity: 0, 
+                            x: animParams.xTransform, 
+                            y: -animParams.yTransform, 
+                            duration: animParams.transitionDuration, 
+                            ease: 'none',
+                        },
+                        startTime + halfStayDuration
+                    )
+            }else if(i==animParams.totalCount){
+                servicesTimeline
+                    .fromTo(
+                        `.services-content-${i}`,
+                        { 
+                            opacity: 0, 
+                            x: animParams.xTransform, 
+                            y: animParams.yTransform 
+                        },
+                        { 
+                            opacity: 1, 
+                            x: animParams.xStayTransform,
+                            y: animParams.yStayTransform, 
+                            duration: animParams.transitionDuration, 
+                            ease: 'none',
+                        },
+                        startTime
+                    )
+                    .to(
+                        `.services-content-${i}`,
+                        { 
+                            x: 0,
+                            y: 0, 
+                            duration: halfStayDuration, 
+                            ease: 'none' 
+                        },
+                        startTime+animParams.transitionDuration
+                    )
+            }else{
+                servicesTimeline
+                    .fromTo(
+                        `.services-content-${i}`,
+                        { 
+                            opacity: 0, 
+                            x: animParams.xTransform, 
+                            y: animParams.yTransform 
+                        },
+                        { 
+                            opacity: 1, 
+                            x: animParams.xStayTransform,
+                            y: animParams.yStayTransform, 
+                            duration: animParams.transitionDuration, 
+                            ease: 'none' 
+                        },
+                        startTime
+                    )
+                    .to(
+                        `.services-content-${i}`,
+                        { 
+                            x: 0,
+                            y: 0, 
+                            duration: halfStayDuration, 
+                            ease: 'none' 
+                        },
+                        startTime + animParams.transitionDuration
+                    )
+                    .to(
+                        `.services-content-${i}`,
+                        { 
+                            x: animParams.xStayTransform,
+                            y: -animParams.yStayTransform, 
+                            duration: halfStayDuration, 
+                            ease: 'none' 
+                        },
+                        startTime + animParams.transitionDuration + halfStayDuration
+                    )
+                    .to(
+                        `.services-content-${i}`,
+                        { 
+                            opacity: 0, 
+                            x: animParams.xTransform, 
+                            y: -animParams.yTransform, 
+                            duration: animParams.transitionDuration, 
+                            ease: 'none' 
+                        },
+                        startTime + animParams.transitionDuration + halfStayDuration + halfStayDuration
+                    )
             }
 
             ScrollTrigger.create({
                 trigger: `.services-section`,
-                start: `${((startTime + (animParams.stayDuration/2)) / timeLineDuration) * 100}% bottom`,
-                end: `${(endTime - (animParams.stayDuration/2)) / timeLineDuration * 100}% bottom`,
+                start: `${startPercentage} 40%`,
+                end: `${endPercentage} 40%`,
                 onEnter: () => {
-                    growingFunction();
+                    if(i!==1){
+                        growingFunction();
+                    }
                     changeMaterialType(i-1);
                 },
                 onLeave: () => {
-                    shrinkingFunction();
+                    if(i!==animParams.totalCount){
+                        shrinkingFunction();
+                    }
                 },
                 onEnterBack: () => {
-                    growingFunction();
+                    if(i!==animParams.totalCount){
+                        growingFunction();
+                    }
                     changeMaterialType(i-1);
                 },
                 onLeaveBack: () => {
-                    shrinkingFunction();
+                    if(i!==1){
+                        shrinkingFunction();
+                    }
                 },
                 markers: false
             });
