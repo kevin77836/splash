@@ -95,21 +95,21 @@
                 </span>
             </h1> -->
         </div>
-        <div v-if="isStarted" class="aboutUs-marquee">
-            <div class="aboutUs-marquee-content-group">
-                <span class="aboutUs-marquee-content-group-item">Splash DigiLab</span>
-                <span class="aboutUs-marquee-content-group-item">Splash DigiLab</span>
-                <span class="aboutUs-marquee-content-group-item">Splash DigiLab</span>
-                <span class="aboutUs-marquee-content-group-item">Splash DigiLab</span>
+        <div v-show="isStarted" class="marquee">
+            <div class="marquee-content-group">
+                <span class="marquee-content-group-item">Splash DigiLab</span>
+                <span class="marquee-content-group-item">Splash DigiLab</span>
+                <span class="marquee-content-group-item">Splash DigiLab</span>
+                <span class="marquee-content-group-item">Splash DigiLab</span>
             </div>
-            <div class="aboutUs-marquee-content-group2">
-                <span class="aboutUs-marquee-content-group-item">Splash DigiLab</span>
-                <span class="aboutUs-marquee-content-group-item">Splash DigiLab</span>
-                <span class="aboutUs-marquee-content-group-item">Splash DigiLab</span>
-                <span class="aboutUs-marquee-content-group-item">Splash DigiLab</span>
+            <div class="marquee-content-group2">
+                <span class="marquee-content-group-item">Splash DigiLab</span>
+                <span class="marquee-content-group-item">Splash DigiLab</span>
+                <span class="marquee-content-group-item">Splash DigiLab</span>
+                <span class="marquee-content-group-item">Splash DigiLab</span>
             </div>
         </div>
-        <div v-if="isStarted" class="section aboutUs-section">
+        <div v-show="isStarted" class="section aboutUs-section">
             <div class="aboutUs-content-container">
                 <div class="aboutUs-content-group">
                     <div class="aboutUs-section-content aboutUs-section-content-1">
@@ -121,11 +121,9 @@
                         <span class="aboutUs-section-content-2-1">結合</span>
                         <span class="aboutUs-section-content-2-2">
                             <div class="service-group">
-                                <div class="service-group-item">AR/VR/XR策展</div>
-                                <div class="service-group-item">互動設計/數位藝術</div>
-                                <div class="service-group-item">UIUX/網頁開發</div>
-                                <div class="service-group-item">2D/3D動畫</div>
-                                <div class="service-group-item">CIS/平面設計</div>
+                                <div v-for="(item,index) in serviceData.slice(1,serviceData.length)" :key="index" class="service-group-item">
+                                    {{ item.title }}
+                                </div>
                             </div>
                         </span>
                     </div>
@@ -145,8 +143,8 @@
                 </div>
             </div>
         </div>
-        <div v-if="isStarted" class="section works-section">
-            <div class="works-content-container">
+        <div v-show="isStarted" class="section works-section">
+            <div v-if="isStarted" class="works-content-container">
                 <div class="works-content-group">
                     <a href="#" class="works-content-item works-content-item-15 column">
                         <video src="/works/works15.mp4" autoplay muted loop playsinline></video>
@@ -196,53 +194,17 @@
                 </div>
             </div> 
         </div>
-        <div v-if="isStarted" class="section services-section">
+        <div v-show="isStarted" class="section services-section">
             <div class="services-content-container">
-                <div class="services-content services-content-1">
-                    <h2 class="services-title">Services</h2>
+                <div v-for="(item, index) in serviceData" class="services-content" :class="`services-content-${index+1}`" :key="index">
+                    <h2 class="services-title">{{ item.title }}</h2>
                     <div class="services-description">
-                        介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹
-                    </div>
-                </div>
-                <div class="services-content services-content-2">
-                    <h2 class="services-title">AR/VR/XR策展</h2>
-                    <div class="services-description">
-                        介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹
-                    </div>
-                </div>
-                <div class="services-content services-content-3">
-                    <h2 class="services-title">互動設計/數位藝術</h2>
-                    <div class="services-description">
-                        介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹
-                    </div>
-                </div>
-                <div class="services-content services-content-4">
-                    <h2 class="services-title">UIUX/網頁開發</h2>
-                    <div class="services-description">
-                        介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹
-                    </div>
-                </div>
-                <div class="services-content services-content-5">
-                    <h2 class="services-title">2D/3D動畫</h2>
-                    <div class="services-description">
-                        介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹
-                    </div>
-                </div>
-                <div class="services-content services-content-6">
-                    <h2 class="services-title">CIS/平面設計</h2>
-                    <div class="services-description">
-                        介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹
+                        {{ item.description }}
                     </div>
                 </div>
             </div>
-            <!-- <div class="box1"></div>
-            <div class="box2"></div>
-            <div class="box3"></div>
-            <div class="box4"></div>
-            <div class="box5"></div>
-            <div class="box6"></div> -->
         </div>
-        <div v-if="isStarted" class="section contactUs-section">
+        <div v-show="isStarted" class="section contactUs-section">
         </div>
     </div>
     
@@ -261,9 +223,10 @@
     import { ScrollTrigger } from 'gsap/ScrollTrigger';
     import { CustomEase } from 'gsap/CustomEase';
     import { useWindowSize } from '@vueuse/core'
+    import { SplitText } from 'gsap/SplitText';
     const { width, height } = useWindowSize();
     if (process.client) {
-        gsap.registerPlugin(ScrollTrigger, CustomEase);
+        gsap.registerPlugin(ScrollTrigger, CustomEase, SplitText);
     }
     
     const splashRef = ref(null);
@@ -274,7 +237,130 @@
     const isMenuOpen = ref(false);
     const isLandingPage = ref(true);
     let customEasing;
-    
+
+    const serviceData = ref([
+        {
+            title: 'Services',
+            description: 'Splash DigiLab 結合設計創意與前端開發，擅長跨界沉浸式互動體驗，服務範圍包含 XR 展演策劃、UI/UX 設計、網頁開發、品牌設計、數位藝術、互動設計等。',
+            splitTitle: [],
+            splitDescription: []
+        },
+        {
+            title: 'AR/VR/XR策展',
+            description: '策劃並開發、執行 Web AR/ XR 沉浸式展覽、行銷活動或產品展示，打造虛實整合體驗。',
+            splitTitle: [],
+            splitDescription: []
+        },
+        {
+            title: 'UIUX/網頁開發',
+            description: '從前端網站設計到3D互動前端，整合 Nuxt、Three.js 等技術，實現網頁創新體驗。',
+            splitTitle: [],
+            splitDescription: []
+        },
+        {
+            title: 'CIS/平面設計',
+            description: '提供品牌識別與視覺系統規劃服務，滿足品牌在實體門店到數位體驗中的各式需求。',
+            splitTitle: [],
+            splitDescription: []
+        },
+        {
+            title: '2D/3D動畫',
+            description: '製作 3D 動畫、CGI 與 Web AR 結合的視覺內容，豐富數位敘事層次。',
+            splitTitle: [],
+            splitDescription: []
+        },
+        {
+            title: '互動設計/數位藝術',
+            description: '專注於直覺互動體驗，從動作感應裝置到展覽互動系統，強化體驗參與感。',
+            splitTitle: [],
+            splitDescription: []
+        },
+    ])
+
+    // 文字動態特效
+    const textAnimation = {
+        splitTexts: {},
+        init() {
+            if (process.client) {
+                // // 為每個服務區塊創建 SplitText 實例
+                // const elements = document.querySelectorAll(selector);
+                // console.log('selector', selector);
+                // elements.forEach((el, index) => {
+                //     this.splitTexts[index] = new SplitText(el, {
+                //         type: "chars",
+                //         charsClass: "char"
+                //     });
+                // });
+                for(let i=0;i<serviceData.value.length;i++){
+                    const a = document.querySelector(`.services-content`);
+                    serviceData.value[i].splitTitle = new SplitText(`.services-content-${i+1} .services-title`, {
+                        type: "chars",
+                        charsClass: "char"
+                    });
+                    serviceData.value[i].splitDescription = new SplitText(`.services-content-${i+1} .services-description`, {
+                        type: "chars",
+                        charsClass: "char"
+                    });
+                }
+                console.log('serviceData.value', serviceData.value);
+            }
+        },
+
+        // 取得隨機字母
+        getRandomLetter() {
+            const letters = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+            return letters[Math.floor(Math.random() * letters.length)];
+        },
+
+        // 觸發文字動畫
+        animate(selector) {
+            if (!process.client) return;
+            
+            const elements = document.querySelectorAll(selector);
+
+            elements.forEach((el, index) => {
+                if (!this.splitTexts[index]) {
+                    this.splitTexts[index] = new SplitText(el, {
+                        type: "chars",
+                        charsClass: "char"
+                    });
+                }
+                
+                const chars = this.splitTexts[index].chars;
+
+                console.log('this.splitTexts[index]', this.splitTexts[index]);
+                
+                chars.forEach((char, charIndex) => {
+                    const tl = gsap.timeline();
+                    
+                    // 儲存原始文字
+                    const originalText = char.textContent;
+                    
+                    // 隨機字母動畫
+                    for (let i = 0; i < 5; i++) {
+                        tl.to(char, {
+                            duration: 0.05,
+                            onStart: () => {
+                                char.textContent = this.getRandomLetter();
+                            }
+                        });
+                    }
+                    
+                    // 最終顯示原始文字
+                    tl.to(char, {
+                        duration: 0.05,
+                        onStart: () => {
+                            char.textContent = originalText;
+                        }
+                    });
+                    
+                    // 設定延遲
+                    tl.delay(charIndex * 0.03);
+                });
+            });
+        }
+    };
+
     // 新增：媒體資源列表
     const mediaResources = [
         { type: 'video', src: '/works/works15.mp4' },
@@ -347,7 +433,7 @@
             setTimeout(() => {
                 changeMaterialType(0);
                 loadedItems.value++;
-            },5*100)
+            },5*100)       
             splashRef.value.updatePosition(0, 0, 10);
         }
     }
@@ -723,7 +809,7 @@
                     trigger: '.services-section',
                     start: `${(sectionStart + animParams.transitionDuration) / animateDuration}% top`,
                     end: `${(sectionEnd - animParams.transitionDuration) / animateDuration}% top`,
-                    scrub: true,
+                    scrub: false,
                     markers: false,
                     onEnter: () => {
                         growingFunction();
@@ -740,7 +826,7 @@
                         shrinkingFunction();
                     },
                 },
-            })
+            });
         }
         
         // 6
@@ -1014,5 +1100,7 @@
 
         // 開始預載入媒體資源
         preloadAllMedia();
+
+        textAnimation.init();
     });
 </script>

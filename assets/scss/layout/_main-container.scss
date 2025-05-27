@@ -2,7 +2,6 @@
     width: 100%;
     height: 100%;
     position: relative;
-
     .section{
         position: relative;
         width: 100%;
@@ -25,7 +24,7 @@
             border-radius: 50%;
         }
     }
-    .aboutUs-marquee{
+    .marquee{
         z-index: 10;
         width: 100%;
         background-color: #F2F2F2;
@@ -34,12 +33,12 @@
         overflow: hidden;
         position: relative;
         display: flex;
-        .aboutUs-marquee-content-group,.aboutUs-marquee-content-group2{
+        .marquee-content-group,.marquee-content-group2{
             display: flex;
             flex-wrap: nowrap;
             padding: 1rem 0;
             width: fit-content;
-            .aboutUs-marquee-content-group-item{
+            .marquee-content-group-item{
                 font-size: 2rem;
                 @include max-md{
                     font-size: 1.5rem;
@@ -50,14 +49,14 @@
                 color: black;
                 white-space: nowrap;
                 flex-shrink: 0;
-                letter-spacing: 1rem;
+                letter-spacing: 0.5rem;
                 margin-right: 6rem;
             }
         }
-        .aboutUs-marquee-content-group{
+        .marquee-content-group{
             animation: marquee-animation 40s linear infinite;
         }
-        .aboutUs-marquee-content-group2{
+        .marquee-content-group2{
             animation: marquee-animation2 40s linear infinite;
             animation-delay: -20s;
         }
@@ -213,7 +212,7 @@
         }
     } 
     .works-section{
-        height: 1000%;
+        height: 500%;
         .works-content-container{
             width: 100%;
             height: 100dvh;
@@ -263,54 +262,6 @@
         // }
         // mix-blend-mode: difference;
         color: var(--font-color);
-        .box1{
-            position: absolute;
-            top: 0;
-            left: 0;
-            height: calc( 1.5 / 10 * 100% * 4 / 5);
-            width: 100px;
-            background-color: red;
-        }
-        .box2{
-            position: absolute;
-            top: calc( 0.5 / 10 * 100% * 4 / 5);
-            left: 100px;
-            height: calc( 3 / 10 * 100% * 4 / 5);
-            width: 100px;
-            background-color: green;
-        }
-        .box3{
-            position: absolute;
-            top: calc( 2.5 / 10 * 100% * 4 / 5);
-            left: 200px;
-            height: calc( 3 / 10 * 100% * 4 / 5);
-            width: 100px;
-            background-color: blue;
-        }
-        .box4{
-            position: absolute;
-            top: calc( 4.5 / 10 * 100% * 4 / 5);
-            left: 300px;
-            height: calc( 3 / 10 * 100% * 4 / 5);
-            width: 100px;
-            background-color: yellow;
-        }
-        .box5{
-            position: absolute;
-            top: calc( 6.5 / 10 * 100% * 4 / 5);
-            left: 400px;
-            height: calc( 3 / 10 * 100% * 4 / 5);
-            width: 100px;
-            background-color: grey;
-        }
-        .box6{
-            position: absolute;
-            top: calc( 8.5 / 10 * 100% * 4 / 5);
-            left: 500px;
-            height: calc( 1.5 / 10 * 100% * 4 / 5);
-            width: 100px;
-            background-color: purple;
-        }
         .services-content-container{
             width: 100%;
             height: 100dvh;
