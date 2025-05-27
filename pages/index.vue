@@ -587,7 +587,7 @@
                 },
             },
         })
-        
+
         // 動畫時間參數
         const animParams = {
             transitionDuration: 0.1,  // 淡入淡出過渡時間
@@ -598,15 +598,15 @@
             xStayTransform: 2,
             yStayTransform: 50,
         }
-        if(width.value <= 768){
-            animParams.xTransform = 0;
-            animParams.xStayTransform = 0;
-        }
 
         const halfStayDuration = animParams.stayDuration / 2;
         const contentDuration = animParams.transitionDuration + animParams.stayDuration;
         const timeLineDuration = halfStayDuration + animParams.transitionDuration + (animParams.totalCount - 2) * contentDuration + halfStayDuration;
         const animateDuration = timeLineDuration / 100 / 4 * 5;
+        if(width.value <= 768){
+            animParams.xTransform = 0;
+            animParams.xStayTransform = 0;
+        }
         
         // 1
         const tl1 = gsap.timeline({
@@ -797,7 +797,7 @@
         })
     }
     const contactUsSectionGsap = () => {
-        const contactUsTimeline = gsap.timeline({
+        gsap.timeline({
             scrollTrigger: {
                 trigger: '.contactUs-section',
                 start: 'top bottom',
@@ -806,18 +806,24 @@
                 markers: false,
                 onUpdate: (self) => {
                     if(width.value>768){
-                        updatePosition(-8, 0, 0, -8, -25, 0, self.progress);
+                        updatePosition(-8, 0, 0, 0, 0, 0, self.progress);
                     }else{
-                        updatePosition(0, -2, 0, 0, -25, 0, self.progress);
+                        updatePosition(0, -2, 0, 0, 0, 0, self.progress);
                     }
                 },
+                onEnter:()=>{
+                    shrinkingFunction();
+                },
                 onLeave:()=>{
-                    // changeMaterialType(0);
-                    // growingFunction();
+                    changeMaterialType(0);
+                    growingFunction();
                 },
                 onEnterBack:()=>{
-                    // changeMaterialType(materialData.length-1);
-                    // shrinkingFunction();
+                    shrinkingFunction();
+                },
+                onLeaveBack:()=>{
+                    changeMaterialType(5);
+                    growingFunction();
                 },
             }
         })
