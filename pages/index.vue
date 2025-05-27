@@ -235,9 +235,14 @@
                     </div>
                 </div>
             </div>
+            <!-- <div class="box1"></div>
+            <div class="box2"></div>
+            <div class="box3"></div>
+            <div class="box4"></div>
+            <div class="box5"></div>
+            <div class="box6"></div> -->
         </div>
         <div v-if="isStarted" class="section contactUs-section">
-            <h2 style="color: white;">contact us</h2>
         </div>
     </div>
     
@@ -554,20 +559,6 @@
         }
     }
     const servicesSectionGsap = () => {
-        // 動畫時間參數
-        const animParams = {
-            transitionDuration: 0.1,  // 淡入淡出過渡時間
-            stayDuration: 0.1,     // 內容停留時間
-            totalCount: 6,
-            xTransform: 40,
-            yTransform: 250,
-            xStayTransform: 2,
-            yStayTransform: 50,
-        }
-        if(width.value <= 768){
-            animParams.xTransform = 0;
-            animParams.xStayTransform = 0;
-        }
         gsap.timeline({
             scrollTrigger: {
                 trigger: '.services-section',
@@ -596,165 +587,214 @@
                 },
             },
         })
+        
+        // 動畫時間參數
+        const animParams = {
+            transitionDuration: 0.1,  // 淡入淡出過渡時間
+            stayDuration: 0.1,     // 內容停留時間
+            totalCount: 6,
+            xTransform: 40,
+            yTransform: 250,
+            xStayTransform: 2,
+            yStayTransform: 50,
+        }
+        if(width.value <= 768){
+            animParams.xTransform = 0;
+            animParams.xStayTransform = 0;
+        }
 
         const halfStayDuration = animParams.stayDuration / 2;
         const contentDuration = animParams.transitionDuration + animParams.stayDuration;
         const timeLineDuration = halfStayDuration + animParams.transitionDuration + (animParams.totalCount - 2) * contentDuration + halfStayDuration;
+        const animateDuration = timeLineDuration / 100 / 4 * 5;
         
-        const servicesTimeline = gsap.timeline({
+        // 1
+        const tl1 = gsap.timeline({
             scrollTrigger: {
                 trigger: '.services-section',
                 start: 'top top',
-                end: `bottom bottom`,
+                end: `${(halfStayDuration + animParams.transitionDuration) / animateDuration}% top`,
                 scrub: true,
                 markers: false,
             },
-        });
-        // 使用迴圈建立動畫序列
-        for (let i = 1; i <= animParams.totalCount; i++) {
-            let startTime;
-            let startPercentage;
-            let endPercentage;
-            if(i==1){
-                startTime = 0;
-            }else{
-                startTime = halfStayDuration + (i - 2) * contentDuration;
-            }
-            startPercentage = `${(i-1) * 0.16 / timeLineDuration * 100}%`;
-            endPercentage = `${((i-1) * 0.16 + 0.1 )/ timeLineDuration * 100}%`;
+        })
+        tl1.to(
+            `.services-content-1`,
+            {
+                opacity: 1,
+                x: animParams.xStayTransform,
+                y: -animParams.yStayTransform, 
+                duration: halfStayDuration, 
+                ease: 'none' 
+            },
+            0
+        )
+        .to(
+            `.services-content-1`,
+            { 
+                opacity: 0, 
+                x: animParams.xTransform, 
+                y: -animParams.yTransform, 
+                duration: animParams.transitionDuration, 
+                ease: 'none',
+            },
+            halfStayDuration
+        )
 
-            if(i==1){
-                servicesTimeline
-                    .to(
-                        `.services-content-${i}`,
-                        {
-                            opacity: 1,
-                            x: animParams.xStayTransform,
-                            y: -animParams.yStayTransform, 
-                            duration: halfStayDuration, 
-                            ease: 'none' 
-                        },
-                        startTime
-                    )
-                    .to(
-                        `.services-content-${i}`,
-                        { 
-                            opacity: 0, 
-                            x: animParams.xTransform, 
-                            y: -animParams.yTransform, 
-                            duration: animParams.transitionDuration, 
-                            ease: 'none',
-                        },
-                        startTime + halfStayDuration
-                    )
-            }else if(i==animParams.totalCount){
-                servicesTimeline
-                    .fromTo(
-                        `.services-content-${i}`,
-                        { 
-                            opacity: 0, 
-                            x: animParams.xTransform, 
-                            y: animParams.yTransform 
-                        },
-                        { 
-                            opacity: 1, 
-                            x: animParams.xStayTransform,
-                            y: animParams.yStayTransform, 
-                            duration: animParams.transitionDuration, 
-                            ease: 'none',
-                        },
-                        startTime
-                    )
-                    .to(
-                        `.services-content-${i}`,
-                        { 
-                            x: 0,
-                            y: 0, 
-                            duration: halfStayDuration, 
-                            ease: 'none' 
-                        },
-                        startTime+animParams.transitionDuration
-                    )
-            }else{
-                servicesTimeline
-                    .fromTo(
-                        `.services-content-${i}`,
-                        { 
-                            opacity: 0, 
-                            x: animParams.xTransform, 
-                            y: animParams.yTransform 
-                        },
-                        { 
-                            opacity: 1, 
-                            x: animParams.xStayTransform,
-                            y: animParams.yStayTransform, 
-                            duration: animParams.transitionDuration, 
-                            ease: 'none' 
-                        },
-                        startTime
-                    )
-                    .to(
-                        `.services-content-${i}`,
-                        { 
-                            x: 0,
-                            y: 0, 
-                            duration: halfStayDuration, 
-                            ease: 'none' 
-                        },
-                        startTime + animParams.transitionDuration
-                    )
-                    .to(
-                        `.services-content-${i}`,
-                        { 
-                            x: animParams.xStayTransform,
-                            y: -animParams.yStayTransform, 
-                            duration: halfStayDuration, 
-                            ease: 'none' 
-                        },
-                        startTime + animParams.transitionDuration + halfStayDuration
-                    )
-                    .to(
-                        `.services-content-${i}`,
-                        { 
-                            opacity: 0, 
-                            x: animParams.xTransform, 
-                            y: -animParams.yTransform, 
-                            duration: animParams.transitionDuration, 
-                            ease: 'none' 
-                        },
-                        startTime + animParams.transitionDuration + halfStayDuration + halfStayDuration
-                    )
-            }
-
-            ScrollTrigger.create({
-                trigger: `.services-section`,
-                start: `${startPercentage} 40%`,
-                end: `${endPercentage} 40%`,
-                onEnter: () => {
-                    if(i!==1){
-                        growingFunction();
-                    }
-                    changeMaterialType(i-1);
-                },
+        gsap.timeline({
+            scrollTrigger: {
+                trigger: '.services-section',
+                end: `${(halfStayDuration + halfStayDuration) / animateDuration}% top`,
+                scrub: true,
+                markers: false,
                 onLeave: () => {
-                    if(i!==animParams.totalCount){
-                        shrinkingFunction();
-                    }
+                    shrinkingFunction();
                 },
                 onEnterBack: () => {
-                    if(i!==animParams.totalCount){
+                    growingFunction();
+                    changeMaterialType(0);
+                },
+            },
+        })
+        
+        // 2~5
+        for(let i = 2; i <= animParams.totalCount-1; i++){
+            const sectionStart = (halfStayDuration + (((halfStayDuration * 2) + animParams.transitionDuration) * (i-2)));
+            const sectionEnd = (halfStayDuration + (((halfStayDuration * 2) + animParams.transitionDuration) * (i-1))+ animParams.transitionDuration);
+            const tl = gsap.timeline({
+                scrollTrigger: {
+                    trigger: '.services-section',
+                    start: `${sectionStart / animateDuration}% top`,
+                    end: `${sectionEnd / animateDuration}% top`,
+                    scrub: true,
+                    markers: false,
+                },
+            })
+            tl.fromTo(
+                `.services-content-${i}`,
+                { 
+                    opacity: 0, 
+                    x: animParams.xTransform, 
+                    y: animParams.yTransform 
+                },
+                { 
+                    opacity: 1, 
+                    x: animParams.xStayTransform,
+                    y: animParams.yStayTransform, 
+                    duration: animParams.transitionDuration, 
+                    ease: 'none' 
+                },
+                0
+            )
+            .to(
+                `.services-content-${i}`,
+                { 
+                    x: 0,
+                    y: 0, 
+                    duration: halfStayDuration, 
+                    ease: 'none' 
+                },
+                animParams.transitionDuration
+            )
+            .to(
+                `.services-content-${i}`,
+                { 
+                    x: animParams.xStayTransform,
+                    y: -animParams.yStayTransform, 
+                    duration: halfStayDuration, 
+                    ease: 'none' 
+                },
+                animParams.transitionDuration + halfStayDuration
+            )
+            .to(
+                `.services-content-${i}`,
+                { 
+                    opacity: 0, 
+                    x: animParams.xTransform, 
+                    y: -animParams.yTransform, 
+                    duration: animParams.transitionDuration, 
+                    ease: 'none' 
+                },
+                animParams.transitionDuration + halfStayDuration + halfStayDuration
+            )
+
+            gsap.timeline({
+                scrollTrigger: {
+                    trigger: '.services-section',
+                    start: `${(sectionStart + animParams.transitionDuration) / animateDuration}% top`,
+                    end: `${(sectionEnd - animParams.transitionDuration) / animateDuration}% top`,
+                    scrub: true,
+                    markers: false,
+                    onEnter: () => {
                         growingFunction();
-                    }
-                    changeMaterialType(i-1);
+                        changeMaterialType(i-1);
+                    },
+                    onLeave: () => {
+                        shrinkingFunction();
+                    },
+                    onEnterBack: () => {
+                        growingFunction();
+                        changeMaterialType(i-1);
+                    },
+                    onLeaveBack: () => {
+                        shrinkingFunction();
+                    },
+                },
+            })
+        }
+        
+        // 6
+        const tl6 = gsap.timeline({
+            scrollTrigger: {
+                trigger: '.services-section',
+                start: `${(halfStayDuration + (((halfStayDuration * 2) + animParams.transitionDuration) * (6-2))) / animateDuration}% top`,
+                end:`${((((halfStayDuration * 2) + animParams.transitionDuration) * (6-1))) / animateDuration}% top`,
+                scrub: true,
+                markers: false,
+            },
+        })
+        tl6.fromTo(
+            `.services-content-${animParams.totalCount}`,
+            { 
+                opacity: 0, 
+                x: animParams.xTransform, 
+                y: animParams.yTransform 
+            },
+            { 
+                opacity: 1, 
+                x: animParams.xStayTransform,
+                y: animParams.yStayTransform, 
+                duration: animParams.transitionDuration, 
+                ease: 'none',
+            },
+            0
+        )
+        .to(
+            `.services-content-${animParams.totalCount}`,
+            { 
+                x: 0,
+                y: 0, 
+                duration: halfStayDuration, 
+                ease: 'none' 
+            },
+            animParams.transitionDuration
+        )
+        
+        gsap.timeline({
+            scrollTrigger: {
+                trigger: '.services-section',
+                start: `${(halfStayDuration + (((halfStayDuration * 2) + animParams.transitionDuration) * (animParams.totalCount-2)) + animParams.transitionDuration) / animateDuration}% top`,
+                scrub: true,
+                markers: false,
+                onEnter: () => {
+                    growingFunction();
+                    changeMaterialType(5);
                 },
                 onLeaveBack: () => {
-                    if(i!==1){
-                        shrinkingFunction();
-                    }
+                    shrinkingFunction();
                 },
-                markers: false
-            });
-        }
+            },
+        })
     }
     const contactUsSectionGsap = () => {
         const contactUsTimeline = gsap.timeline({
