@@ -279,7 +279,6 @@
 
     // 文字動態特效
     const textAnimation = {
-        splitTexts: {},
         init() {
             if (process.client) {
                 for(let i = 0; i < serviceData.value.length; i++) {
@@ -290,9 +289,11 @@
                             type: "chars",
                             charsClass: "char"
                         });
-                        // 保存原始文字
+                        // 保存原始文字並設置初始可見性
                         serviceData.value[i].splitTitle.chars.forEach(char => {
                             char.dataset.originalText = char.textContent;
+                            char.style.visibility = 'hidden';
+                            char.textContent = '';
                         });
                     }
 
@@ -303,9 +304,11 @@
                             type: "chars",
                             charsClass: "char"
                         });
-                        // 保存原始文字
+                        // 保存原始文字並設置初始可見性
                         serviceData.value[i].splitDescription.chars.forEach(char => {
                             char.dataset.originalText = char.textContent;
+                            char.style.visibility = 'hidden';
+                            char.textContent = '';
                         });
                     }
                 }
@@ -323,44 +326,76 @@
             const titleChars = serviceData.value[index].splitTitle.chars;
             const descriptionChars = serviceData.value[index].splitDescription.chars;
 
-            // 動畫標題
-            gsap.from(titleChars, {
-                duration: 0.5,
-                ease: 'expo.out',
-                onStart: function() {
-                    titleChars.forEach(char => {
-                        char.textContent = textAnimation.getRandomLetter();
-                    });
-                },
-                onUpdate: function() {
-                    titleChars.forEach(char => {
-                        char.textContent = textAnimation.getRandomLetter();
-                    });
-                },
-                onComplete: function() {
-                    titleChars.forEach(char => {
-                        char.textContent = char.dataset.originalText;
-                    });
-                }
+            // 先將所有字元設為空
+            titleChars.forEach(char => {
+                char.textContent = '';
+                char.style.visibility = 'hidden';
             });
-            gsap.from(descriptionChars, {
-                duration: 0.5,
-                ease: 'expo.out',
-                onStart: function() {
-                    descriptionChars.forEach(char => {
-                        char.textContent = textAnimation.getRandomLetter();
-                    });
-                },
-                onUpdate: function() {
-                    descriptionChars.forEach(char => {
-                        char.textContent = textAnimation.getRandomLetter();
-                    });
-                },
-                onComplete: function() {
-                    descriptionChars.forEach(char => {
-                        char.textContent = char.dataset.originalText;
-                    });
-                }
+            descriptionChars.forEach(char => {
+                char.textContent = '';
+                char.style.visibility = 'hidden';
+            });
+
+            // 創建標題動畫時間軸
+            const titleTimeline = gsap.timeline();
+
+            // 為每個標題字元創建動畫
+            titleChars.forEach((char, charIndex) => {
+                const charTimeline = gsap.timeline();
+                
+                // 添加單個字元的動畫到時間軸
+                charTimeline
+                    .set(char, { visibility: 'visible' }) // 顯示字元
+                    .to({}, { 
+                        duration: 0.05,
+                        onStart: () => {
+                            // 開始隨機字動態
+                            const randomInterval = setInterval(() => {
+                                char.textContent = textAnimation.getRandomLetter();
+                            }, 5);
+
+                            // 0.5秒後清除隨機字動態
+                            setTimeout(() => {
+                                clearInterval(randomInterval);
+                                char.textContent = char.dataset.originalText;
+                            }, 50);
+                        }
+                    })
+
+                // 將此字元的動畫添加到主時間軸
+                titleTimeline.add(charTimeline, charIndex * 0.05); // 0.6 = 0.5(動畫) + 0.1(延遲)
+            });
+
+            // 等標題完成後開始描述文字動畫
+            titleTimeline.add(() => {
+                const descriptionTimeline = gsap.timeline();
+
+                // 為每個描述字元創建動畫
+                descriptionChars.forEach((char, charIndex) => {
+                    const charTimeline = gsap.timeline();
+                    
+                    // 添加單個字元的動畫到時間軸
+                    charTimeline
+                        .set(char, { visibility: 'visible' }) // 顯示字元
+                        .to({}, { 
+                            duration: 0.02,
+                            onStart: () => {
+                                // 開始隨機字動態
+                                const randomInterval = setInterval(() => {
+                                    char.textContent = textAnimation.getRandomLetter();
+                                }, 2);
+
+                                // 0.5秒後清除隨機字動態
+                                setTimeout(() => {
+                                    clearInterval(randomInterval);
+                                    char.textContent = char.dataset.originalText;
+                                }, 20);
+                            }
+                        })
+
+                    // 將此字元的動畫添加到描述時間軸
+                    descriptionTimeline.add(charTimeline, charIndex * 0.02); // 0.6 = 0.5(動畫) + 0.1(延遲)
+                });
             });
         }
     };

@@ -283,7 +283,7 @@
                 top: auto;
                 width: 90%;
                 right: 5%;
-                bottom: 0;
+                bottom: 20%;
             }
             &-1{
                 opacity: 1;
@@ -299,7 +299,7 @@
                     font-size: 1.5rem;
                 }
                 @include max-md{
-                    // text-align: center;
+                    text-align: center;
                 }
             }
             .services-description{
@@ -309,7 +309,7 @@
                 transform: rotate(-0.35deg);
                 @include max-md{
                     transform: rotate(-0.3deg);
-                    // text-align: center;
+                    text-align: center;
                 }   
             }
         }
