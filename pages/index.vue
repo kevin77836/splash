@@ -420,14 +420,14 @@
     };
     // 新增：預載入所有媒體資源
     const preloadAllMedia = async () => {
-        // if(isMobileDevice()){
-        //     mediaResources.value.forEach(resource => {
-        //         if (resource.type === 'video') {
-        //             resource.src = resource.src.replace('.mp4', '.webp');
-        //             resource.type = 'image';
-        //         }
-        //     });
-        // }
+        if(isMobileDevice()){
+            mediaResources.value.forEach(resource => {
+                if (resource.type === 'video') {
+                    resource.src = resource.src.replace('.mp4', '.webp');
+                    resource.type = 'image';
+                }
+            });
+        }
         try {
             await Promise.all(mediaResources.value.map((resource) => {
                 preloadMedia(resource);
