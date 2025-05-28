@@ -282,81 +282,85 @@
         splitTexts: {},
         init() {
             if (process.client) {
-                // // 為每個服務區塊創建 SplitText 實例
-                // const elements = document.querySelectorAll(selector);
-                // console.log('selector', selector);
-                // elements.forEach((el, index) => {
-                //     this.splitTexts[index] = new SplitText(el, {
-                //         type: "chars",
-                //         charsClass: "char"
-                //     });
-                // });
-                for(let i=0;i<serviceData.value.length;i++){
-                    const a = document.querySelector(`.services-content`);
-                    serviceData.value[i].splitTitle = new SplitText(`.services-content-${i+1} .services-title`, {
-                        type: "chars",
-                        charsClass: "char"
-                    });
-                    serviceData.value[i].splitDescription = new SplitText(`.services-content-${i+1} .services-description`, {
-                        type: "chars",
-                        charsClass: "char"
-                    });
+                for(let i = 0; i < serviceData.value.length; i++) {
+                    // 為標題創建 SplitText
+                    const titleElement = document.querySelector(`.services-content-${i+1} .services-title`);
+                    if (titleElement) {
+                        serviceData.value[i].splitTitle = new SplitText(titleElement, {
+                            type: "chars",
+                            charsClass: "char"
+                        });
+                        // 保存原始文字
+                        serviceData.value[i].splitTitle.chars.forEach(char => {
+                            char.dataset.originalText = char.textContent;
+                        });
+                    }
+
+                    // 為描述創建 SplitText
+                    const descElement = document.querySelector(`.services-content-${i+1} .services-description`);
+                    if (descElement) {
+                        serviceData.value[i].splitDescription = new SplitText(descElement, {
+                            type: "chars",
+                            charsClass: "char"
+                        });
+                        // 保存原始文字
+                        serviceData.value[i].splitDescription.chars.forEach(char => {
+                            char.dataset.originalText = char.textContent;
+                        });
+                    }
                 }
-                console.log('serviceData.value', serviceData.value);
             }
         },
 
-        // 取得隨機字母
         getRandomLetter() {
-            const letters = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+            const letters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ結合設計創意與前端開發擅長跨界沉浸式互動體驗';
             return letters[Math.floor(Math.random() * letters.length)];
         },
 
-        // 觸發文字動畫
-        animate(selector) {
+        animate(index) {
             if (!process.client) return;
-            
-            const elements = document.querySelectorAll(selector);
 
-            elements.forEach((el, index) => {
-                if (!this.splitTexts[index]) {
-                    this.splitTexts[index] = new SplitText(el, {
-                        type: "chars",
-                        charsClass: "char"
+            const titleChars = serviceData.value[index].splitTitle.chars;
+            const descriptionChars = serviceData.value[index].splitDescription.chars;
+
+            // 動畫標題
+            gsap.from(titleChars, {
+                duration: 0.5,
+                ease: 'expo.out',
+                onStart: function() {
+                    titleChars.forEach(char => {
+                        char.textContent = textAnimation.getRandomLetter();
+                    });
+                },
+                onUpdate: function() {
+                    titleChars.forEach(char => {
+                        char.textContent = textAnimation.getRandomLetter();
+                    });
+                },
+                onComplete: function() {
+                    titleChars.forEach(char => {
+                        char.textContent = char.dataset.originalText;
                     });
                 }
-                
-                const chars = this.splitTexts[index].chars;
-
-                console.log('this.splitTexts[index]', this.splitTexts[index]);
-                
-                chars.forEach((char, charIndex) => {
-                    const tl = gsap.timeline();
-                    
-                    // 儲存原始文字
-                    const originalText = char.textContent;
-                    
-                    // 隨機字母動畫
-                    for (let i = 0; i < 5; i++) {
-                        tl.to(char, {
-                            duration: 0.05,
-                            onStart: () => {
-                                char.textContent = this.getRandomLetter();
-                            }
-                        });
-                    }
-                    
-                    // 最終顯示原始文字
-                    tl.to(char, {
-                        duration: 0.05,
-                        onStart: () => {
-                            char.textContent = originalText;
-                        }
+            });
+            gsap.from(descriptionChars, {
+                duration: 0.5,
+                ease: 'expo.out',
+                onStart: function() {
+                    descriptionChars.forEach(char => {
+                        char.textContent = textAnimation.getRandomLetter();
                     });
-                    
-                    // 設定延遲
-                    tl.delay(charIndex * 0.03);
-                });
+                },
+                onUpdate: function() {
+                    descriptionChars.forEach(char => {
+                        char.textContent = textAnimation.getRandomLetter();
+                    });
+                },
+                onComplete: function() {
+                    descriptionChars.forEach(char => {
+                        char.textContent = char.dataset.originalText;
+                    });
+                }
             });
         }
     };
@@ -653,10 +657,11 @@
                 scrub: true,
                 markers: false,
                 onEnter: () => {
+                    textAnimation.animate(0);
                     shrinkingFunction()
                 },
                 onLeave: () => {
-                    growingFunction()
+                    growingFunction();
                 },
                 onEnterBack: () => {
                     shrinkingFunction()
@@ -731,7 +736,6 @@
             scrollTrigger: {
                 trigger: '.services-section',
                 end: `${(halfStayDuration + halfStayDuration) / animateDuration}% top`,
-                scrub: true,
                 markers: false,
                 onLeave: () => {
                     shrinkingFunction();
@@ -739,6 +743,16 @@
                 onEnterBack: () => {
                     growingFunction();
                     changeMaterialType(0);
+                },
+            },
+        })
+        gsap.timeline({
+            scrollTrigger: {
+                trigger: '.services-content-container',
+                start: `top center`,
+                markers: false,
+                onEnter: () => {
+                    textAnimation.animate(0);
                 },
             },
         })
@@ -754,6 +768,9 @@
                     end: `${sectionEnd / animateDuration}% top`,
                     scrub: true,
                     markers: false,
+                    onEnter: () => {
+                        textAnimation.animate(i-1);
+                    },
                 },
             })
             tl.fromTo(
@@ -809,7 +826,6 @@
                     trigger: '.services-section',
                     start: `${(sectionStart + animParams.transitionDuration) / animateDuration}% top`,
                     end: `${(sectionEnd - animParams.transitionDuration) / animateDuration}% top`,
-                    scrub: false,
                     markers: false,
                     onEnter: () => {
                         growingFunction();
@@ -837,6 +853,9 @@
                 end:`${((((halfStayDuration * 2) + animParams.transitionDuration) * (6-1))) / animateDuration}% top`,
                 scrub: true,
                 markers: false,
+                onEnter: () => {
+                    textAnimation.animate(6-1);
+                },
             },
         })
         tl6.fromTo(
@@ -870,7 +889,6 @@
             scrollTrigger: {
                 trigger: '.services-section',
                 start: `${(halfStayDuration + (((halfStayDuration * 2) + animParams.transitionDuration) * (animParams.totalCount-2)) + animParams.transitionDuration) / animateDuration}% top`,
-                scrub: true,
                 markers: false,
                 onEnter: () => {
                     growingFunction();
