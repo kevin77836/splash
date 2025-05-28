@@ -146,50 +146,9 @@
         <div v-show="isStarted" class="section works-section">
             <div v-if="isStarted" class="works-content-container">
                 <div class="works-content-group">
-                    <a href="#" class="works-content-item works-content-item-15 column">
-                        <video src="/works/works15.mp4" autoplay muted loop playsinline></video>
-                    </a>
-                    <a href="#" class="works-content-item works-content-item-14 column">
-                        <video src="/works/works14.mp4" autoplay muted loop playsinline></video>
-                    </a>
-                    <a href="#" class="works-content-item works-content-item-13">
-                        <video src="/works/works13.mp4" autoplay muted loop playsinline></video>
-                    </a>
-                    <a href="#" class="works-content-item works-content-item-12">
-                        <img src="/works/works12.webp" alt="">
-                    </a>
-                    <a href="#" class="works-content-item works-content-item-11 column">
-                        <video src="/works/works11.mp4" autoplay muted loop playsinline></video>
-                    </a>
-                    <a href="#" class="works-content-item works-content-item-10 column">
-                        <video src="/works/works10.mp4" autoplay muted loop playsinline></video>
-                    </a>
-                    <a href="#" class="works-content-item works-content-item-9 column">
-                        <video src="/works/works9.mp4" autoplay muted loop playsinline></video>
-                    </a>
-                    <a href="#" class="works-content-item works-content-item-8">
-                        <img src="/works/works8.webp" alt="">
-                    </a>
-                    <a href="#" class="works-content-item works-content-item-7">
-                        <video src="/works/works7.mp4" autoplay muted loop playsinline></video>
-                    </a>
-                    <a href="#" class="works-content-item works-content-item-6 column">
-                        <video src="/works/works6.mp4" autoplay muted loop playsinline></video>
-                    </a>
-                    <a href="#" class="works-content-item works-content-item-5 column">
-                        <video src="/works/works5.mp4" autoplay muted loop playsinline></video>
-                    </a>
-                    <a href="#" class="works-content-item works-content-item-4">
-                        <img src="/works/works4.webp" alt="">
-                    </a>
-                    <a href="#" class="works-content-item works-content-item-3">
-                        <video src="/works/works3.mp4" autoplay muted loop playsinline></video>
-                    </a>
-                    <a href="#" class="works-content-item works-content-item-2">
-                        <video src="/works/works2.mp4" autoplay muted loop playsinline></video>
-                    </a>
-                    <a href="#" class="works-content-item works-content-item-1">
-                        <video src="/works/works1.mp4" autoplay muted loop playsinline></video>
+                    <a v-for="(media,index) in reversedMediaResources" :key="'media'+index" href="media.link" :class="`works-content-item works-content-item-${index+1} ${media.column ? 'column' : ''}`">
+                        <video v-if="media.type === 'video'" :src="media.src" autoplay muted loop playsinline></video>
+                        <img v-else :src="media.src" alt="">
                     </a>
                 </div>
             </div> 
@@ -225,6 +184,7 @@
     import { useWindowSize } from '@vueuse/core'
     import { SplitText } from 'gsap/SplitText';
     const { width, height } = useWindowSize();
+    import { isMobileDevice } from '../utils/device';
     if (process.client) {
         gsap.registerPlugin(ScrollTrigger, CustomEase, SplitText);
     }
@@ -401,26 +361,32 @@
     };
 
     // 新增：媒體資源列表
-    const mediaResources = [
-        { type: 'video', src: '/works/works15.mp4' },
-        { type: 'video', src: '/works/works14.mp4' },
-        { type: 'video', src: '/works/works13.mp4' },
-        { type: 'image', src: '/works/works12.webp' },
-        { type: 'video', src: '/works/works11.mp4' },
-        { type: 'video', src: '/works/works10.mp4' },
-        { type: 'video', src: '/works/works9.mp4' },
-        { type: 'image', src: '/works/works8.webp' },
-        { type: 'video', src: '/works/works7.mp4' },
-        { type: 'video', src: '/works/works6.mp4' },
-        { type: 'video', src: '/works/works5.mp4' },
-        { type: 'image', src: '/works/works4.webp' },
-        { type: 'video', src: '/works/works3.mp4' },
-        { type: 'video', src: '/works/works2.mp4' },
-        { type: 'video', src: '/works/works1.mp4' }
-    ];
+    const mediaResources = ref([
+        { type: 'video', src: '/works/works15.mp4', link: '#', column: true },
+        { type: 'video', src: '/works/works14.mp4', link: '#', column: true },
+        { type: 'video', src: '/works/works13.mp4', link: '#', column: false },
+        { type: 'image', src: '/works/works12.webp', link: '#', column: false },
+        { type: 'video', src: '/works/works11.mp4', link: '#', column: true },
+        { type: 'video', src: '/works/works10.mp4', link: '#', column: true },
+        { type: 'video', src: '/works/works9.mp4', link: '#', column: true },
+        { type: 'image', src: '/works/works8.webp', link: '#', column: false },
+        { type: 'video', src: '/works/works7.mp4', link: '#', column: false },
+        { type: 'video', src: '/works/works6.mp4', link: '#', column: true },
+        { type: 'video', src: '/works/works5.mp4', link: '#', column: true },
+        { type: 'image', src: '/works/works4.webp', link: '#', column: false },
+        { type: 'video', src: '/works/works3.mp4', link: '#', column: false },
+        { type: 'video', src: '/works/works2.mp4', link: '#', column: false },
+        { type: 'video', src: '/works/works1.mp4', link: '#', column: false }
+    ]);
+
+    // 新增：反轉後的媒體資源列表
+    const reversedMediaResources = computed(() => {
+        return [...mediaResources.value].reverse();
+    });
+
     // 新增：計算載入進度
     const loadingPercent = computed(() => {
-        const percent = Math.floor((loadedItems.value / (mediaResources.length + 1)) * 100);
+        const percent = Math.floor((loadedItems.value / (mediaResources.value.length + 1)) * 100);
         if(percent == 100){
             loadComplete.value = true;
             return 'Start';
@@ -454,8 +420,18 @@
     };
     // 新增：預載入所有媒體資源
     const preloadAllMedia = async () => {
+        if(isMobileDevice()){
+            mediaResources.value.forEach(resource => {
+                if (resource.type === 'video') {
+                    resource.src = resource.src.replace('.mp4', '.webp');
+                    resource.type = 'image';
+                }
+            });
+        }
         try {
-            await Promise.all(mediaResources.map(resource => preloadMedia(resource)));
+            await Promise.all(mediaResources.value.map((resource) => {
+                preloadMedia(resource);
+            }));
             console.log('All media loaded successfully');
         } catch (error) {
             console.error('Error loading media:', error);

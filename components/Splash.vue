@@ -12,6 +12,7 @@ import { FontLoader } from 'three/examples/jsm/loaders/FontLoader.js';
 import { TTFLoader } from 'three/examples/jsm/loaders/TTFLoader.js';
 import gsap from 'gsap';
 import Stats from 'stats.js';
+import { isMobileDevice } from '../utils/device';
 
 // 父組件事件
 const emit = defineEmits([
@@ -1031,10 +1032,6 @@ function initializeScene() {
   });
   
   return true;
-}
-
-function isMobileDevice() {
-  return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
 }
 
 //開始生長動畫
