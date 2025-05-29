@@ -433,8 +433,10 @@
     // 新增：預載入所有媒體資源
     const preloadAllMedia = async () => {
         try {
-            await Promise.all(processedMediaResources.value.map(resource => preloadMedia(resource)));
-            console.log('All media loaded successfully');
+            if(!isMobileDevice()){
+                await Promise.all(processedMediaResources.value.map(resource => preloadMedia(resource)));
+                console.log('All media loaded successfully');
+            }
         } catch (error) {
             console.error('Error loading media:', error);
         }
