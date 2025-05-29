@@ -379,27 +379,27 @@
         { type: 'video', src: '/works/works1.mp4', link: '#', column: false }
     ]);
     const mediaMobileResources = ref([
-        { type: 'image', src: '/works/works15.webp', link: '#', column: true },
-        { type: 'image', src: '/works/works14.webp', link: '#', column: true },
-        { type: 'image', src: '/works/works13.webp', link: '#', column: false },
-        { type: 'image', src: '/works/works12.webp', link: '#', column: false },
-        { type: 'image', src: '/works/works11.webp', link: '#', column: true },
-        { type: 'image', src: '/works/works10.webp', link: '#', column: true },
-        { type: 'image', src: '/works/works9.webp', link: '#', column: true },
-        { type: 'image', src: '/works/works8.webp', link: '#', column: false },
-        { type: 'image', src: '/works/works7.webp', link: '#', column: false },
-        { type: 'image', src: '/works/works6.webp', link: '#', column: true },
-        { type: 'image', src: '/works/works5.webp', link: '#', column: true },
-        { type: 'image', src: '/works/works4.webp', link: '#', column: false },
-        { type: 'image', src: '/works/works3.webp', link: '#', column: false },
-        { type: 'image', src: '/works/works2.webp', link: '#', column: false },
+        { type: 'image', src: '/works/works1.webp', link: '#', column: true },
+        { type: 'image', src: '/works/works1.webp', link: '#', column: true },
+        { type: 'image', src: '/works/works1.webp', link: '#', column: false },
+        { type: 'image', src: '/works/works1.webp', link: '#', column: false },
+        { type: 'image', src: '/works/works1.webp', link: '#', column: true },
+        { type: 'image', src: '/works/works1.webp', link: '#', column: true },
+        { type: 'image', src: '/works/works1.webp', link: '#', column: true },
+        { type: 'image', src: '/works/works1.webp', link: '#', column: false },
+        { type: 'image', src: '/works/works1.webp', link: '#', column: false },
+        { type: 'image', src: '/works/works1.webp', link: '#', column: true },
+        { type: 'image', src: '/works/works1.webp', link: '#', column: true },
+        { type: 'image', src: '/works/works1.webp', link: '#', column: false },
+        { type: 'image', src: '/works/works1.webp', link: '#', column: false },
+        { type: 'image', src: '/works/works1.webp', link: '#', column: false },
         { type: 'image', src: '/works/works1.webp', link: '#', column: false }
     ]);
 
     // 新增：反轉後的媒體資源列表
     const reversedMediaResources = computed(() => {
         if(isMobileDevice()){
-            return [...mediaResources.value].reverse();
+            return [...mediaMobileResources.value].reverse();
         }else{
             return [...mediaResources.value].reverse();
         }
@@ -451,7 +451,7 @@
         // }
         try {
             if(isMobileDevice()){
-                await Promise.all(mediaResources.value.map((resource) => {
+                await Promise.all(mediaMobileResources.value.map((resource) => {
                     preloadMedia(resource);
                 }));
             }else{
