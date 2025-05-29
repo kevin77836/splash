@@ -399,7 +399,7 @@
     // 新增：反轉後的媒體資源列表
     const reversedMediaResources = computed(() => {
         if(isMobileDevice()){
-            return [...mediaMobileResources.value].reverse();
+            return [...mediaResources.value].reverse();
         }else{
             return [...mediaResources.value].reverse();
         }
@@ -451,7 +451,7 @@
         // }
         try {
             if(isMobileDevice()){
-                await Promise.all(mediaMobileResources.value.map((resource) => {
+                await Promise.all(mediaResources.value.map((resource) => {
                     preloadMedia(resource);
                 }));
             }else{
