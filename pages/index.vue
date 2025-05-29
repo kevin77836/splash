@@ -423,7 +423,8 @@
         if(isMobileDevice()){
             mediaResources.value.forEach(resource => {
                 if (resource.type === 'video') {
-                    resource.src = resource.src.replace('.mp4', '.webp');
+                    // resource.src = resource.src.replace('.mp4', '.webp');
+                    resource.src = '/works/works8.webp'
                     resource.type = 'image';
                 }
             });
