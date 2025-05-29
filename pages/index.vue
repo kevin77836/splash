@@ -378,31 +378,9 @@
         { type: 'video', src: '/works/works2.mp4', link: '#', column: false },
         { type: 'video', src: '/works/works1.mp4', link: '#', column: false }
     ]);
-    const mediaMobileResources = ref([
-        { type: 'image', src: '/works/works15.webp', link: '#', column: true },
-        { type: 'image', src: '/works/works14.webp', link: '#', column: true },
-        { type: 'image', src: '/works/works13.webp', link: '#', column: false },
-        { type: 'image', src: '/works/works12.webp', link: '#', column: false },
-        { type: 'image', src: '/works/works11.webp', link: '#', column: true },
-        { type: 'image', src: '/works/works10.webp', link: '#', column: true },
-        { type: 'image', src: '/works/works9.webp', link: '#', column: true },
-        { type: 'image', src: '/works/works8.webp', link: '#', column: false },
-        { type: 'image', src: '/works/works7.webp', link: '#', column: false },
-        { type: 'image', src: '/works/works6.webp', link: '#', column: true },
-        { type: 'image', src: '/works/works5.webp', link: '#', column: true },
-        { type: 'image', src: '/works/works4.webp', link: '#', column: false },
-        { type: 'image', src: '/works/works3.webp', link: '#', column: false },
-        { type: 'image', src: '/works/works2.webp', link: '#', column: false },
-        { type: 'image', src: '/works/works1.webp', link: '#', column: false }
-    ]);
-
     // 新增：反轉後的媒體資源列表
     const reversedMediaResources = computed(() => {
-        if(isMobileDevice()){
-            return [...mediaMobileResources.value].reverse();
-        }else{
-            return [...mediaResources.value].reverse();
-        }
+        return [...mediaResources.value].reverse();
     });
 
     // 新增：計算載入進度
@@ -442,15 +420,9 @@
     // 新增：預載入所有媒體資源
     const preloadAllMedia = async () => {
         try {
-            if(isMobileDevice()){
-                await Promise.all(mediaResources.value.map((resource) => {
-                    preloadMedia(resource);
-                }));
-            }else{
-                await Promise.all(mediaResources.value.map((resource) => {
-                    preloadMedia(resource);
-                }));
-            }
+            await Promise.all(mediaResources.value.map((resource) => {
+                preloadMedia(resource);
+            }));
             console.log('All media loaded successfully');
         } catch (error) {
             console.error('Error loading media:', error);
@@ -687,7 +659,7 @@
                 scrub: true,
                 markers: false,
                 onEnter: () => {
-                    textAnimation.animate(0);
+                    // textAnimation.animate(0);
                     shrinkingFunction()
                 },
                 onLeave: () => {
@@ -714,10 +686,10 @@
             transitionDuration: 0.1,  // 淡入淡出過渡時間
             stayDuration: 0.1,     // 內容停留時間
             totalCount: 6,
-            xTransform: 40,
-            yTransform: 250,
-            xStayTransform: 2,
-            yStayTransform: 50,
+            xTransform: 80,
+            yTransform: 500,
+            xStayTransform: 4,
+            yStayTransform: 100,
         }
 
         const halfStayDuration = animParams.stayDuration / 2;
@@ -782,7 +754,7 @@
                 start: `top center`,
                 markers: false,
                 onEnter: () => {
-                    textAnimation.animate(0);
+                    // textAnimation.animate(0);
                 },
             },
         })
@@ -799,7 +771,7 @@
                     scrub: true,
                     markers: false,
                     onEnter: () => {
-                        textAnimation.animate(i-1);
+                        // textAnimation.animate(i-1);
                     },
                 },
             })
@@ -884,7 +856,7 @@
                 scrub: true,
                 markers: false,
                 onEnter: () => {
-                    textAnimation.animate(6-1);
+                    // textAnimation.animate(6-1);
                 },
             },
         })
@@ -1071,7 +1043,11 @@
         isStarted.value = true;
         startAutoPlay();
         animateTextToTargetPosition();
-        // splashRef.value.addMouseControlEvents();
+
+        if (splashRef.value) {
+            splashRef.value.addMouseControlEvents();
+        }
+        
         
         // 設置滾動動畫
         setupScrollAnimations();
@@ -1149,6 +1125,6 @@
         // 開始預載入媒體資源
         preloadAllMedia();
 
-        textAnimation.init();
+        // textAnimation.init();
     });
 </script>

@@ -60,7 +60,7 @@ const sphereParams = reactive({
 const animParams = reactive({
   // 基本設定
   mobileResolution: 75,
-  resolution: 100,                // Marching Cubes 解析度
+  resolution: 80,                // Marching Cubes 解析度
   numSegments: 50,                // 每條線分段數量
   subtract: 20,                   // Metaball 減法參數
   
@@ -877,31 +877,27 @@ function animate() {
   updateSpheres();
   
   // 應用旋轉到場景
-  // if(isMobileDevice()){
-  //   effect.rotation.y += 0.0025;
-  //   if (sphereGroup) {
-  //     sphereGroup.rotation.y += 0.0025;
-  //   }
-  // }else{
-  //   // 平滑過渡到目標旋轉角度
-  //   modelRotationX += (targetRotationX - modelRotationX) * 0.05;/*  */
-  //   modelRotationY += (targetRotationY - modelRotationY) * 0.05;
+  if(isMobileDevice()){
+    effect.rotation.y += 0.0015;
+    if (sphereGroup) {
+      sphereGroup.rotation.y += 0.0015;
+    }
+  }else{
+    // 平滑過渡到目標旋轉角度
+    modelRotationX += (targetRotationX - modelRotationX) * 0.05;
+    modelRotationY += (targetRotationY - modelRotationY) * 0.05;
 
-  //   effect.rotation.y = modelRotationY;
-  //   effect.rotation.x = modelRotationX;
-  //   // 更新 effect 和球體群組位置
-  //   effect.position.x = targetPositionX;
-  //   effect.position.y = targetPositionY;
-  //   if (sphereGroup) {
-  //     sphereGroup.rotation.x = modelRotationX;
-  //     sphereGroup.rotation.y = modelRotationY;
-  //     sphereGroup.position.x = targetPositionX;
-  //     sphereGroup.position.y = targetPositionY;
-  //   }
-  // }
-  effect.rotation.y += 0.0015;
-  if (sphereGroup) {
-    sphereGroup.rotation.y += 0.0015;
+    effect.rotation.x = modelRotationX;
+    effect.rotation.y = modelRotationY;
+    effect.position.x = targetPositionX;
+    effect.position.y = targetPositionY;
+    
+    if (sphereGroup) {
+      sphereGroup.rotation.x = modelRotationX;
+      sphereGroup.rotation.y = modelRotationY;
+      sphereGroup.position.x = targetPositionX;
+      sphereGroup.position.y = targetPositionY;
+    }
   }
   
   scene.position.set(targetScrollOffsetX, targetScrollOffsetY, targetScrollOffsetZ);
@@ -975,7 +971,7 @@ function initializeScene() {
     resolution = animParams.mobileResolution;
   }
   const derivedIsolation = resolution * 1.5;
-  effect = new MarchingCubes(resolution, material, true, true, 100000);
+  effect = new MarchingCubes(resolution, material, true, true, 10000);
   effect.isolation = derivedIsolation;
   effect.scale.set(8, 8, 8);
   effect.enableUvs = false;
@@ -1266,25 +1262,11 @@ function addMouseControlEvents() {
   if (!container) return;
   
   // 只有在非行動裝置上才添加滑鼠控制
-  // if (!isMobileDevice()) {
-  //   window.addEventListener('mousemove', onMouseMove);
-  // }
+  if (!isMobileDevice()) {
+    window.addEventListener('mousemove', onMouseMove);
+  }
 }
 
-/**
- * 移除滑鼠控制事件
- */
-// function removeMouseControlEvents() {
-//   const container = canvasContainer.value;
-//   if (!container) return;
-  
-//   // 無論是否為行動裝置，都應移除事件以防止內存洩漏
-//   window.removeEventListener('mousemove', onMouseMove);
-// }
-
-/**
- * 滑鼠移動事件處理
- */
 function onMouseMove(event) {
   // 如果是行動裝置，則直接返回不處理
   if (isMobileDevice()) return;
@@ -1338,7 +1320,7 @@ onMounted(async () => {
 defineExpose({
   startGrowingAnimation,
   startShrinkingAnimation,
-  // addMouseControlEvents,
+  addMouseControlEvents,
   updatePosition,
   animateTextToTargetPosition,
   animateTextToOrigin,
