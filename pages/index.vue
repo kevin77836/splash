@@ -436,6 +436,8 @@
             if(!isMobileDevice()){
                 await Promise.all(processedMediaResources.value.map(resource => preloadMedia(resource)));
                 console.log('All media loaded successfully');
+            }else{
+                loadedItems.value += mediaResources.value.length;
             }
         } catch (error) {
             console.error('Error loading media:', error);
