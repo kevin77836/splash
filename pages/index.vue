@@ -422,7 +422,8 @@
     const preloadAllMedia = async () => {
         if(isMobileDevice()){
             mediaResources.value.forEach(resource => {
-                resource.src = '/works/works8.webp'
+                resource.src = '/works/works8.webp';
+                resource.type = 'image';
                 // if (resource.type === 'video') {
                 //     resource.src = resource.src.replace('.mp4', '.webp');
                 //     resource.type = 'image';
