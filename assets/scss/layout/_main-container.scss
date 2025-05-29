@@ -88,7 +88,7 @@
             .aboutUs-content-group{
                 width: fit-content;
                 margin: 0 auto;
-                height: 100vh;
+                height: 100dvh;
                 display: flex;
                 align-items: center;
                 justify-content: center;
@@ -316,5 +316,16 @@
     }
     .contactUs-section{
         height: 100dvh;
+        .contactUs-title{
+            position: absolute;
+            left: 50%;
+            bottom: 0;
+            transform: translateX(-50%);
+            font-size: 4rem;
+            font-weight: bold;
+            color: black;
+            text-align: center;
+            width: 100%;
+        }
     }
 }

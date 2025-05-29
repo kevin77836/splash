@@ -164,6 +164,7 @@
             </div>
         </div>
         <div v-show="isStarted" class="section contactUs-section">
+            <h2 class="contactUs-title">Contact Us</h2>
         </div>
     </div>
     
@@ -655,8 +656,8 @@
             scrollTrigger: {
                 trigger: '.services-section',
                 start: 'top bottom',
-                end: `top top`,
-                scrub: true,
+                end: `top 15%`,
+                scrub: false,
                 markers: false,
                 onEnter: () => {
                     // textAnimation.animate(0);
@@ -686,9 +687,9 @@
             transitionDuration: 0.1,  // 淡入淡出過渡時間
             stayDuration: 0.1,     // 內容停留時間
             totalCount: 6,
-            xTransform: 80,
+            xTransform: 125,
             yTransform: 500,
-            xStayTransform: 4,
+            xStayTransform: 8,
             yStayTransform: 100,
         }
 
@@ -906,7 +907,7 @@
         gsap.timeline({
             scrollTrigger: {
                 trigger: '.contactUs-section',
-                start: 'top bottom',
+                start: '15% bottom',
                 end: `bottom bottom`,
                 scrub: true,
                 markers: false,
@@ -1056,19 +1057,15 @@
         customEasing = CustomEase.create("custom", "M0,0 C0,0 0.015,1 1,1 ");
         
         gsap.to({
-            x: 0,
-            y: 0,
             z: 10
         }, {
-            x: 0,
-            y: 0,
             z: 0,
             duration: 1,
             ease: "customGrowEase", // 使用自定義緩動
             onUpdate: function(self) {
                 // 動畫每一幀更新場景位置
                 if (splashRef.value) {
-                    splashRef.value.updatePosition(this.targets()[0].x, this.targets()[0].y, this.targets()[0].z);
+                    splashRef.value.updatePosition(0, 0, this.targets()[0].z);
                 }
             }
         });
