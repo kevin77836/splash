@@ -379,9 +379,21 @@
         { type: 'video', src: '/works/works1.mp4', link: '#', column: false }
     ]);
 
+    // 新增：處理後的媒體資源列表
+    const processedMediaResources = computed(() => {
+        if (isMobileDevice()) {
+            return mediaResources.value.map(resource => ({
+                ...resource,
+                type: resource.type === 'video' ? 'image' : resource.type,
+                src: resource.type === 'video' ? resource.src.replace('.mp4', '.webp') : resource.src
+            }));
+        }
+        return mediaResources.value;
+    });
+
     // 新增：反轉後的媒體資源列表
     const reversedMediaResources = computed(() => {
-        return [...mediaResources.value].reverse();
+        return [...processedMediaResources.value].reverse();
     });
 
     // 新增：計算載入進度
@@ -420,20 +432,8 @@
     };
     // 新增：預載入所有媒體資源
     const preloadAllMedia = async () => {
-        if(isMobileDevice()){
-            mediaResources.value.forEach(resource => {
-                resource.src = '/works/works8.webp';
-                resource.type = 'image';
-                // if (resource.type === 'video') {
-                //     resource.src = resource.src.replace('.mp4', '.webp');
-                //     resource.type = 'image';
-                // }
-            });
-        }
         try {
-            await Promise.all(mediaResources.value.map((resource) => {
-                preloadMedia(resource);
-            }));
+            await Promise.all(processedMediaResources.value.map(resource => preloadMedia(resource)));
             console.log('All media loaded successfully');
         } catch (error) {
             console.error('Error loading media:', error);
