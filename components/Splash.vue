@@ -71,9 +71,9 @@ const animParams = reactive({
   shrinkEaseInPower: 2.5,         // 收縮緩動指數 (值越大開頭越快)
   
   // 波浪效果設定
-  flowWaveFrequency: 0.1,         // 波浪頻率
+  flowWaveFrequency: 0.001,         // 波浪頻率
   flowWaveAmplitudeFactor: 0.15,  // 波浪振幅因子
-  flowWaveAmplitudeFactorAtStart: 0.5, // 原點狀態下的波浪振幅因子
+  flowWaveAmplitudeFactorAtStart: 0.1, // 原點狀態下的波浪振幅因子
   flowWavePhaseFactor: Math.PI * 4, // 波浪相位因子
 });
 
@@ -928,7 +928,7 @@ async function initializeScene() {
     resolution = animParams.mobileResolution;
   }
   const derivedIsolation = 150;
-  effect = new MarchingCubes(resolution, material, true, true, 7000);
+  effect = new MarchingCubes(resolution, material, true, true, 7500);
   effect.isolation = derivedIsolation;
   effect.scale.set(8, 8, 8);
   effect.enableUvs = false;

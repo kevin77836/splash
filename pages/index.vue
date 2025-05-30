@@ -481,15 +481,16 @@
     // 處理資源載入完成事件
     const handleResourcesLoaded = () => {
         if (splashRef.value) {
-            for(let i=1;i<5;i++){
-                setTimeout(() => {
-                    changeMaterialType(i);
-                },(i-1)*100)
-            }
-            setTimeout(() => {
-                changeMaterialType(0);
-                loadedItems.value++;
-            },5*100)       
+            // for(let i=1;i<5;i++){
+            //     setTimeout(() => {
+            //         changeMaterialType(i);
+            //     },(i-1)*100)
+            // }
+            // setTimeout(() => {
+            //     changeMaterialType(0);
+            //     loadedItems.value++;
+            // },5*100)
+            loadedItems.value++;
             splashRef.value.updatePosition(0, 0, 10);
         }
     }
@@ -735,10 +736,10 @@
             transitionDuration: 0.1,  // 淡入淡出過渡時間
             stayDuration: 0.1,     // 內容停留時間
             totalCount: 6,
-            xTransform: 30,
-            yTransform: 500,
-            xStayTransform: 30/4,
-            yStayTransform: 500/4,
+            xTransform: 50,
+            yTransform: 300,
+            xStayTransform: 50/4,
+            yStayTransform: 300/4,
         }
 
         const halfStayDuration = animParams.stayDuration / 2;
@@ -895,9 +896,9 @@
                 end:`${((((halfStayDuration * 2) + animParams.transitionDuration) * (6-1))) / animateDuration}% top`,
                 scrub: true,
                 markers: false,
-                onEnter: () => {
-                    // textAnimation.animate(6-1);
-                },
+                // onEnter: () => {
+                //     // textAnimation.animate(6-1);
+                // },
             },
         })
         tl6.fromTo(
@@ -956,7 +957,7 @@
         gsap.timeline({
             scrollTrigger: {
                 trigger: '.partners-section',
-                start: `${15 / 100 / 200}% bottom`,
+                start: `${15 * (100 / 200)}% bottom`,
                 end: 'top top',
                 scrub: true,
                 markers: false,
