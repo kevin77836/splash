@@ -169,7 +169,7 @@ class MaterialManager {
           transmission: 1.0,
           ior: 1.5,
           thickness: 2,
-          envMapIntensity: 5.0,
+          envMapIntensity: 10.0,
           side: THREE.DoubleSide
         }
       },
@@ -415,11 +415,11 @@ function loadFontAndCreateText() {
     textTargetPosition2 = new THREE.Vector3(4, 0, -3);
     
     // 創建第一個文字 - 初始位置為原點
-    textMesh1 = createText('Splash', new THREE.Vector3(3, 0, -3),'left', 1);
+    textMesh1 = createText('Splash', new THREE.Vector3(3, 0, -8),'left', 1);
     scene.add(textMesh1);
     
     // 創建第二個文字 - 初始位置為原點
-    textMesh2 = createText('DigiLab', new THREE.Vector3(-3, 0, -3),'right', 1);
+    textMesh2 = createText('DigiLab', new THREE.Vector3(-3, 0, -8),'right', 1);
     scene.add(textMesh2);
   });
 }
@@ -946,7 +946,7 @@ function initializeScene() {
   scene.background = null;
 
   // 相機
-  camera = new THREE.PerspectiveCamera(45, width / height, 0.1, 1000);
+  camera = new THREE.PerspectiveCamera(45, width / height, 0.1, 100);
   camera.position.set(0, 0, 30);
   camera.lookAt(scene.position);
 

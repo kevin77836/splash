@@ -45,10 +45,14 @@
         @include max-xxl{
             font-size: 1rem;
         }
-        @include max-md{
+        @include max-lg{
             padding: 0 0.5rem;
         }
+        // @include max-md{
+        //     padding: 0 0.5rem;
+        // }
         &.hidden{
+            pointer-events: none;
             opacity: 0;
             max-width: 0;
             padding: 0;
@@ -61,7 +65,7 @@
         transition-timing-function: ease;
         max-width: 100%;
         padding: 0 0.75rem;
-        @include max-md{
+        @include max-lg{
             padding: 0 0.5rem;
         }
         .header-saparator-line{

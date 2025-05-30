@@ -6,7 +6,7 @@
     />
     <div :class="{'active': isStarted}" class="l-header">
         <div class="desktop-group">
-            <div class="header-link" :class="{'hidden': isLandingPage}">
+            <div class="header-link" :class="{'hidden': isLandingPage}" @click="scrollToSection('main-section')">
                 Splash DigiLab
             </div>
             <div class="header-saparator" :class="{'hidden': isLandingPage}">
@@ -24,8 +24,14 @@
             <div class="header-saparator" :class="{'hidden': !isLandingPage}">
                 <div class="header-saparator-line"></div>
             </div>
-            <div class="header-link" @click="scrollToSection('Services-section')">
+            <div class="header-link" @click="scrollToSection('services-section')">
                 Services
+            </div>
+            <div class="header-saparator" :class="{'hidden': !isLandingPage}">
+                <div class="header-saparator-line"></div>
+            </div>
+            <div class="header-link" @click="scrollToSection('partners-section')">
+                Partners
             </div>
             <div class="header-saparator" :class="{'hidden': !isLandingPage}">
                 <div class="header-saparator-line"></div>
@@ -37,7 +43,7 @@
 
         <!-- 漢堡選單按鈕 -->
         <div class="mobile-group">
-            <div class="header-link" :class="{'hidden': isLandingPage}">Splash DigiLab</div>
+            <div class="header-link" :class="{'hidden': isLandingPage}" @click="scrollToSection('main-section')">Splash DigiLab</div>
             <div class="header-saparator">
                 <div class="header-saparator-line"></div>
             </div>
@@ -59,6 +65,9 @@
             </div>
             <div class="menu-item" @click="scrollToSection('services-section', true)">
                 Services
+            </div>
+            <div class="menu-item" @click="scrollToSection('partners-section', true)">
+                Partners
             </div>
             <div class="menu-item" @click="scrollToSection('contactUs-section', true)">
                 Contact Us
@@ -96,10 +105,10 @@
             </h1> -->
             <div v-show="isStarted" class="marquee">
                 <div class="marquee-content-group">
-                    <span class="marquee-content-group-item">AR/VR/XR策展 ・ UIUX/網頁開發 ・ CIS/平面設計 ・ 2D/3D動畫 ・ 互動設計/數位藝術 ・ </span>
+                    <span class="marquee-content-group-item">AR/VR/XR策展 ・ UIUX/網頁開發 ・ CIS/平面設計 ・ 2D/3D動畫 ・ 互動設計/數位藝術 ・&nbsp;</span>
                 </div>
                 <div class="marquee-content-group2">
-                    <span class="marquee-content-group-item">AR/VR/XR策展 ・ UIUX/網頁開發 ・ CIS/平面設計 ・ 2D/3D動畫 ・ 互動設計/數位藝術 ・ </span>
+                    <span class="marquee-content-group-item">AR/VR/XR策展 ・ UIUX/網頁開發 ・ CIS/平面設計 ・ 2D/3D動畫 ・ 互動設計/數位藝術 ・&nbsp;</span>
                 </div>
             </div>
         </div>
@@ -157,8 +166,54 @@
                 </div>
             </div>
         </div>
+        <div v-show="isStarted" class="section partners-section">
+            <div class="partners-content-container">
+                <div class="partners-content-group">
+                    <div class="partners-content-item partners-content-item-1">
+                        <img src="/partners/partners1.png" alt="">
+                    </div>
+                    <div class="partners-content-item partners-content-item-2">
+                        <img src="/partners/partners2.png" alt="">
+                    </div>
+                    <div class="partners-content-item partners-content-item-3">
+                        <img src="/partners/partners3.png" alt="">
+                    </div>
+                    <div class="partners-content-item partners-content-item-4">
+                        <img src="/partners/partners4.png" alt="">
+                    </div>
+                    <div class="partners-content-item partners-content-item-5">
+                        <img src="/partners/partners1.png" alt="">
+                    </div>
+                    <div class="partners-content-item partners-content-item-6">
+                        <img src="/partners/partners2.png" alt="">
+                    </div>
+                    <div class="partners-content-item partners-content-item-7">
+                        <img src="/partners/partners3.png" alt="">
+                    </div>
+                    <div class="partners-content-item partners-content-item-8">
+                        <img src="/partners/partners4.png" alt="">
+                    </div>
+                    <div class="partners-content-item partners-content-item-9">
+                        <img src="/partners/partners1.png" alt="">
+                    </div>
+                    <div class="partners-content-item partners-content-item-10">
+                        <img src="/partners/partners2.png" alt="">
+                    </div>
+                    <div class="partners-content-item partners-content-item-11">
+                        <img src="/partners/partners3.png" alt="">
+                    </div>
+                    <div class="partners-content-item partners-content-item-12">
+                        <img src="/partners/partners4.png" alt="">
+                    </div>
+                </div>
+            </div>
+        </div>
         <div v-show="isStarted" class="section contactUs-section">
-            <h2 class="contactUs-title">Let's Make a Splash</h2>
+            <div class="contactUs-container">
+                <div class="contactUs-title">
+                    Let's make a splash
+                </div>
+            </div>
         </div>
     </div>
     
@@ -446,6 +501,7 @@
                 aboutUsSectionGsap();
                 worksSectionGsap();
                 servicesSectionGsap();
+                partnersSectionGsap();
                 contactUsSectionGsap();
             });
         }
@@ -633,14 +689,12 @@
                 '--transform-x': x,
                 '--transform-y': y,
                 '--transform-z': zDistance,
-                ease: 'none',
                 duration: durationTime,
             }, start);
 
             // 透明動畫（延遲 opacityDelayRatio 啟動）
             worksTimeline.to(itemSelector, {
                 opacity: 1,
-                ease: 'none',
                 duration: opacityDuration / durationTime,
             }, start);
         }
@@ -713,7 +767,6 @@
                 x: animParams.xStayTransform,
                 y: -animParams.yStayTransform, 
                 duration: halfStayDuration, 
-                ease: 'none' 
             },
             0
         )
@@ -724,7 +777,6 @@
                 x: animParams.xTransform, 
                 y: -animParams.yTransform, 
                 duration: animParams.transitionDuration, 
-                ease: 'none',
             },
             halfStayDuration
         )
@@ -732,7 +784,7 @@
         gsap.timeline({
             scrollTrigger: {
                 trigger: '.services-section',
-                end: `${(halfStayDuration + halfStayDuration) / animateDuration}% top`,
+                end: `${(halfStayDuration + halfStayDuration) / animateDuration}% 20%`,
                 markers: false,
                 onLeave: () => {
                     shrinkingFunction();
@@ -782,7 +834,6 @@
                     x: animParams.xStayTransform,
                     y: animParams.yStayTransform, 
                     duration: animParams.transitionDuration, 
-                    ease: 'none' 
                 },
                 0
             )
@@ -792,7 +843,6 @@
                     x: 0,
                     y: 0, 
                     duration: halfStayDuration, 
-                    ease: 'none' 
                 },
                 animParams.transitionDuration
             )
@@ -802,7 +852,6 @@
                     x: animParams.xStayTransform,
                     y: -animParams.yStayTransform, 
                     duration: halfStayDuration, 
-                    ease: 'none' 
                 },
                 animParams.transitionDuration + halfStayDuration
             )
@@ -813,7 +862,6 @@
                     x: animParams.xTransform, 
                     y: -animParams.yTransform, 
                     duration: animParams.transitionDuration, 
-                    ease: 'none' 
                 },
                 animParams.transitionDuration + halfStayDuration + halfStayDuration
             )
@@ -867,7 +915,6 @@
                 x: animParams.xStayTransform,
                 y: animParams.yStayTransform, 
                 duration: animParams.transitionDuration, 
-                ease: 'none',
             },
             0
         )
@@ -877,7 +924,6 @@
                 x: 0,
                 y: 0, 
                 duration: halfStayDuration, 
-                ease: 'none' 
             },
             animParams.transitionDuration
         )
@@ -897,12 +943,24 @@
             },
         })
     }
-    const contactUsSectionGsap = () => {
+    const partnersSectionGsap = () => {
+        const itemCount = 12; // 作品總數
+        const radius = 300; // ring 半徑
+        const angleStep = (360 / itemCount); // 每個項目的角度間隔
+        
+        // 初始化每個作品的位置
+        for (let i = 1; i <= itemCount; i++) {
+            const angle = angleStep * (i - 1);
+            gsap.set(`.partners-content-item-${i}`, {
+                '--item-rotation': angle,
+            });
+        }
+
         gsap.timeline({
             scrollTrigger: {
-                trigger: '.contactUs-section',
-                start: '15% bottom',
-                end: `bottom bottom`,
+                trigger: '.partners-section',
+                start: `${15 / 100 / 200}% bottom`,
+                end: 'top top',
                 scrub: true,
                 markers: false,
                 onUpdate: (self) => {
@@ -915,19 +973,65 @@
                 onEnter:()=>{
                     shrinkingFunction();
                 },
-                onLeave:()=>{
+                onLeave: () => {
                     changeMaterialType(0);
                     growingFunction();
+                    for (let i = 1; i <= itemCount; i++) {
+                        gsap.to(`.partners-content-item-${i}`, {
+                            opacity: 1,
+                            '--item-radius': radius,
+                            '--width': 100,
+                            duration: 1,
+                            ease: "customGrowEase"
+                        });
+                    }
                 },
-                onEnterBack:()=>{
+                onEnterBack: () => {
                     shrinkingFunction();
                 },
-                onLeaveBack:()=>{
-                    changeMaterialType(5);
+                onLeaveBack: () => {
                     growingFunction();
-                },
+                    changeMaterialType(5);
+                    for (let i = 1; i <= itemCount; i++) {
+                        gsap.set(`.partners-content-item-${i}`, {
+                            opacity: 0,
+                            '--width': 0,
+                            '--item-radius': 0
+                        });
+                    }
+                }
+            },    
+        });
+
+        gsap.timeline({
+            scrollTrigger: {
+                trigger: '.partners-section',
+                start: 'top top',
+                end: 'bottom bottom',
+                scrub: 1,
+                markers: false,
+                onUpdate: (self) => {
+                    const rotation = self.progress * 360;
+                    gsap.set('.partners-content-group', {
+                        '--rotation-y': rotation
+                    });
+                }
             }
-        })
+        });
+    }
+    const contactUsSectionGsap = () => {
+        gsap.timeline({
+            scrollTrigger: {
+                trigger: '.contactUs-section',
+                start: 'top bottom',
+                end: 'bottom bottom',
+                scrub: true,
+                markers: false,
+                onUpdate: (self) => {
+                    updatePosition(0, 0, 0, 0, -25, 0, self.progress);
+                },
+            },    
+        });
     }
     const updatePosition = (fromX, fromY, fromZ, toX, toY, toZ, progress) => {
         if (splashRef.value) {
@@ -1089,13 +1193,19 @@
             toggleMenu();
         }
         
-        // 使用 setTimeout 確保 DOM 已更新
         setTimeout(() => {
             const section = document.querySelector(`.${sectionClass}`);
             if (section) {
-                // 使用平滑滾動
+                let position = section.offsetTop;
+
+                if(sectionClass == 'aboutUs-section'){
+                    position = section.offsetTop + section.offsetHeight * 0.65;
+                }else if(sectionClass == 'works-section'){
+                    position = section.offsetTop + section.offsetHeight * 0.15;
+                }
+
                 window.scrollTo({
-                    top: section.offsetTop,
+                    top: position,
                     behavior: 'smooth'
                 });
             }
