@@ -561,7 +561,7 @@
         });
         aboutUsContentTimeline
             .to('.aboutUs-section-content-1-1', { opacity: 1, filter: 'blur(0px)', duration: 0.1 },0)
-            .to('.aboutUs-section-hr-1', { width: '100%', duration: 0.2 },0.1)
+            .to('.aboutUs-section-hr-1', { opacity: 1, width: '100%', duration: 0.2 },0.1)
             .to('.aboutUs-section-content-1-2', { opacity: 1, filter: 'blur(0px)', duration: 0.1 },0.3)
             .to('.aboutUs-section-content-2-1', { opacity: 1, filter: 'blur(0px)', duration: 0.1 },0.4)
             .to('.aboutUs-section-content-2-2', { width: '100%', duration: 0.2 },0.5)
@@ -735,10 +735,10 @@
             transitionDuration: 0.1,  // 淡入淡出過渡時間
             stayDuration: 0.1,     // 內容停留時間
             totalCount: 6,
-            xTransform: 125,
+            xTransform: 50,
             yTransform: 500,
-            xStayTransform: 8,
-            yStayTransform: 100,
+            xStayTransform: 15,
+            yStayTransform: 500/3,
         }
 
         const halfStayDuration = animParams.stayDuration / 2;
@@ -766,6 +766,7 @@
                 opacity: 1,
                 x: animParams.xStayTransform,
                 y: -animParams.yStayTransform, 
+                ease: 'power5.inOut',
                 duration: halfStayDuration, 
             },
             0
@@ -843,6 +844,7 @@
                     x: 0,
                     y: 0, 
                     duration: halfStayDuration, 
+                    ease: 'power5.inOut',
                 },
                 animParams.transitionDuration
             )
@@ -852,6 +854,7 @@
                     x: animParams.xStayTransform,
                     y: -animParams.yStayTransform, 
                     duration: halfStayDuration, 
+                    ease: 'power5.inOut',
                 },
                 animParams.transitionDuration + halfStayDuration
             )
@@ -915,6 +918,7 @@
                 x: animParams.xStayTransform,
                 y: animParams.yStayTransform, 
                 duration: animParams.transitionDuration, 
+                ease: 'power5.inOut',
             },
             0
         )
