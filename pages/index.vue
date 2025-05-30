@@ -735,10 +735,10 @@
             transitionDuration: 0.1,  // 淡入淡出過渡時間
             stayDuration: 0.1,     // 內容停留時間
             totalCount: 6,
-            xTransform: 50,
+            xTransform: 30,
             yTransform: 500,
-            xStayTransform: 15,
-            yStayTransform: 500/3,
+            xStayTransform: 30/4,
+            yStayTransform: 500/4,
         }
 
         const halfStayDuration = animParams.stayDuration / 2;
@@ -766,7 +766,6 @@
                 opacity: 1,
                 x: animParams.xStayTransform,
                 y: -animParams.yStayTransform, 
-                ease: 'power5.inOut',
                 duration: halfStayDuration, 
             },
             0
@@ -796,16 +795,16 @@
                 },
             },
         })
-        gsap.timeline({
-            scrollTrigger: {
-                trigger: '.services-content-container',
-                start: `top center`,
-                markers: false,
-                onEnter: () => {
-                    // textAnimation.animate(0);
-                },
-            },
-        })
+        // gsap.timeline({
+        //     scrollTrigger: {
+        //         trigger: '.services-content-container',
+        //         start: `top center`,
+        //         markers: false,
+        //         onEnter: () => {
+        //             // textAnimation.animate(0);
+        //         },
+        //     },
+        // })
         
         // 2~5
         for(let i = 2; i <= animParams.totalCount-1; i++){
@@ -818,9 +817,6 @@
                     end: `${sectionEnd / animateDuration}% top`,
                     scrub: true,
                     markers: false,
-                    onEnter: () => {
-                        // textAnimation.animate(i-1);
-                    },
                 },
             })
             tl.fromTo(
@@ -844,7 +840,6 @@
                     x: 0,
                     y: 0, 
                     duration: halfStayDuration, 
-                    ease: 'power5.inOut',
                 },
                 animParams.transitionDuration
             )
@@ -854,7 +849,6 @@
                     x: animParams.xStayTransform,
                     y: -animParams.yStayTransform, 
                     duration: halfStayDuration, 
-                    ease: 'power5.inOut',
                 },
                 animParams.transitionDuration + halfStayDuration
             )
@@ -918,7 +912,6 @@
                 x: animParams.xStayTransform,
                 y: animParams.yStayTransform, 
                 duration: animParams.transitionDuration, 
-                ease: 'power5.inOut',
             },
             0
         )

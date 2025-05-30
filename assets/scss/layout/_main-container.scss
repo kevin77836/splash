@@ -90,22 +90,18 @@
             .aboutUs-content-group{
                 width: fit-content;
                 margin: 0 auto;
-                height: 100svh;
+                // height: 100svh;
                 height: 100dvh;
                 display: flex;
                 align-items: center;
                 justify-content: center;
                 flex-direction: column;
-                --font-size: 2rem;
-                --gap-main-size: 5rem;
+                --font-size: 1.5rem;
+                --gap-main-size: 4rem;
                 --gap-sub-size: 1rem;
 
                 gap: var(--gap-main-size);
                 @include max-xxl{
-                    --font-size: 1.5rem;
-                    --gap-main-size: 4rem;
-                }
-                @include max-lg{
                     --font-size: 1.25rem;
                     --gap-main-size: 3rem;
                 }
@@ -215,7 +211,7 @@
         height: 500%;
         .works-content-container{
             width: 100%;
-            height: 100svh;
+            // height: 100svh;
             height: 100dvh;
             position: sticky;
             top: 0;
@@ -265,7 +261,7 @@
         color: var(--font-color);
         .services-content-container{
             width: 100%;
-            height: 100svh;
+            // height: 100svh;
             height: 100dvh;
             position: sticky;
             top: 0;
@@ -294,12 +290,9 @@
             .services-title{
                 font-weight: bold;
                 margin-bottom: 1rem;
-                font-size: 2rem;
+                font-size: 1.5rem;
                 letter-spacing: 0.5rem;
                 color: black;
-                @include max-xl{
-                    font-size: 1.5rem;
-                }
                 @include max-md{
                     text-align: center;
                 }
@@ -333,15 +326,6 @@
                 position: relative;
                 transform-style: preserve-3d;
                 transform-origin: center center;
-                // @keyframes rotateY360 {
-                //     from {
-                //       transform: rotateY(0deg);
-                //     }
-                //     to {
-                //       transform: rotateY(360deg);
-                //     }
-                // }
-                // animation: rotateY360 30s linear infinite;
                 --rotation-y: 0;
                 transform: rotateY(calc(var(--rotation-y) * 1deg));
                 .partners-content-item{
@@ -369,14 +353,13 @@
                         width: 100%;
                         object-fit: cover;
                         filter: grayscale(100%);
-                        backface-visibility: hidden;
                     }
                 }
             }
         }
     }
     .contactUs-section{
-        height: 100svh;
+        // height: 100svh;
         height: 100dvh;
         background-color: black;
         .contactUs-container{

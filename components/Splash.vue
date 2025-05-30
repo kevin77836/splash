@@ -278,46 +278,6 @@ class MaterialManager {
     }
   }
 
-  // 預編譯所有材質
-  precompileMaterials(scene, camera, renderer) {
-    console.log('開始預編譯材質...');
-    
-    // 創建預編譯用的幾何體
-    const geometries = [
-      new THREE.SphereGeometry(1, 32, 32),
-      new THREE.BoxGeometry(1, 1, 1)
-    ];
-    
-    // 創建預編譯用的場景
-    const precompileScene = new THREE.Scene();
-    const group = new THREE.Group();
-    precompileScene.add(group);
-    
-    // 為每個材質創建測試物件
-    let offset = 0;
-    for (const material of this.materials.values()) {
-      geometries.forEach((geometry, index) => {
-        const mesh = new THREE.Mesh(geometry, material);
-        mesh.position.set(offset * 2, index * 2, 0);
-        group.add(mesh);
-      });
-      offset++;
-    }
-    
-    // 強制預編譯
-    renderer.compile(precompileScene, camera);
-    
-    // 進行幾次測試渲染
-    for (let i = 0; i < 3; i++) {
-      renderer.render(precompileScene, camera);
-    }
-    
-    // 清理資源
-    geometries.forEach(geometry => geometry.dispose());
-    group.clear();
-    
-    console.log('材質預編譯完成');
-  }
 
   // 釋放資源
   dispose() {
@@ -383,9 +343,6 @@ function loadEnvironmentMap() {
           
           // 初始化材質
           materialManager.initialize(envMap);
-          
-          // 預編譯材質
-          materialManager.precompileMaterials(scene, camera, renderer);
           
           // 設置初始材質
           material = materialManager.getMaterial('default');
@@ -931,7 +888,7 @@ function handleResize() {
 /**
  * 初始化Three.js場景和相關物件
  */
-function initializeScene() {
+async function initializeScene() {
   if (!canvasContainer.value) {
     console.error("Canvas container not found!");
     return false;
@@ -946,7 +903,7 @@ function initializeScene() {
   scene.background = null;
 
   // 相機
-  camera = new THREE.PerspectiveCamera(45, width / height, 0.1, 100);
+  camera = new THREE.PerspectiveCamera(45, width / height, 0.1, 75);
   camera.position.set(0, 0, 30);
   camera.lookAt(scene.position);
 
@@ -961,7 +918,7 @@ function initializeScene() {
   pmremGenerator.compileEquirectangularShader();
 
   // 材質
-  material = materialManager.getMaterial('default');
+  await loadEnvironmentMap();
 
   // Marching Cubes
   let resolution;
@@ -970,8 +927,8 @@ function initializeScene() {
   }else{
     resolution = animParams.mobileResolution;
   }
-  const derivedIsolation = resolution * 1.5;
-  effect = new MarchingCubes(resolution, material, true, true, 10000);
+  const derivedIsolation = 150;
+  effect = new MarchingCubes(resolution, material, true, true, 7000);
   effect.isolation = derivedIsolation;
   effect.scale.set(8, 8, 8);
   effect.enableUvs = false;
@@ -991,11 +948,6 @@ function initializeScene() {
   // 時鐘
   clock = new THREE.Clock();
   
-  // 初始化滾動位移變量
-  targetScrollOffsetX = 0;
-  targetScrollOffsetY = 0;
-  targetScrollOffsetZ = 0;
-  
   // 載入字體並創建文字
   loadFontAndCreateText();
 
@@ -1004,18 +956,6 @@ function initializeScene() {
   stats.dom.style.position = 'fixed';
   stats.dom.style.top = '0px';
   document.body.appendChild(stats.dom);
-
-  // const textureLoader = new THREE.TextureLoader();
-  // textureLoader.setPath('/works/');
-  // const bgTexture = textureLoader.load('works1.jpg', () => {
-  //   console.log('背景紋理加載完成');
-  // });
-  
-  // const bgGeometry = new THREE.PlaneGeometry(19.2, 14.4);
-  // const bgMaterial = new THREE.MeshBasicMaterial({ map: bgTexture });
-  // const bgMesh = new THREE.Mesh(bgGeometry, bgMaterial);
-  // bgMesh.position.set(0, 0, -1);
-  // scene.add(bgMesh);
 
   // 註冊自定義緩動函數（只註冊一次）
   gsap.registerEase("customGrowEase", function(x) {
@@ -1297,8 +1237,6 @@ onMounted(async () => {
   try {
     // 初始化場景
     if (!await initializeScene()) return;
-    // 載入環境貼圖
-    await loadEnvironmentMap();
     // 初始化為收合狀態
     initializeCollapsedState();
 
