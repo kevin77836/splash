@@ -65,7 +65,7 @@
             </div>
         </div>
     </div>
-    <div :class="{'active': isStarted && isLandingPage}" class="l-footer">
+    <!-- <div :class="{'active': isStarted && isLandingPage}" class="l-footer">
         <div class="desktop-group">
             <div class="footer-saparator">
                 <div class="footer-saparator-line"></div>
@@ -77,7 +77,7 @@
                 <div class="footer-saparator-line"></div>
             </div>
         </div>        
-    </div>
+    </div> -->
     <div class="main-container">
         <div class="section main-section">
             <div v-if="!isStarted" 
@@ -94,19 +94,13 @@
             DigiLab
                 </span>
             </h1> -->
-        </div>
-        <div v-show="isStarted" class="marquee">
-            <div class="marquee-content-group">
-                <span class="marquee-content-group-item">Splash DigiLab</span>
-                <span class="marquee-content-group-item">Splash DigiLab</span>
-                <span class="marquee-content-group-item">Splash DigiLab</span>
-                <span class="marquee-content-group-item">Splash DigiLab</span>
-            </div>
-            <div class="marquee-content-group2">
-                <span class="marquee-content-group-item">Splash DigiLab</span>
-                <span class="marquee-content-group-item">Splash DigiLab</span>
-                <span class="marquee-content-group-item">Splash DigiLab</span>
-                <span class="marquee-content-group-item">Splash DigiLab</span>
+            <div v-show="isStarted" class="marquee">
+                <div class="marquee-content-group">
+                    <span class="marquee-content-group-item">AR/VR/XR策展 ・ UIUX/網頁開發 ・ CIS/平面設計 ・ 2D/3D動畫 ・ 互動設計/數位藝術 ・ </span>
+                </div>
+                <div class="marquee-content-group2">
+                    <span class="marquee-content-group-item">AR/VR/XR策展 ・ UIUX/網頁開發 ・ CIS/平面設計 ・ 2D/3D動畫 ・ 互動設計/數位藝術 ・ </span>
+                </div>
             </div>
         </div>
         <div v-show="isStarted" class="section aboutUs-section">
@@ -164,7 +158,7 @@
             </div>
         </div>
         <div v-show="isStarted" class="section contactUs-section">
-            <h2 class="contactUs-title">Contact Us</h2>
+            <h2 class="contactUs-title">Let's Make a Splash</h2>
         </div>
     </div>
     
@@ -646,7 +640,7 @@
             // 透明動畫（延遲 opacityDelayRatio 啟動）
             worksTimeline.to(itemSelector, {
                 opacity: 1,
-                ease: 'power5.in',
+                ease: 'none',
                 duration: opacityDuration / durationTime,
             }, start);
         }
