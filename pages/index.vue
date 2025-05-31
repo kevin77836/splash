@@ -836,6 +836,7 @@
         const itemCount = 12; // 作品總數
         const radius = 300; // ring 半徑
         const angleStep = (360 / itemCount); // 每個項目的角度間隔
+        const picWidth = 100;
         
         // 初始化每個作品的位置
         for (let i = 1; i <= itemCount; i++) {
@@ -869,9 +870,9 @@
                         gsap.to(`.partners-content-item-${i}`, {
                             opacity: 1,
                             '--item-radius': radius,
-                            '--width': 100,
-                            duration: 1,
-                            ease: "customGrowEase"
+                            '--width': picWidth,
+                            duration: 0.5,
+                            ease: "customGrowEase",
                         });
                     }
                 },
@@ -1091,7 +1092,10 @@
                     position = section.offsetTop + section.offsetHeight * 0.65;
                 }else if(sectionClass == 'works-section'){
                     position = section.offsetTop + section.offsetHeight * 0.15;
+                }else if(sectionClass == 'services-section'){
+                    position = section.offsetTop - section.offsetHeight / 12;
                 }
+                
 
                 window.scrollTo({
                     top: position,
