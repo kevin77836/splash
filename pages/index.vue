@@ -207,34 +207,22 @@
             </div>
         </div>
         <div v-show="isStarted" class="section contactUs-section">
-            <div class="contactUs-container">
-                <div class="contactUs-title">
-                    Let's make a splash
-                </div>
-                <div class="contactUs-description">
-                    如果有任何疑問或者有報價洽詢的需求，歡迎聯繫我們，
-                    我們會在收到訊息後三天內回覆，
-                    請留下您的聯絡方式及簡要內容，方便讓我們了解您的需求。
-                </div>
-                <div class="contactUs-information">
-                    <div class="phone">Phone: 0912-345-678</div>
-                    <div class="email">Email: splash-digilab@gmail.com</div>
-                    <div class="line">Line: @splash-digilab</div>
-                    <div class="companyName">斯巴拉系數位互動有限公司</div>
-                </div>
+            <div class="contactUs-title">
+                Let's make a splash
+            </div>
+            <div class="contactUs-description">
+                如果有任何疑問或者有報價洽詢的需求，歡迎聯繫我們，
+                我們會在收到訊息後三天內回覆，
+                請留下您的聯絡方式及簡要內容，方便讓我們了解您的需求。
+            </div>
+            <div class="contactUs-information">
+                <div class="phone">Phone: 0912-345-678</div>
+                <div class="email">Email: splash-digilab@gmail.com</div>
+                <div class="line">Line: @splash-digilab</div>
+                <div class="companyName">斯巴拉系數位互動有限公司</div>
             </div>
         </div>
     </div>
-    
-        
-        <!-- <div class="button-group" style="top: 1rem; position: fixed;">
-        <button @click="growingFunction">開始生長</button>
-        <button @click="shrinkingFunction">開始收合</button>
-        <button @click="startAutoPlay">開始自動播放</button>
-        <button @click="stopAutoPlay">停止自動播放</button>
-        <div class="status">資源狀態: {{ loadComplete ? '已載入' : '載入中' }}</div>
-        <div class="status">自動播放: {{ isAutoPlaying ? '進行中' : '停止' }}</div>
-        </div> -->
 </template>
 <script setup>
     import gsap from 'gsap';
@@ -243,7 +231,7 @@
     import { useWindowSize } from '@vueuse/core'
     import { SplitText } from 'gsap/SplitText';
     const { width, height } = useWindowSize();
-    import { isMobileDevice } from '../utils/device';
+    // import { isMobileDevice } from '../utils/device';
     if (process.client) {
         gsap.registerPlugin(ScrollTrigger, CustomEase, SplitText);
     }
@@ -540,11 +528,11 @@
             scrollTrigger: {
                 trigger: '.main-section',
                 start: 'top top',
-                end: `bottom top`,
+                end: `bottom+=150% top`,
                 scrub: true,
                 markers: false,
                 onUpdate: (self) => {
-                    updatePosition(0, 0, 0, 0, -15, 0, self.progress);
+                    updatePosition(0, 0, 0, 0, -18, 0, self.progress);
                 },
                 onEnter: () =>{ 
                     startServiceMarquee();
@@ -578,6 +566,7 @@
             .to('.aboutUs-section-content-3-1', { opacity: 1, filter: 'blur(0px)', duration: 0.1 },0.7)
             .to('.aboutUs-section-content-3-2', { opacity: 1, filter: 'blur(0px)', duration: 0.1 },0.8)
             .to('.aboutUs-section-content-3-2 .underline', { width: '100%', duration: 0.2 },0.9)
+            .to('.aboutUs-section', { '--bg-opacity': '0', duration: 0 },0.9)
             .to('.aboutUs-section-content-3-3', { opacity: 1, filter: 'blur(0px)', duration: 0.1 },1.1)
             .to('.aboutUs-content-group', { opacity: 0, transform: 'scale(5)', duration: 0.2 },1.3)
     }
@@ -930,17 +919,23 @@
                 onUpdate: (self) => {
                     updatePosition(0, 0, 0, 0, -25, 0, self.progress);
                 },
+                onEnter: ()=>{
+                    shrinkingFunction();
+                },
+                onLeaveBack: ()=>{
+                    growingFunction();
+                }
             },    
         });
 
-        gsap.timeline({
-            scrollTrigger: {
-                trigger: '.contactUs-section',
-                start: 'top 15%',
-                markers: false,
-                toggleClass: {targets: ['html', '.contactUs-section', '.l-header'], className: "lastSection"},
-            },    
-        });
+        // gsap.timeline({
+        //     scrollTrigger: {
+        //         trigger: '.contactUs-section',
+        //         start: 'top 15%',
+        //         markers: false,
+        //         toggleClass: {targets: ['html', '.contactUs-section', '.l-header'], className: "lastSection"},
+        //     },    
+        // });
     }
     const updatePosition = (fromX, fromY, fromZ, toX, toY, toZ, progress) => {
         if (splashRef.value) {
@@ -1074,11 +1069,11 @@
                 if (splashRef.value) {
                     splashRef.value.updatePosition(0, 0, this.targets()[0].z);
                 }
+            },
+            onComplete: ()=>{
+                document.body.style.overflow = 'auto';
             }
-        });
-        
-        // 啟用頁面滾動
-        document.body.style.overflow = 'auto';
+        });       
     }
     
     // 切換漢堡選單

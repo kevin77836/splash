@@ -13,14 +13,6 @@ type HydrationStrategies = {
 type LazyComponent<T> = (T & DefineComponent<HydrationStrategies, {}, {}, {}, {}, {}, {}, { hydrated: () => void }>)
 interface _GlobalComponents {
       'Splash': typeof import("../components/Splash.vue")['default']
-    'Splash1': typeof import("../components/Splash1.vue")['default']
-    'Splash2': typeof import("../components/Splash2.vue")['default']
-    'Splash3': typeof import("../components/Splash3.vue")['default']
-    'Splash4': typeof import("../components/Splash4.vue")['default']
-    'SplashCopy': typeof import("../components/SplashCopy.vue")['default']
-    'SplashGLSL': typeof import("../components/SplashGLSL.vue")['default']
-    'SplashShader': typeof import("../components/SplashShader.vue")['default']
-    'SplashWithWord': typeof import("../components/SplashWithWord.vue")['default']
     'NuxtWelcome': typeof import("../node_modules/nuxt/dist/app/components/welcome.vue")['default']
     'NuxtLayout': typeof import("../node_modules/nuxt/dist/app/components/nuxt-layout")['default']
     'NuxtErrorBoundary': typeof import("../node_modules/nuxt/dist/app/components/nuxt-error-boundary.vue")['default']
@@ -46,14 +38,6 @@ interface _GlobalComponents {
     'NuxtIsland': typeof import("../node_modules/nuxt/dist/app/components/nuxt-island")['default']
     'NuxtRouteAnnouncer': IslandComponent<typeof import("../node_modules/nuxt/dist/app/components/server-placeholder")['default']>
       'LazySplash': LazyComponent<typeof import("../components/Splash.vue")['default']>
-    'LazySplash1': LazyComponent<typeof import("../components/Splash1.vue")['default']>
-    'LazySplash2': LazyComponent<typeof import("../components/Splash2.vue")['default']>
-    'LazySplash3': LazyComponent<typeof import("../components/Splash3.vue")['default']>
-    'LazySplash4': LazyComponent<typeof import("../components/Splash4.vue")['default']>
-    'LazySplashCopy': LazyComponent<typeof import("../components/SplashCopy.vue")['default']>
-    'LazySplashGLSL': LazyComponent<typeof import("../components/SplashGLSL.vue")['default']>
-    'LazySplashShader': LazyComponent<typeof import("../components/SplashShader.vue")['default']>
-    'LazySplashWithWord': LazyComponent<typeof import("../components/SplashWithWord.vue")['default']>
     'LazyNuxtWelcome': LazyComponent<typeof import("../node_modules/nuxt/dist/app/components/welcome.vue")['default']>
     'LazyNuxtLayout': LazyComponent<typeof import("../node_modules/nuxt/dist/app/components/nuxt-layout")['default']>
     'LazyNuxtErrorBoundary': LazyComponent<typeof import("../node_modules/nuxt/dist/app/components/nuxt-error-boundary.vue")['default']>
@@ -85,14 +69,6 @@ declare module 'vue' {
 }
 
 export const Splash: typeof import("../components/Splash.vue")['default']
-export const Splash1: typeof import("../components/Splash1.vue")['default']
-export const Splash2: typeof import("../components/Splash2.vue")['default']
-export const Splash3: typeof import("../components/Splash3.vue")['default']
-export const Splash4: typeof import("../components/Splash4.vue")['default']
-export const SplashCopy: typeof import("../components/SplashCopy.vue")['default']
-export const SplashGLSL: typeof import("../components/SplashGLSL.vue")['default']
-export const SplashShader: typeof import("../components/SplashShader.vue")['default']
-export const SplashWithWord: typeof import("../components/SplashWithWord.vue")['default']
 export const NuxtWelcome: typeof import("../node_modules/nuxt/dist/app/components/welcome.vue")['default']
 export const NuxtLayout: typeof import("../node_modules/nuxt/dist/app/components/nuxt-layout")['default']
 export const NuxtErrorBoundary: typeof import("../node_modules/nuxt/dist/app/components/nuxt-error-boundary.vue")['default']
@@ -118,14 +94,6 @@ export const Body: typeof import("../node_modules/nuxt/dist/head/runtime/compone
 export const NuxtIsland: typeof import("../node_modules/nuxt/dist/app/components/nuxt-island")['default']
 export const NuxtRouteAnnouncer: IslandComponent<typeof import("../node_modules/nuxt/dist/app/components/server-placeholder")['default']>
 export const LazySplash: LazyComponent<typeof import("../components/Splash.vue")['default']>
-export const LazySplash1: LazyComponent<typeof import("../components/Splash1.vue")['default']>
-export const LazySplash2: LazyComponent<typeof import("../components/Splash2.vue")['default']>
-export const LazySplash3: LazyComponent<typeof import("../components/Splash3.vue")['default']>
-export const LazySplash4: LazyComponent<typeof import("../components/Splash4.vue")['default']>
-export const LazySplashCopy: LazyComponent<typeof import("../components/SplashCopy.vue")['default']>
-export const LazySplashGLSL: LazyComponent<typeof import("../components/SplashGLSL.vue")['default']>
-export const LazySplashShader: LazyComponent<typeof import("../components/SplashShader.vue")['default']>
-export const LazySplashWithWord: LazyComponent<typeof import("../components/SplashWithWord.vue")['default']>
 export const LazyNuxtWelcome: LazyComponent<typeof import("../node_modules/nuxt/dist/app/components/welcome.vue")['default']>
 export const LazyNuxtLayout: LazyComponent<typeof import("../node_modules/nuxt/dist/app/components/nuxt-layout")['default']>
 export const LazyNuxtErrorBoundary: LazyComponent<typeof import("../node_modules/nuxt/dist/app/components/nuxt-error-boundary.vue")['default']>

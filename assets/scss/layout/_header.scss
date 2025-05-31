@@ -10,10 +10,6 @@
     z-index: 10;
     --header-color: black;
     --mobile-menu-background-color: rgba(255, 255, 255, 0.95);
-    &.lastSection{
-        --header-color: white;
-        --mobile-menu-background-color: rgba(0, 0, 0, 0.95);
-    }
     @include max-xxl{
         top: 2rem;
     }
@@ -46,7 +42,6 @@
         white-space:nowrap;
         padding: 0 0.75rem;
         color: var(--header-color);
-        transition: color 0.5s ease-in-out;
         @include max-xxl{
             font-size: 1rem;
         }
@@ -72,7 +67,6 @@
         }
         .header-saparator-line{
             border-top: 1px solid var(--header-color);
-            transition: border-top 0.5s ease-in-out;
             width: 100%;
         }
         &.hidden{
@@ -116,7 +110,6 @@
                     height: 1.5px;
                     width: 100%;
                     background: var(--header-color);
-                    transition: background 0.5s ease-in-out;
                     opacity: 1;
                     left: 0;
                     transform: rotate(0deg);
@@ -176,12 +169,10 @@
         }
         
         .menu-item {
-            font-size: 2rem;
+            font-size: 1.5rem;
             margin: 1.5rem 0;
             cursor: pointer;
-            transition: all 0.2s ease;
             color: var(--header-color);
-            transition: color 0.5s ease-in-out;
         }
     }
 }
