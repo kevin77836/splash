@@ -157,12 +157,10 @@
             </div> 
         </div>
         <div v-show="isStarted" class="section services-section">
-            <div class="services-content-container">
-                <div v-for="(item, index) in serviceData" class="services-content" :class="`services-content-${index+1}`" :key="index">
-                    <h2 class="services-title">{{ item.title }}</h2>
-                    <div class="services-description">
-                        {{ item.description }}
-                    </div>
+            <div v-for="(item, index) in serviceData" class="services-content" :class="`services-content-${index+1}`" :key="index">
+                <h2 class="services-title">{{ item.title }}</h2>
+                <div class="services-description">
+                    {{ item.description }}
                 </div>
             </div>
         </div>
@@ -288,127 +286,127 @@
     ])
 
     // 文字動態特效
-    const textAnimation = {
-        init() {
-            if (process.client) {
-                for(let i = 0; i < serviceData.value.length; i++) {
-                    // 為標題創建 SplitText
-                    const titleElement = document.querySelector(`.services-content-${i+1} .services-title`);
-                    if (titleElement) {
-                        serviceData.value[i].splitTitle = new SplitText(titleElement, {
-                            type: "chars",
-                            charsClass: "char"
-                        });
-                        // 保存原始文字並設置初始可見性
-                        serviceData.value[i].splitTitle.chars.forEach(char => {
-                            char.dataset.originalText = char.textContent;
-                            char.style.visibility = 'hidden';
-                            char.textContent = '';
-                        });
-                    }
+    // const textAnimation = {
+    //     init() {
+    //         if (process.client) {
+    //             for(let i = 0; i < serviceData.value.length; i++) {
+    //                 // 為標題創建 SplitText
+    //                 const titleElement = document.querySelector(`.services-content-${i+1} .services-title`);
+    //                 if (titleElement) {
+    //                     serviceData.value[i].splitTitle = new SplitText(titleElement, {
+    //                         type: "chars",
+    //                         charsClass: "char"
+    //                     });
+    //                     // 保存原始文字並設置初始可見性
+    //                     serviceData.value[i].splitTitle.chars.forEach(char => {
+    //                         char.dataset.originalText = char.textContent;
+    //                         char.style.visibility = 'hidden';
+    //                         char.textContent = '';
+    //                     });
+    //                 }
 
-                    // 為描述創建 SplitText
-                    const descElement = document.querySelector(`.services-content-${i+1} .services-description`);
-                    if (descElement) {
-                        serviceData.value[i].splitDescription = new SplitText(descElement, {
-                            type: "chars",
-                            charsClass: "char"
-                        });
-                        // 保存原始文字並設置初始可見性
-                        serviceData.value[i].splitDescription.chars.forEach(char => {
-                            char.dataset.originalText = char.textContent;
-                            char.style.visibility = 'hidden';
-                            char.textContent = '';
-                        });
-                    }
-                }
-            }
-        },
+    //                 // 為描述創建 SplitText
+    //                 const descElement = document.querySelector(`.services-content-${i+1} .services-description`);
+    //                 if (descElement) {
+    //                     serviceData.value[i].splitDescription = new SplitText(descElement, {
+    //                         type: "chars",
+    //                         charsClass: "char"
+    //                     });
+    //                     // 保存原始文字並設置初始可見性
+    //                     serviceData.value[i].splitDescription.chars.forEach(char => {
+    //                         char.dataset.originalText = char.textContent;
+    //                         char.style.visibility = 'hidden';
+    //                         char.textContent = '';
+    //                     });
+    //                 }
+    //             }
+    //         }
+    //     },
 
-        getRandomLetter() {
-            const letters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ結合設計創意與前端開發擅長跨界沉浸式互動體驗';
-            return letters[Math.floor(Math.random() * letters.length)];
-        },
+    //     getRandomLetter() {
+    //         const letters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ結合設計創意與前端開發擅長跨界沉浸式互動體驗';
+    //         return letters[Math.floor(Math.random() * letters.length)];
+    //     },
 
-        animate(index) {
-            if (!process.client) return;
+    //     animate(index) {
+    //         if (!process.client) return;
 
-            const titleChars = serviceData.value[index].splitTitle.chars;
-            const descriptionChars = serviceData.value[index].splitDescription.chars;
+    //         const titleChars = serviceData.value[index].splitTitle.chars;
+    //         const descriptionChars = serviceData.value[index].splitDescription.chars;
 
-            // 先將所有字元設為空
-            titleChars.forEach(char => {
-                char.textContent = '';
-                char.style.visibility = 'hidden';
-            });
-            descriptionChars.forEach(char => {
-                char.textContent = '';
-                char.style.visibility = 'hidden';
-            });
+    //         // 先將所有字元設為空
+    //         titleChars.forEach(char => {
+    //             char.textContent = '';
+    //             char.style.visibility = 'hidden';
+    //         });
+    //         descriptionChars.forEach(char => {
+    //             char.textContent = '';
+    //             char.style.visibility = 'hidden';
+    //         });
 
-            // 創建標題動畫時間軸
-            const titleTimeline = gsap.timeline();
+    //         // 創建標題動畫時間軸
+    //         const titleTimeline = gsap.timeline();
 
-            // 為每個標題字元創建動畫
-            titleChars.forEach((char, charIndex) => {
-                const charTimeline = gsap.timeline();
+    //         // 為每個標題字元創建動畫
+    //         titleChars.forEach((char, charIndex) => {
+    //             const charTimeline = gsap.timeline();
                 
-                // 添加單個字元的動畫到時間軸
-                charTimeline
-                    .set(char, { visibility: 'visible' }) // 顯示字元
-                    .to({}, { 
-                        duration: 0.05,
-                        onStart: () => {
-                            // 開始隨機字動態
-                            const randomInterval = setInterval(() => {
-                                char.textContent = textAnimation.getRandomLetter();
-                            }, 5);
+    //             // 添加單個字元的動畫到時間軸
+    //             charTimeline
+    //                 .set(char, { visibility: 'visible' }) // 顯示字元
+    //                 .to({}, { 
+    //                     duration: 0.05,
+    //                     onStart: () => {
+    //                         // 開始隨機字動態
+    //                         const randomInterval = setInterval(() => {
+    //                             char.textContent = textAnimation.getRandomLetter();
+    //                         }, 5);
 
-                            // 0.5秒後清除隨機字動態
-                            setTimeout(() => {
-                                clearInterval(randomInterval);
-                                char.textContent = char.dataset.originalText;
-                            }, 50);
-                        }
-                    })
+    //                         // 0.5秒後清除隨機字動態
+    //                         setTimeout(() => {
+    //                             clearInterval(randomInterval);
+    //                             char.textContent = char.dataset.originalText;
+    //                         }, 50);
+    //                     }
+    //                 })
 
-                // 將此字元的動畫添加到主時間軸
-                titleTimeline.add(charTimeline, charIndex * 0.05); // 0.6 = 0.5(動畫) + 0.1(延遲)
-            });
+    //             // 將此字元的動畫添加到主時間軸
+    //             titleTimeline.add(charTimeline, charIndex * 0.05); // 0.6 = 0.5(動畫) + 0.1(延遲)
+    //         });
 
-            // 等標題完成後開始描述文字動畫
-            titleTimeline.add(() => {
-                const descriptionTimeline = gsap.timeline();
+    //         // 等標題完成後開始描述文字動畫
+    //         titleTimeline.add(() => {
+    //             const descriptionTimeline = gsap.timeline();
 
-                // 為每個描述字元創建動畫
-                descriptionChars.forEach((char, charIndex) => {
-                    const charTimeline = gsap.timeline();
+    //             // 為每個描述字元創建動畫
+    //             descriptionChars.forEach((char, charIndex) => {
+    //                 const charTimeline = gsap.timeline();
                     
-                    // 添加單個字元的動畫到時間軸
-                    charTimeline
-                        .set(char, { visibility: 'visible' }) // 顯示字元
-                        .to({}, { 
-                            duration: 0.02,
-                            onStart: () => {
-                                // 開始隨機字動態
-                                const randomInterval = setInterval(() => {
-                                    char.textContent = textAnimation.getRandomLetter();
-                                }, 2);
+    //                 // 添加單個字元的動畫到時間軸
+    //                 charTimeline
+    //                     .set(char, { visibility: 'visible' }) // 顯示字元
+    //                     .to({}, { 
+    //                         duration: 0.02,
+    //                         onStart: () => {
+    //                             // 開始隨機字動態
+    //                             const randomInterval = setInterval(() => {
+    //                                 char.textContent = textAnimation.getRandomLetter();
+    //                             }, 2);
 
-                                // 0.5秒後清除隨機字動態
-                                setTimeout(() => {
-                                    clearInterval(randomInterval);
-                                    char.textContent = char.dataset.originalText;
-                                }, 20);
-                            }
-                        })
+    //                             // 0.5秒後清除隨機字動態
+    //                             setTimeout(() => {
+    //                                 clearInterval(randomInterval);
+    //                                 char.textContent = char.dataset.originalText;
+    //                             }, 20);
+    //                         }
+    //                     })
 
-                    // 將此字元的動畫添加到描述時間軸
-                    descriptionTimeline.add(charTimeline, charIndex * 0.02); // 0.6 = 0.5(動畫) + 0.1(延遲)
-                });
-            });
-        }
-    };
+    //                 // 將此字元的動畫添加到描述時間軸
+    //                 descriptionTimeline.add(charTimeline, charIndex * 0.02); // 0.6 = 0.5(動畫) + 0.1(延遲)
+    //             });
+    //         });
+    //     }
+    // };
 
     // 新增：媒體資源列表
     const mediaResources = ref([
@@ -703,13 +701,12 @@
     const servicesSectionGsap = () => {
         gsap.timeline({
             scrollTrigger: {
-                trigger: '.services-section',
+                trigger: `.services-content-1`,
                 start: 'top bottom',
-                end: `top 15%`,
+                end: `${100/3}% center`,
                 scrub: false,
                 markers: false,
                 onEnter: () => {
-                    // textAnimation.animate(0);
                     shrinkingFunction()
                 },
                 onLeave: () => {
@@ -733,213 +730,107 @@
 
         // 動畫時間參數
         const animParams = {
-            transitionDuration: 0.1,  // 淡入淡出過渡時間
-            stayDuration: 0.1,     // 內容停留時間
             totalCount: 6,
             xTransform: 50,
-            yTransform: 300,
-            xStayTransform: 50/4,
-            yStayTransform: 300/4,
+            xStayTransform: 5,
         }
 
-        const halfStayDuration = animParams.stayDuration / 2;
-        const contentDuration = animParams.transitionDuration + animParams.stayDuration;
-        const timeLineDuration = halfStayDuration + animParams.transitionDuration + (animParams.totalCount - 2) * contentDuration + halfStayDuration;
-        const animateDuration = timeLineDuration / 100 / 4 * 5;
-        if(width.value <= 768){
-            animParams.xTransform = 0;
-            animParams.xStayTransform = 0;
-        }
-        
-        // 1
-        const tl1 = gsap.timeline({
-            scrollTrigger: {
-                trigger: '.services-section',
-                start: 'top top',
-                end: `${(halfStayDuration + animParams.transitionDuration) / animateDuration}% top`,
-                scrub: true,
-                markers: false,
-            },
-        })
-        tl1.to(
-            `.services-content-1`,
-            {
-                opacity: 1,
-                x: animParams.xStayTransform,
-                y: -animParams.yStayTransform, 
-                duration: halfStayDuration, 
-            },
-            0
-        )
-        .to(
-            `.services-content-1`,
-            { 
-                opacity: 0, 
-                x: animParams.xTransform, 
-                y: -animParams.yTransform, 
-                duration: animParams.transitionDuration, 
-            },
-            halfStayDuration
-        )
-
-        gsap.timeline({
-            scrollTrigger: {
-                trigger: '.services-section',
-                end: `${(halfStayDuration + halfStayDuration) / animateDuration}% 20%`,
-                markers: false,
-                onLeave: () => {
-                    shrinkingFunction();
-                },
-                onEnterBack: () => {
-                    growingFunction();
-                    changeMaterialType(0);
-                },
-            },
-        })
-        // gsap.timeline({
-        //     scrollTrigger: {
-        //         trigger: '.services-content-container',
-        //         start: `top center`,
-        //         markers: false,
-        //         onEnter: () => {
-        //             // textAnimation.animate(0);
-        //         },
-        //     },
-        // })
-        
-        // 2~5
-        for(let i = 2; i <= animParams.totalCount-1; i++){
-            const sectionStart = (halfStayDuration + (((halfStayDuration * 2) + animParams.transitionDuration) * (i-2)));
-            const sectionEnd = (halfStayDuration + (((halfStayDuration * 2) + animParams.transitionDuration) * (i-1))+ animParams.transitionDuration);
-            const tl = gsap.timeline({
+        for (let i = 1; i <= animParams.totalCount; i++) {
+            if(width.value <= 768){
+                animParams.xTransform = 0;
+                animParams.xStayTransform = 0;
+            }
+            gsap.timeline({
                 scrollTrigger: {
-                    trigger: '.services-section',
-                    start: `${sectionStart / animateDuration}% top`,
-                    end: `${sectionEnd / animateDuration}% top`,
-                    scrub: true,
+                    trigger: `.services-content-${i}`,
+                    start: 'top bottm',
                     markers: false,
-                },
-            })
-            tl.fromTo(
-                `.services-content-${i}`,
-                { 
+                    scrub: true,
+                }
+            }).set(`.services-content-${i}`, 
+                {
+                    x: animParams.xTransform,
                     opacity: 0, 
-                    x: animParams.xTransform, 
-                    y: animParams.yTransform 
+                }
+            )
+            
+            gsap.timeline({
+                scrollTrigger: {
+                    trigger: `.services-content-${i}`,
+                    start: 'top center',
+                    end: `${100/3}% center`,
+                    markers: false,
+                    scrub: true,
                 },
-                { 
+            }).to(
+                `.services-content-${i}`,
+                {
+                    x: animParams.xStayTransform,
                     opacity: 1, 
-                    x: animParams.xStayTransform,
-                    y: animParams.yStayTransform, 
-                    duration: animParams.transitionDuration, 
-                },
-                0
-            )
-            .to(
-                `.services-content-${i}`,
-                { 
-                    x: 0,
-                    y: 0, 
-                    duration: halfStayDuration, 
-                },
-                animParams.transitionDuration
-            )
-            .to(
-                `.services-content-${i}`,
-                { 
-                    x: animParams.xStayTransform,
-                    y: -animParams.yStayTransform, 
-                    duration: halfStayDuration, 
-                },
-                animParams.transitionDuration + halfStayDuration
-            )
-            .to(
-                `.services-content-${i}`,
-                { 
-                    opacity: 0, 
-                    x: animParams.xTransform, 
-                    y: -animParams.yTransform, 
-                    duration: animParams.transitionDuration, 
-                },
-                animParams.transitionDuration + halfStayDuration + halfStayDuration
+                }
             )
 
             gsap.timeline({
                 scrollTrigger: {
-                    trigger: '.services-section',
-                    start: `${(sectionStart + animParams.transitionDuration) / animateDuration}% top`,
-                    end: `${(sectionEnd - animParams.transitionDuration) / animateDuration}% top`,
+                    trigger: `.services-content-${i}`,
+                    start: `${100/3}% center`,
+                    end: `center center`,
                     markers: false,
+                    scrub: true,
                     onEnter: () => {
                         growingFunction();
                         changeMaterialType(i-1);
                     },
-                    onLeave: () => {
+                    onLeaveBack: () =>{
                         shrinkingFunction();
-                    },
-                    onEnterBack: () => {
-                        growingFunction();
-                        changeMaterialType(i-1);
+                    }
+                },
+            }).to(
+                `.services-content-${i}`,
+                {
+                    x: 0
+                }
+            )
+
+            gsap.timeline({
+                scrollTrigger: {
+                    trigger: `.services-content-${i}`,
+                    start: `center center`,
+                    end: `${100*2/3}% center`,
+                    markers: false,
+                    scrub: true,
+                },
+            }).to(
+                `.services-content-${i}`,
+                {
+                    x: animParams.xStayTransform,
+                }
+            )
+
+            gsap.timeline({
+                scrollTrigger: {
+                    trigger: `.services-content-${i}`,
+                    start: `${100*2/3}% center`,
+                    end: `bottom center`,
+                    markers: false,
+                    scrub: true,
+                    onEnter: () => {
+                        shrinkingFunction();
                     },
                     onLeaveBack: () => {
-                        shrinkingFunction();
-                    },
+                        growingFunction();
+                        changeMaterialType(i-1);
+                    }
                 },
-            });
+            }).to(
+                `.services-content-${i}`,
+                { 
+                    x: animParams.xTransform,
+                    opacity: 0, 
+                }
+            )
+            
         }
-        
-        // 6
-        const tl6 = gsap.timeline({
-            scrollTrigger: {
-                trigger: '.services-section',
-                start: `${(halfStayDuration + (((halfStayDuration * 2) + animParams.transitionDuration) * (6-2))) / animateDuration}% top`,
-                end:`${((((halfStayDuration * 2) + animParams.transitionDuration) * (6-1))) / animateDuration}% top`,
-                scrub: true,
-                markers: false,
-                // onEnter: () => {
-                //     // textAnimation.animate(6-1);
-                // },
-            },
-        })
-        tl6.fromTo(
-            `.services-content-${animParams.totalCount}`,
-            { 
-                opacity: 0, 
-                x: animParams.xTransform, 
-                y: animParams.yTransform 
-            },
-            { 
-                opacity: 1, 
-                x: animParams.xStayTransform,
-                y: animParams.yStayTransform, 
-                duration: animParams.transitionDuration, 
-            },
-            0
-        )
-        .to(
-            `.services-content-${animParams.totalCount}`,
-            { 
-                x: 0,
-                y: 0, 
-                duration: halfStayDuration, 
-            },
-            animParams.transitionDuration
-        )
-        
-        gsap.timeline({
-            scrollTrigger: {
-                trigger: '.services-section',
-                start: `${(halfStayDuration + (((halfStayDuration * 2) + animParams.transitionDuration) * (animParams.totalCount-2)) + animParams.transitionDuration) / animateDuration}% top`,
-                markers: false,
-                onEnter: () => {
-                    growingFunction();
-                    changeMaterialType(5);
-                },
-                onLeaveBack: () => {
-                    shrinkingFunction();
-                },
-            },
-        })
     }
     const partnersSectionGsap = () => {
         const itemCount = 12; // 作品總數
@@ -957,10 +848,10 @@
         gsap.timeline({
             scrollTrigger: {
                 trigger: '.partners-section',
-                start: `${15 * (100 / 200)}% bottom`,
+                start: `top ${(100 * 2) / 3}%`,
                 end: 'top top',
                 scrub: true,
-                markers: false,
+                markers: true,
                 onUpdate: (self) => {
                     if(width.value>768){
                         updatePosition(-8, 0, 0, 0, 0, 0, self.progress);
