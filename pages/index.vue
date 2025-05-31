@@ -211,6 +211,17 @@
                 <div class="contactUs-title">
                     Let's make a splash
                 </div>
+                <div class="contactUs-description">
+                    如果有任何疑問或者有報價洽詢的需求，歡迎聯繫我們，
+                    我們會在收到訊息後三天內回覆，
+                    請留下您的聯絡方式及簡要內容，方便讓我們了解您的需求。
+                </div>
+                <div class="contactUs-information">
+                    <div class="phone">Phone: 0912-345-678</div>
+                    <div class="email">Email: splash-digilab@gmail.com</div>
+                    <div class="line">Line: @splash-digilab</div>
+                    <div class="companyName">斯巴拉系數位互動有限公司</div>
+                </div>
             </div>
         </div>
     </div>
