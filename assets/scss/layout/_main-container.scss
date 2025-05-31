@@ -259,9 +259,6 @@
         align-items: flex-end;
         overflow: hidden;
         padding-right: 10%;
-        @include max-md{
-            padding-right: 5%;
-        }
         .services-content{
             flex-grow: 1;
             width: 40%;

@@ -851,7 +851,7 @@
                 start: `top ${(100 * 2) / 3}%`,
                 end: 'top top',
                 scrub: true,
-                markers: true,
+                markers: false,
                 onUpdate: (self) => {
                     if(width.value>768){
                         updatePosition(-8, 0, 0, 0, 0, 0, self.progress);
