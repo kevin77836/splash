@@ -1,16 +1,19 @@
 .l-header{
-    // mix-blend-mode: difference;
     position: fixed;
     top: 4rem;
     transition-duration: 1s;
     background-blend-mode: difference;
-    // color: var(--font-color);
-    // transition-timing-function: cubic-bezier(0,0,.015,1);
     transition-timing-function: ease;
     opacity: 0;
     width: calc(100% - 60%);
     left: 30%;
     z-index: 10;
+    --header-color: black;
+    --mobile-menu-background-color: rgba(255, 255, 255, 0.95);
+    &.lastSection{
+        --header-color: white;
+        --mobile-menu-background-color: rgba(0, 0, 0, 0.95);
+    }
     @include max-xxl{
         top: 2rem;
     }
@@ -42,15 +45,14 @@
         max-width: 100%;
         white-space:nowrap;
         padding: 0 0.75rem;
+        color: var(--header-color);
+        transition: color 0.5s ease-in-out;
         @include max-xxl{
             font-size: 1rem;
         }
         @include max-lg{
             padding: 0 0.5rem;
         }
-        // @include max-md{
-        //     padding: 0 0.5rem;
-        // }
         &.hidden{
             pointer-events: none;
             opacity: 0;
@@ -69,7 +71,8 @@
             padding: 0 0.5rem;
         }
         .header-saparator-line{
-            border-top: 1px solid black;
+            border-top: 1px solid var(--header-color);
+            transition: border-top 0.5s ease-in-out;
             width: 100%;
         }
         &.hidden{
@@ -112,7 +115,8 @@
                     position: absolute;
                     height: 1.5px;
                     width: 100%;
-                    background: black;
+                    background: var(--header-color);
+                    transition: background 0.5s ease-in-out;
                     opacity: 1;
                     left: 0;
                     transform: rotate(0deg);
@@ -156,7 +160,7 @@
         left: 0;
         width: 100%;
         height: 100%;
-        background-color: rgba(255, 255, 255, 0.95);
+        background-color: var(--mobile-menu-background-color);
         z-index: 100;
         display: flex;
         flex-direction: column;
@@ -176,11 +180,8 @@
             margin: 1.5rem 0;
             cursor: pointer;
             transition: all 0.2s ease;
-            
-            // &:hover {
-            //     transform: scale(1.1);
-            //     color: #666;
-            // }
+            color: var(--header-color);
+            transition: color 0.5s ease-in-out;
         }
     }
 }

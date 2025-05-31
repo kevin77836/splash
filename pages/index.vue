@@ -527,13 +527,13 @@
 
         gsap.timeline({
             scrollTrigger: {
-                trigger: '.aboutUs-section',
-                start: '5% bottom',
-                end: `center bottom`,
+                trigger: '.main-section',
+                start: 'top top',
+                end: `bottom top`,
                 scrub: true,
                 markers: false,
                 onUpdate: (self) => {
-                    updatePosition(0, 0, 0, 0, -30, 0, self.progress);
+                    updatePosition(0, 0, 0, 0, -15, 0, self.progress);
                 },
                 onEnter: () =>{ 
                     startServiceMarquee();
@@ -567,7 +567,6 @@
             .to('.aboutUs-section-content-3-1', { opacity: 1, filter: 'blur(0px)', duration: 0.1 },0.7)
             .to('.aboutUs-section-content-3-2', { opacity: 1, filter: 'blur(0px)', duration: 0.1 },0.8)
             .to('.aboutUs-section-content-3-2 .underline', { width: '100%', duration: 0.2 },0.9)
-            .to('.aboutUs-section', { '--bg-opacity': 0, duration: 0 },0.9)
             .to('.aboutUs-section-content-3-3', { opacity: 1, filter: 'blur(0px)', duration: 0.1 },1.1)
             .to('.aboutUs-content-group', { opacity: 0, transform: 'scale(5)', duration: 0.2 },1.3)
     }
@@ -922,6 +921,15 @@
                 },
             },    
         });
+
+        gsap.timeline({
+            scrollTrigger: {
+                trigger: '.contactUs-section',
+                start: 'top 15%',
+                markers: false,
+                toggleClass: {targets: ['html', '.contactUs-section', '.l-header'], className: "lastSection"},
+            },    
+        });
     }
     const updatePosition = (fromX, fromY, fromZ, toX, toY, toZ, progress) => {
         if (splashRef.value) {
@@ -1089,7 +1097,7 @@
                 let position = section.offsetTop;
 
                 if(sectionClass == 'aboutUs-section'){
-                    position = section.offsetTop + section.offsetHeight * 0.65;
+                    position = section.offsetTop + section.offsetHeight * 0.5;
                 }else if(sectionClass == 'works-section'){
                     position = section.offsetTop + section.offsetHeight * 0.15;
                 }else if(sectionClass == 'services-section'){
