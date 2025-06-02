@@ -811,82 +811,6 @@
         }
     }
     const partnersSectionGsap = () => {
-        // const itemCount = 12; // 作品總數
-        // const radius = 300; // ring 半徑
-        // const angleStep = (360 / itemCount); // 每個項目的角度間隔
-        // const picWidth = 100;
-        
-        // // 初始化每個作品的位置
-        // for (let i = 1; i <= itemCount; i++) {
-        //     const angle = angleStep * (i - 1);
-        //     gsap.set(`.partners-content-item-${i}`, {
-        //         '--item-rotation': angle,
-        //     });
-        // }
-
-        // gsap.timeline({
-        //     scrollTrigger: {
-        //         trigger: '.partners-section',
-        //         start: `top ${(100 * 2) / 3}%`,
-        //         end: 'top top',
-        //         scrub: true,
-        //         markers: false,
-        //         onUpdate: (self) => {
-        //             if(width.value>768){
-        //                 updatePosition(-8, 0, 0, 0, 0, 0, self.progress);
-        //             }else{
-        //                 updatePosition(0, -2, 0, 0, 0, 0, self.progress);
-        //             }
-        //         },
-        //         onEnter:()=>{
-        //             shrinkingFunction();
-        //         },
-        //         onLeave: () => {
-        //             changeMaterialType(0);
-        //             growingFunction();
-        //             for (let i = 1; i <= itemCount; i++) {
-        //                 gsap.to(`.partners-content-item-${i}`, {
-        //                     opacity: 1,
-        //                     '--item-radius': radius,
-        //                     '--width': picWidth,
-        //                     duration: 0.5,
-        //                     ease: "customGrowEase",
-        //                 });
-        //             }
-        //         },
-        //         onEnterBack: () => {
-        //             shrinkingFunction();
-        //         },
-        //         onLeaveBack: () => {
-        //             growingFunction();
-        //             changeMaterialType(5);
-        //             for (let i = 1; i <= itemCount; i++) {
-        //                 gsap.set(`.partners-content-item-${i}`, {
-        //                     opacity: 0,
-        //                     '--width': 0,
-        //                     '--item-radius': 0
-        //                 });
-        //             }
-        //         }
-        //     },    
-        // });
-
-        // gsap.timeline({
-        //     scrollTrigger: {
-        //         trigger: '.partners-section',
-        //         start: 'top top',
-        //         end: 'bottom bottom',
-        //         scrub: 1,
-        //         markers: false,
-        //         onUpdate: (self) => {
-        //             const rotation = self.progress * 360;
-        //             gsap.set('.partners-content-group', {
-        //                 '--rotation-y': rotation
-        //             });
-        //         }
-        //     }
-        // });
-
         const itemCount = 12; // 元素總數
 
         const desktopPositions = {
@@ -986,7 +910,7 @@
                 scrub: true, // 平滑的滾動效果
                 markers: false,
                 onUpdate: (self) => {
-                    updatePosition(0, 0, 0, 0, 0, 25, self.progress);
+                    updatePosition(0, 0, 0, 0, 0, 20, self.progress);
                 },
             }
         });
@@ -1009,25 +933,16 @@
                 scrub: true,
                 markers: false,
                 onUpdate: (self) => {
-                    // updatePosition(0, 0, 0, 0, -25, 0, self.progress);
+                    updatePosition(0, 0, 20, 0, 0, 30, self.progress);
                 },
                 onEnter: ()=>{
                     shrinkingFunction();
                 },
                 onLeaveBack: ()=>{
-                    growingFunction();
+                    // growingFunction();
                 }
             },    
         });
-
-        // gsap.timeline({
-        //     scrollTrigger: {
-        //         trigger: '.contactUs-section',
-        //         start: 'top 15%',
-        //         markers: false,
-        //         toggleClass: {targets: ['html', '.contactUs-section', '.l-header'], className: "lastSection"},
-        //     },    
-        // });
     }
     const updatePosition = (fromX, fromY, fromZ, toX, toY, toZ, progress) => {
         if (splashRef.value) {
