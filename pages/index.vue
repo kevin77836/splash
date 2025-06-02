@@ -94,15 +94,7 @@
                  @click="clickStart">
                 {{ loadingPercent }}
             </div>
-      
-            <!-- <h1 :class="{'hidden': !isLandingPage || (isLandingPage && !isStarted)}" class="company-name">
-            <span class="front-name">
-            Splash
-            </span>
-            <span class="back-name">
-            DigiLab
-                </span>
-            </h1> -->
+
             <div v-show="isStarted" class="marquee">
                 <div class="marquee-content-group">
                     <span class="marquee-content-group-item">AR/VR/XR策展 ・ 網頁設計開發 ・ 品牌識別規劃 ・ 2D/3D動畫 ・ 互動設計/數位藝術 ・ AR/VR/XR策展 ・ 網頁設計開發 ・ 品牌識別規劃 ・ 2D/3D動畫 ・ 互動設計/數位藝術 ・&nbsp;</span>
@@ -577,7 +569,7 @@
                 start: 'top bottom',
                 end: 'top top',
                 scrub: true,
-                markers: true,
+                markers: false,
                 onUpdate: (self) => {
                     updatePosition(0, -1, 30, 0, 0, -10, self.progress);
                 },
@@ -1133,6 +1125,8 @@
         // 開始預載入媒體資源
         preloadAllMedia();
 
-        // textAnimation.init();
+        if (isMobileDevice()) {
+            document.documentElement.style.setProperty('--mainHeight', '-webkit-fill-available');
+        }
     });
 </script>
