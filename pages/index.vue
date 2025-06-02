@@ -74,19 +74,6 @@
             </div>
         </div>
     </div>
-    <!-- <div :class="{'active': isStarted && isLandingPage}" class="l-footer">
-        <div class="desktop-group">
-            <div class="footer-saparator">
-                <div class="footer-saparator-line"></div>
-            </div>
-            <div class="footer-link">
-                Let's Make a Splash
-            </div>
-            <div class="footer-saparator">
-                <div class="footer-saparator-line"></div>
-            </div>
-        </div>        
-    </div> -->
     <div class="main-container">
         <div class="section main-section">
             <div v-if="!isStarted" 
