@@ -1,13 +1,13 @@
 .main-container{
+    height: var(--h);
     .section{
         position: relative;
         width: 100%;
     }
     .main-section{
-        position: relative;
         display: flex;
         align-items: flex-end;
-        height: var(--mainHeight);
+        height: 100%;
         .startButton{
             z-index: 10;
             position: absolute;
@@ -78,9 +78,8 @@
         }
     }
     .aboutUs-section{
-        position: relative;
-        height: 2000px;
-        // height: 300%;
+        // height: 2000px;
+        height: 300%;
         --bg-opacity: 0.75;
         background-color:rgba($color: #F2F2F2, $alpha: var(--bg-opacity));
         .aboutUs-content-container{
@@ -209,9 +208,8 @@
         }
     } 
     .works-section{
-        position: relative;
-        height: 2000px;
-        // height: 300%;
+        // height: 2000px;
+        height: 300%;
         // background-color: red;
         .works-content-container{
             // background-color: red;
@@ -257,8 +255,8 @@
         }
     }
     .services-section{
-        position: relative;
-        height: 2000px;
+        height: 500%;
+        // height: 2000px;
         color: var(--font-color);
         display: flex;
         flex-direction: column;
@@ -295,9 +293,9 @@
                 font-size: 1rem;
                 line-height: 1.5;
                 color: black;
-                transform: rotate(-0.35deg);
+                // transform: rotate(-0.35deg);
                 @include max-md{
-                    transform: rotate(-0.3deg);
+                    // transform: rotate(-0.3deg);
                     text-align: center;
                 }   
             }
@@ -305,7 +303,7 @@
     }
     .partners-section{
         position: relative;
-        height: 1000px;
+        height: 200%;
         .partners-content-container{
             width: 100%;
             // height: 100svh;
@@ -356,7 +354,7 @@
         }
     }
     .contactUs-section{
-        height: 100dvh;
+        height: 100%;
         --lastSection-color: black;
         overflow: hidden;
         display: flex;

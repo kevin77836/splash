@@ -1112,8 +1112,10 @@
         // 開始預載入媒體資源
         preloadAllMedia();
 
+        const windowHeight = height.value;
+        
         if (isMobileDevice()) {
-            document.documentElement.style.setProperty('--mainHeight', '-webkit-fill-available');
+            document.documentElement.style.setProperty('--h', `${windowHeight}px`);
         }
     });
 </script>
