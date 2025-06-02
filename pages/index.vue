@@ -638,7 +638,7 @@
                 scrub: true,
                 markers: false,
                 onUpdate: (self) => {
-                    updatePosition(0, 0, -10, 0, 0, 20, self.progress);
+                    updatePosition(0, 0, -10, 0, 0, 0, self.progress);
                 },
             }
         });
@@ -698,9 +698,9 @@
                 },
                 onUpdate: (self) => {
                     if(width.value>768){
-                        updatePosition(0, 0, 20, -8, 0, 0, self.progress);
+                        updatePosition(0, 0, 0, -8, 0, 0, self.progress);
                     }else{
-                        updatePosition(0, 0, 20, 0, -2, 0, self.progress);
+                        updatePosition(0, 0, 0, 0, -2, 0, self.progress);
                     }
                 },
             },
@@ -890,49 +890,46 @@
         const itemCount = 12; // 元素總數
 
         const desktopPositions = {
-            1: {x: 250, y: -700, z: 3100},
-            2: {x: 700, y: -500, z: 2900},
-            3: {x: 880, y: 0, z: 3100},
-            4: {x: 700, y: 350, z: 2900},
-            5: {x: 920, y: -450, z: 3100},
-            6: {x: 600, y: 750, z: 2900},
-            7: {x: -480, y: 600, z: 3100},
-            8: {x: -700, y: 450, z: 2900},
-            9: {x: -890, y: 250, z: 3100},
-            10: {x: -850, y: 0, z: 2900},
-            11: {x: -800, y: -600, z: 3100},
-            12: {x: -625, y: -550, z: 2900},
+            1: {x: 50, y: -400, z: 3300},
+            2: {x: 400, y: -200, z: 3400},
+            3: {x: 580, y: 0, z: 3300},
+            
+            // 右下區域
+            4: {x: 350, y: 200, z: 3400},
+            5: {x: 220, y: -50, z: 3350},
+            6: {x: 100, y: 250, z: 3400},
+            
+            // 左下區域
+            7: {x: -180, y: 300, z: 3300},
+            8: {x: -400, y: 150, z: 3400},
+            9: {x: -390, y: 50, z: 3200},
+            
+            // 左上區域
+            10: {x: -550, y: 0, z: 3300},
+            11: {x: -500, y: -300, z: 3300},
+            12: {x: -325, y: -250, z: 3200},
         };
         const mobilePositions = {
-            1: {x: 300, y: -750, z: 1500},
-            2: {x: -400, y: -700, z: 1400},
-            3: {x: 250, y: -550, z: 1400},
-            4: {x: -450, y: -350, z: 1500},
-            5: {x: 550, y: -300, z: 1500},
-            6: {x: -550, y: -150, z: 1400},
-            7: {x: 500, y: 0, z: 1500},
-            8: {x: -450, y: 150, z: 1400},
-            9: {x: 350, y: 300, z: 1500},
-            10: {x: -500, y: 400, z: 1500},
-            11: {x: 400, y: 500, z: 1400},
-            12: {x: -100, y: 650, z: 1400},
+            // 上方區域
+            1: {x: 250, y: -600, z: 1200},
+            2: {x: -200, y: -500, z: 1400},
+            3: {x: 150, y: -400, z: 1300},
+            
+            // 上中區域
+            4: {x: -300, y: -300, z: 1500},
+            5: {x: 200, y: -200, z: 1100},
+            6: {x: -150, y: -100, z: 1200},
+            
+            // 中心區域
+            7: {x: 300, y: 0, z: 1300},
+            8: {x: -250, y: 100, z: 1400},
+            9: {x: 200, y: 200, z: 1200},
+            
+            // 下中區域
+            10: {x: -300, y: 300, z: 1500},
+            11: {x: 200, y: 400, z: 1300},
+            12: {x: -200, y: 500, z: 1400},
         };
-        function getMinAbsSum(positions) {
-            let min = { key: null, sum: Infinity };
-
-            for (const key in positions) {
-                if (positions.hasOwnProperty(key)) {
-                    const { x, y, z } = positions[key];
-                    const sum = Math.abs(x) + Math.abs(y) + Math.abs(z);
-
-                    if (sum < min.sum) {
-                        min = { key, sum };
-                    }
-                }
-            }
-
-            return min;
-        }
 
         gsap.timeline({
             scrollTrigger: {
@@ -953,7 +950,6 @@
                     growingFunction();
                     const tl = gsap.timeline();
                     const position = width.value > 768 ? desktopPositions : mobilePositions;
-                    const minPosition = getMinAbsSum(position);
 
                     for (let i = 1; i <= itemCount; i++) {
                         tl.to(`.partners-content-item-${i}`, {
@@ -982,6 +978,27 @@
                 }
             },    
         });
+        const partnersSectionTimeline = gsap.timeline({
+            scrollTrigger: {
+                trigger: '.partners-section',
+                start: 'top top', // 從頁面頂部開始
+                end: 'bottom bottom', // 動態計算結束點
+                scrub: true, // 平滑的滾動效果
+                markers: false,
+                onUpdate: (self) => {
+                    updatePosition(0, 0, 0, 0, 0, 25, self.progress);
+                },
+            }
+        });
+        if(width.value > 768){
+            partnersSectionTimeline.to('.partners-content-group', {
+                '--transform-z': 400,
+            });
+        }else{
+            partnersSectionTimeline.to('.partners-content-group', {
+                '--transform-z': 120,
+            });
+        }
     }
     const contactUsSectionGsap = () => {
         gsap.timeline({
@@ -992,7 +1009,7 @@
                 scrub: true,
                 markers: false,
                 onUpdate: (self) => {
-                    updatePosition(0, 0, 0, 0, -25, 0, self.progress);
+                    // updatePosition(0, 0, 0, 0, -25, 0, self.progress);
                 },
                 onEnter: ()=>{
                     shrinkingFunction();
