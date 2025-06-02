@@ -694,7 +694,7 @@
                     shrinkingFunction()
                 },
                 onLeaveBack: () => {
-                    growingFunction()
+                    // growingFunction()
                 },
                 onUpdate: (self) => {
                     if(width.value>768){
