@@ -811,17 +811,127 @@
         }
     }
     const partnersSectionGsap = () => {
-        const itemCount = 12; // 作品總數
-        const radius = 300; // ring 半徑
-        const angleStep = (360 / itemCount); // 每個項目的角度間隔
-        const picWidth = 100;
+        // const itemCount = 12; // 作品總數
+        // const radius = 300; // ring 半徑
+        // const angleStep = (360 / itemCount); // 每個項目的角度間隔
+        // const picWidth = 100;
         
-        // 初始化每個作品的位置
-        for (let i = 1; i <= itemCount; i++) {
-            const angle = angleStep * (i - 1);
-            gsap.set(`.partners-content-item-${i}`, {
-                '--item-rotation': angle,
-            });
+        // // 初始化每個作品的位置
+        // for (let i = 1; i <= itemCount; i++) {
+        //     const angle = angleStep * (i - 1);
+        //     gsap.set(`.partners-content-item-${i}`, {
+        //         '--item-rotation': angle,
+        //     });
+        // }
+
+        // gsap.timeline({
+        //     scrollTrigger: {
+        //         trigger: '.partners-section',
+        //         start: `top ${(100 * 2) / 3}%`,
+        //         end: 'top top',
+        //         scrub: true,
+        //         markers: false,
+        //         onUpdate: (self) => {
+        //             if(width.value>768){
+        //                 updatePosition(-8, 0, 0, 0, 0, 0, self.progress);
+        //             }else{
+        //                 updatePosition(0, -2, 0, 0, 0, 0, self.progress);
+        //             }
+        //         },
+        //         onEnter:()=>{
+        //             shrinkingFunction();
+        //         },
+        //         onLeave: () => {
+        //             changeMaterialType(0);
+        //             growingFunction();
+        //             for (let i = 1; i <= itemCount; i++) {
+        //                 gsap.to(`.partners-content-item-${i}`, {
+        //                     opacity: 1,
+        //                     '--item-radius': radius,
+        //                     '--width': picWidth,
+        //                     duration: 0.5,
+        //                     ease: "customGrowEase",
+        //                 });
+        //             }
+        //         },
+        //         onEnterBack: () => {
+        //             shrinkingFunction();
+        //         },
+        //         onLeaveBack: () => {
+        //             growingFunction();
+        //             changeMaterialType(5);
+        //             for (let i = 1; i <= itemCount; i++) {
+        //                 gsap.set(`.partners-content-item-${i}`, {
+        //                     opacity: 0,
+        //                     '--width': 0,
+        //                     '--item-radius': 0
+        //                 });
+        //             }
+        //         }
+        //     },    
+        // });
+
+        // gsap.timeline({
+        //     scrollTrigger: {
+        //         trigger: '.partners-section',
+        //         start: 'top top',
+        //         end: 'bottom bottom',
+        //         scrub: 1,
+        //         markers: false,
+        //         onUpdate: (self) => {
+        //             const rotation = self.progress * 360;
+        //             gsap.set('.partners-content-group', {
+        //                 '--rotation-y': rotation
+        //             });
+        //         }
+        //     }
+        // });
+
+        const itemCount = 12; // 元素總數
+
+        const desktopPositions = {
+            1: {x: 250, y: -700, z: 3100},
+            2: {x: 700, y: -500, z: 2900},
+            3: {x: 880, y: 0, z: 3100},
+            4: {x: 700, y: 350, z: 2900},
+            5: {x: 920, y: -450, z: 3100},
+            6: {x: 600, y: 750, z: 2900},
+            7: {x: -480, y: 600, z: 3100},
+            8: {x: -700, y: 450, z: 2900},
+            9: {x: -890, y: 250, z: 3100},
+            10: {x: -850, y: 0, z: 2900},
+            11: {x: -800, y: -600, z: 3100},
+            12: {x: -625, y: -550, z: 2900},
+        };
+        const mobilePositions = {
+            1: {x: 300, y: -750, z: 1500},
+            2: {x: -400, y: -700, z: 1400},
+            3: {x: 250, y: -550, z: 1400},
+            4: {x: -450, y: -350, z: 1500},
+            5: {x: 550, y: -300, z: 1500},
+            6: {x: -550, y: -150, z: 1400},
+            7: {x: 500, y: 0, z: 1500},
+            8: {x: -450, y: 150, z: 1400},
+            9: {x: 350, y: 300, z: 1500},
+            10: {x: -500, y: 400, z: 1500},
+            11: {x: 400, y: 500, z: 1400},
+            12: {x: -100, y: 650, z: 1400},
+        };
+        function getMinAbsSum(positions) {
+            let min = { key: null, sum: Infinity };
+
+            for (const key in positions) {
+                if (positions.hasOwnProperty(key)) {
+                    const { x, y, z } = positions[key];
+                    const sum = Math.abs(x) + Math.abs(y) + Math.abs(z);
+
+                    if (sum < min.sum) {
+                        min = { key, sum };
+                    }
+                }
+            }
+
+            return min;
         }
 
         gsap.timeline({
@@ -838,20 +948,21 @@
                         updatePosition(0, -2, 0, 0, 0, 0, self.progress);
                     }
                 },
-                onEnter:()=>{
-                    shrinkingFunction();
-                },
                 onLeave: () => {
                     changeMaterialType(0);
                     growingFunction();
+                    const tl = gsap.timeline();
+                    const position = width.value > 768 ? desktopPositions : mobilePositions;
+                    const minPosition = getMinAbsSum(position);
+
                     for (let i = 1; i <= itemCount; i++) {
-                        gsap.to(`.partners-content-item-${i}`, {
+                        tl.to(`.partners-content-item-${i}`, {
+                            '--transform-x': position[i].x,
+                            '--transform-y': position[i].y,
+                            '--transform-z': position[i].z,
                             opacity: 1,
-                            '--item-radius': radius,
-                            '--width': picWidth,
-                            duration: 0.5,
-                            ease: "customGrowEase",
-                        });
+                            duration: 0.25,
+                        },0);
                     }
                 },
                 onEnterBack: () => {
@@ -862,29 +973,14 @@
                     changeMaterialType(5);
                     for (let i = 1; i <= itemCount; i++) {
                         gsap.set(`.partners-content-item-${i}`, {
+                            '--transform-x': 0,
+                            '--transform-y': 0,
+                            '--transform-z': 0,
                             opacity: 0,
-                            '--width': 0,
-                            '--item-radius': 0
-                        });
+                        })
                     }
                 }
             },    
-        });
-
-        gsap.timeline({
-            scrollTrigger: {
-                trigger: '.partners-section',
-                start: 'top top',
-                end: 'bottom bottom',
-                scrub: 1,
-                markers: false,
-                onUpdate: (self) => {
-                    const rotation = self.progress * 360;
-                    gsap.set('.partners-content-group', {
-                        '--rotation-y': rotation
-                    });
-                }
-            }
         });
     }
     const contactUsSectionGsap = () => {
