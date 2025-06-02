@@ -105,10 +105,10 @@
             </h1> -->
             <div v-show="isStarted" class="marquee">
                 <div class="marquee-content-group">
-                    <span class="marquee-content-group-item">AR/VR/XR策展 ・ UIUX/網頁開發 ・ CIS/平面設計 ・ 2D/3D動畫 ・ 互動設計/數位藝術 ・&nbsp;</span>
+                    <span class="marquee-content-group-item">AR/VR/XR策展 ・ 網頁設計開發 ・ 品牌識別規劃 ・ 2D/3D動畫 ・ 互動設計/數位藝術 ・ AR/VR/XR策展 ・ 網頁設計開發 ・ 品牌識別規劃 ・ 2D/3D動畫 ・ 互動設計/數位藝術 ・&nbsp;</span>
                 </div>
                 <div class="marquee-content-group2">
-                    <span class="marquee-content-group-item">AR/VR/XR策展 ・ UIUX/網頁開發 ・ CIS/平面設計 ・ 2D/3D動畫 ・ 互動設計/數位藝術 ・&nbsp;</span>
+                    <span class="marquee-content-group-item">AR/VR/XR策展 ・ 網頁設計開發 ・ 品牌識別規劃 ・ 2D/3D動畫 ・ 互動設計/數位藝術 ・ AR/VR/XR策展 ・ 網頁設計開發 ・ 品牌識別規劃 ・ 2D/3D動畫 ・ 互動設計/數位藝術 ・&nbsp;</span>
                 </div>
             </div>
         </div>
@@ -259,13 +259,13 @@
             splitDescription: []
         },
         {
-            title: 'UIUX/網頁開發',
+            title: '網頁設計開發',
             description: '從前端網站設計到3D互動前端，整合 Nuxt、Three.js 等技術，實現網頁創新體驗。',
             splitTitle: [],
             splitDescription: []
         },
         {
-            title: 'CIS/平面設計',
+            title: '品牌識別規劃',
             description: '提供品牌識別與視覺系統規劃服務，滿足品牌在實體門店到數位體驗中的各式需求。',
             splitTitle: [],
             splitDescription: []
@@ -577,7 +577,7 @@
                 start: 'top bottom',
                 end: 'top top',
                 scrub: true,
-                markers: false,
+                markers: true,
                 onUpdate: (self) => {
                     updatePosition(0, -1, 30, 0, 0, -10, self.progress);
                 },

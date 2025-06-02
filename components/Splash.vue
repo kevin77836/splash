@@ -168,7 +168,7 @@ class MaterialManager {
           opacity: 0.75,
           transmission: 1.0,
           ior: 1.5,
-          thickness: 2,
+          thickness: 1,
           envMapIntensity: 10.0,
           side: THREE.DoubleSide
         }
@@ -180,7 +180,7 @@ class MaterialManager {
           roughness: 0.3,
           metalness: 0,
           side: THREE.DoubleSide,
-          envMapIntensity: 1.0
+          envMapIntensity: 5.0
         }
       },
       digiArt: {
@@ -188,10 +188,10 @@ class MaterialManager {
         props: {
           color: 0xffffff,
           metalness: 1,
-          roughness: 0.1,
+          roughness: 0,
           transparent: true,
-          transmission: 0.7,
-          envMapIntensity: 2.0
+          transmission: 1,
+          envMapIntensity: 5.0
         }
       },
       uiuxDev: {
@@ -235,7 +235,7 @@ class MaterialManager {
       const material = this.createMaterial(config.type, config.props);
       if (envMap) {
         material.envMap = envMap;
-        material.needsUpdate = true;
+        // material.needsUpdate = true;
       }
       this.materials.set(name, material);
     }
@@ -273,7 +273,7 @@ class MaterialManager {
     for (const material of this.materials.values()) {
       if (material.envMap !== undefined) {
         material.envMap = envMap;
-        material.needsUpdate = true;
+        // material.needsUpdate = true;
       }
     }
   }
