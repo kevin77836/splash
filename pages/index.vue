@@ -74,7 +74,7 @@
             </div>
         </div>
     </div>
-    <div class="main-container">
+    <div data-scroll-container class="main-container">
         <div class="section main-section">
             <div v-if="!isStarted" 
                  class="startButton" 
@@ -211,9 +211,6 @@
     import { SplitText } from 'gsap/SplitText';
     const { width, height } = useWindowSize();
     // import { isMobileDevice } from '../utils/device';
-    if (process.client) {
-        gsap.registerPlugin(ScrollTrigger, CustomEase, SplitText);
-    }
     
     const splashRef = ref(null);
     const loadComplete = ref(false);
@@ -222,7 +219,9 @@
     const isStarted = ref(false);
     const isMenuOpen = ref(false);
     const isLandingPage = ref(true);
+
     let customEasing;
+    let locomotiveScrollInstance = null
 
     const serviceData = ref([
         {
@@ -533,21 +532,21 @@
                 start: '10% bottom',
                 end: 'bottom bottom',
                 scrub: true,
-                markers: false
+                markers: false,
             }
         });
         aboutUsContentTimeline
-            .to('.aboutUs-section-content-1-1', { opacity: 1, filter: 'blur(0px)', duration: 0.1 },0)
-            .to('.aboutUs-section-hr-1', { opacity: 1, width: '100%', duration: 0.2 },0.1)
-            .to('.aboutUs-section-content-1-2', { opacity: 1, filter: 'blur(0px)', duration: 0.1 },0.3)
-            .to('.aboutUs-section-content-2-1', { opacity: 1, filter: 'blur(0px)', duration: 0.1 },0.4)
-            .to('.aboutUs-section-content-2-2', { width: '100%', duration: 0.2 },0.5)
-            .to('.aboutUs-section-content-3-1', { opacity: 1, filter: 'blur(0px)', duration: 0.1 },0.7)
-            .to('.aboutUs-section-content-3-2', { opacity: 1, filter: 'blur(0px)', duration: 0.1 },0.8)
-            .to('.aboutUs-section-content-3-2 .underline', { width: '100%', duration: 0.2 },0.9)
-            .to('.aboutUs-section', { '--bg-opacity': '0', duration: 0 },0.9)
-            .to('.aboutUs-section-content-3-3', { opacity: 1, filter: 'blur(0px)', duration: 0.1 },1.1)
-            .to('.aboutUs-content-group', { opacity: 0, transform: 'scale(5)', duration: 0.2 },1.3)
+            .to('.aboutUs-section-content-1-1', { opacity: 1, filter: 'blur(0px)', duration: 0.1, ease: "power4.in", },0)
+            .to('.aboutUs-section-hr-1', { opacity: 1, width: '100%', duration: 0.2, ease: "power4.in", },0.1)
+            .to('.aboutUs-section-content-1-2', { opacity: 1, filter: 'blur(0px)', duration: 0.1, ease: "power4.in", },0.3)
+            .to('.aboutUs-section-content-2-1', { opacity: 1, filter: 'blur(0px)', duration: 0.1, ease: "power4.in", },0.4)
+            .to('.aboutUs-section-content-2-2', { width: '100%', duration: 0.2, ease: "power4.in", },0.5)
+            .to('.aboutUs-section-content-3-1', { opacity: 1, filter: 'blur(0px)', duration: 0.1, ease: "power4.in", },0.7)
+            .to('.aboutUs-section-content-3-2', { opacity: 1, filter: 'blur(0px)', duration: 0.1, ease: "power4.in", },0.8)
+            .to('.aboutUs-section-content-3-2 .underline', { width: '100%', duration: 0.2, ease: "power4.in", },0.9)
+            .to('.aboutUs-section', { '--bg-opacity': '0', duration: 0, ease: "power4.in", },0.9)
+            .to('.aboutUs-section-content-3-3', { opacity: 1, filter: 'blur(0px)', duration: 0.1, ease: "power4.in", },1.1)
+            .to('.aboutUs-content-group', { opacity: 0, transform: 'scale(5)', duration: 0.2, ease: "power4.in", },1.3)
     }
     const worksSectionGsap = () => {
         gsap.timeline({
@@ -667,6 +666,7 @@
                 '--transform-y': y,
                 '--transform-z': zDistance,
                 duration: durationTime,
+                ease: "power1.out",
             }, start);
 
             // 透明動畫（延遲 opacityDelayRatio 啟動）
@@ -895,20 +895,21 @@
                 },
             }
         });
-
+        let contentGroupTransformZ;
         if(width.value > (768 - 1)){
+            contentGroupTransformZ = 400;
             partnersSectionTimeline.to('.partners-content-group', {
                 '--transform-z': 400,
             },0);
         }else if(width.value > (576 - 1)){
-            partnersSectionTimeline.to('.partners-content-group', {
-                '--transform-z': 140,
-            },0);
+            contentGroupTransformZ = 140;
         }else{
-            partnersSectionTimeline.to('.partners-content-group', {
-                '--transform-z': 120,
-            },0);
+            contentGroupTransformZ = 120;
         }
+        partnersSectionTimeline.to('.partners-content-group', {
+            '--transform-z': contentGroupTransformZ,
+            ease: "power4.out",
+        },0);
         
         const position = width.value > (768 - 1) ? desktopPositions : mobilePositions;
         for (let i = 1; i <= itemCount; i++) {
@@ -917,6 +918,7 @@
                 '--transform-y': position[i].y,
                 '--transform-z': position[i].z,
                 duration: 1,
+                ease: "power4.out",
             },0);
             partnersSectionTimeline.to(`.partners-content-item-${i}`, {
                 opacity: 1,
@@ -1126,22 +1128,70 @@
         }, 100);
     }
 
-    onMounted(() => {
+    onMounted(async() => {
+        if (process.client) {
+            gsap.registerPlugin(ScrollTrigger, CustomEase, SplitText);
+            const { default: LocomotiveScroll } = await import('locomotive-scroll')
+
+            // **2. nextTick 確保 DOM 都渲染完成後再實例化**
+            nextTick(() => {
+                locomotiveScrollInstance = new LocomotiveScroll({
+                    el: document.querySelector('[data-scroll-container]'),
+                    smooth: true,
+                    lerp: 0.01,         // 慢速插值 (可自由調整)
+                    multiplier: 1,    // 滾動速度倍數 (可自由調整)
+                    smartphone: { smooth: true },
+                    tablet: { smooth: true }
+                })
+
+                // **3. 告訴 ScrollTrigger 滾動資料從這個容器來** (scrollerProxy)
+                ScrollTrigger.scrollerProxy('[data-scroll-container]', {
+                    scrollTop(value) {
+                        if (arguments.length) {
+                            locomotiveScrollInstance.scrollTo(value, { duration: 0, disableLerp: true })
+                        }
+                        return locomotiveScrollInstance.scroll.instance.scroll.y
+                    },
+                    getBoundingClientRect() {
+                        return {
+                            top: 0,
+                            left: 0,
+                            width: window.innerWidth,
+                            height: window.innerHeight
+                        }
+                    },
+                    // 有時候也要處理 scrollLeft（若後續有左右滾動動畫）
+                    scrollLeft(value) {
+                        if (arguments.length) {
+                            locomotiveScrollInstance.scrollTo({ x: value, duration: 0, disableLerp: true })
+                        }
+                        return locomotiveScrollInstance.scroll.instance.scroll.x
+                    }
+                })
+
+                // **4. LocomotiveScroll 滾動時，同步通知 ScrollTrigger 更新**
+                locomotiveScrollInstance.on('scroll', ScrollTrigger.update)
+
+                // **5. 最後讓 ScrollTrigger refresh 一次，確保一切參考值都正確**
+                ScrollTrigger.addEventListener('refresh', () => {
+                    if (locomotiveScrollInstance) locomotiveScrollInstance.update()
+                })
+                ScrollTrigger.refresh()
+
+                preloadAllMedia()
+            })
+        }
+
         document.body.style.overflow = 'hidden';
 
         gsap.registerEase("customGrowEase", function(x) {
             return Math.pow(x, 0.15);
         });
-
         gsap.registerEase("customShrinkEase", function(x) {
             return Math.pow(x, 2.5);
         });
 
-        // 開始預載入媒體資源
-        preloadAllMedia();
-
         const windowHeight = height.value;
-        
         if (isMobileDevice()) {
             document.documentElement.style.setProperty('--h', `${windowHeight}px`);
         }
