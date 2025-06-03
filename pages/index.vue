@@ -575,13 +575,13 @@
         const itemCount = 15;
         const zDistance = 10000;
         let totalDistance;
-        if(width.value > 1400){
+        if(width.value > (1400 - 1)){
             totalDistance = 3500;
-        }else if(width.value > 1200){
+        }else if(width.value > (1200 - 1)){
             totalDistance = 3000;
-        }else if(width.value > 992){
+        }else if(width.value > (992 - 1)){
             totalDistance = 2500;
-        }else if(width.value > 768){
+        }else if(width.value > (768 - 1)){
             totalDistance = 2500;
         }else{
             totalDistance = 2500;
@@ -697,7 +697,7 @@
                     // growingFunction()
                 },
                 onUpdate: (self) => {
-                    if(width.value>768){
+                    if(width.value>(768 - 1)){
                         updatePosition(0, 0, 0, -8, 0, 0, self.progress);
                     }else{
                         updatePosition(0, 0, 0, 0, -2, 0, self.progress);
@@ -714,7 +714,7 @@
         }
 
         for (let i = 1; i <= animParams.totalCount; i++) {
-            if(width.value <= 768){
+            if(width.value <= (768 - 1)){
                 animParams.xTransform = 0;
                 animParams.xStayTransform = 0;
             }
@@ -811,50 +811,6 @@
         }
     }
     const partnersSectionGsap = () => {
-        const itemCount = 12; // 元素總數
-
-        const desktopPositions = {
-            1: {x: 50, y: -400, z: 3300},
-            2: {x: 400, y: -200, z: 3400},
-            3: {x: 580, y: 0, z: 3300},
-            
-            // 右下區域
-            4: {x: 350, y: 200, z: 3400},
-            5: {x: 220, y: -50, z: 3350},
-            6: {x: 100, y: 250, z: 3400},
-            
-            // 左下區域
-            7: {x: -180, y: 300, z: 3300},
-            8: {x: -400, y: 150, z: 3400},
-            9: {x: -390, y: 50, z: 3200},
-            
-            // 左上區域
-            10: {x: -550, y: 0, z: 3300},
-            11: {x: -500, y: -300, z: 3300},
-            12: {x: -325, y: -250, z: 3200},
-        };
-        const mobilePositions = {
-            // 上方區域
-            1: {x: 250, y: -600, z: 1200},
-            2: {x: -200, y: -500, z: 1400},
-            3: {x: 150, y: -400, z: 1300},
-            
-            // 上中區域
-            4: {x: -300, y: -300, z: 1500},
-            5: {x: 200, y: -200, z: 1100},
-            6: {x: -150, y: -100, z: 1200},
-            
-            // 中心區域
-            7: {x: 300, y: 0, z: 1300},
-            8: {x: -250, y: 100, z: 1400},
-            9: {x: 200, y: 200, z: 1200},
-            
-            // 下中區域
-            10: {x: -300, y: 300, z: 1500},
-            11: {x: 200, y: 400, z: 1300},
-            12: {x: -200, y: 500, z: 1400},
-        };
-
         gsap.timeline({
             scrollTrigger: {
                 trigger: '.partners-section',
@@ -863,7 +819,7 @@
                 scrub: true,
                 markers: false,
                 onUpdate: (self) => {
-                    if(width.value>768){
+                    if(width.value>(768 - 1)){
                         updatePosition(-8, 0, 0, 0, 0, 0, self.progress);
                     }else{
                         updatePosition(0, -2, 0, 0, 0, 0, self.progress);
@@ -872,18 +828,6 @@
                 onLeave: () => {
                     changeMaterialType(0);
                     growingFunction();
-                    const tl = gsap.timeline();
-                    const position = width.value > 768 ? desktopPositions : mobilePositions;
-
-                    for (let i = 1; i <= itemCount; i++) {
-                        tl.to(`.partners-content-item-${i}`, {
-                            '--transform-x': position[i].x,
-                            '--transform-y': position[i].y,
-                            '--transform-z': position[i].z,
-                            opacity: 1,
-                            duration: 0.25,
-                        },0);
-                    }
                 },
                 onEnterBack: () => {
                     shrinkingFunction();
@@ -891,17 +835,54 @@
                 onLeaveBack: () => {
                     growingFunction();
                     changeMaterialType(5);
-                    for (let i = 1; i <= itemCount; i++) {
-                        gsap.set(`.partners-content-item-${i}`, {
-                            '--transform-x': 0,
-                            '--transform-y': 0,
-                            '--transform-z': 0,
-                            opacity: 0,
-                        })
-                    }
                 }
             },    
         });
+
+        const itemCount = 12; // 元素總數
+
+        const desktopPositions = {
+            1: {x: 50, y: -350, z: 3300},
+            2: {x: 400, y: -150, z: 3400},
+            3: {x: 580, y: 50, z: 3300},
+            
+            // 右下區域
+            4: {x: 350, y: 150, z: 3400},
+            5: {x: 220, y: 0, z: 3350},
+            6: {x: 200, y: 300, z: 3400},
+            
+            // 左下區域
+            7: {x: -180, y: 350, z: 3300},
+            8: {x: -400, y: 200, z: 3400},
+            9: {x: -190, y: 100, z: 3200},
+            
+            // 左上區域
+            10: {x: -550, y: 50, z: 3300},
+            11: {x: -500, y: -250, z: 3300},
+            12: {x: -300, y: -150, z: 3200},
+        };
+        const mobilePositions = {
+            // 上方區域
+            1: {x: 250, y: -550, z: 1100},
+            2: {x: -200, y: -450, z: 1300},
+            3: {x: 150, y: -350, z: 1200},
+            
+            // 上中區域
+            4: {x: -300, y: -250, z: 1200},
+            5: {x: 200, y: -150, z: 1000},
+            6: {x: -150, y: -50, z: 1100},
+            
+            // 中心區域
+            7: {x: 300, y: 50, z: 1200},
+            8: {x: -250, y: 150, z: 1300},
+            9: {x: 200, y: 250, z: 1100},
+            
+            // 下中區域
+            10: {x: -300, y: 350, z: 1400},
+            11: {x: 200, y: 450, z: 1200},
+            12: {x: -200, y: 550, z: 1300},
+        };
+
         const partnersSectionTimeline = gsap.timeline({
             scrollTrigger: {
                 trigger: '.partners-section',
@@ -914,14 +895,33 @@
                 },
             }
         });
-        if(width.value > 768){
+
+        if(width.value > (768 - 1)){
             partnersSectionTimeline.to('.partners-content-group', {
                 '--transform-z': 400,
-            });
+            },0);
+        }else if(width.value > (576 - 1)){
+            partnersSectionTimeline.to('.partners-content-group', {
+                '--transform-z': 140,
+            },0);
         }else{
             partnersSectionTimeline.to('.partners-content-group', {
                 '--transform-z': 120,
-            });
+            },0);
+        }
+        
+        const position = width.value > (768 - 1) ? desktopPositions : mobilePositions;
+        for (let i = 1; i <= itemCount; i++) {
+            partnersSectionTimeline.to(`.partners-content-item-${i}`, {
+                '--transform-x': position[i].x,
+                '--transform-y': position[i].y,
+                '--transform-z': position[i].z,
+                duration: 1,
+            },0);
+            partnersSectionTimeline.to(`.partners-content-item-${i}`, {
+                opacity: 1,
+                duration: 0.5,
+            },0);
         }
     }
     const contactUsSectionGsap = () => {
