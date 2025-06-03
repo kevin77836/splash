@@ -210,7 +210,7 @@
     import { useWindowSize } from '@vueuse/core'
     import { SplitText } from 'gsap/SplitText';
     const { width, height } = useWindowSize();
-    // import { isMobileDevice } from '../utils/device';
+    import { isMobileDevice } from '../utils/device';
     
     const splashRef = ref(null);
     const loadComplete = ref(false);
@@ -221,7 +221,11 @@
     const isLandingPage = ref(true);
 
     let customEasing;
-    let locomotiveScrollInstance = null
+    let locomotiveScrollInstance = null;
+
+    if (process.client) {
+        gsap.registerPlugin(ScrollTrigger, CustomEase, SplitText);
+    }
 
     const serviceData = ref([
         {
@@ -1129,58 +1133,7 @@
     }
 
     onMounted(async() => {
-        if (process.client) {
-            gsap.registerPlugin(ScrollTrigger, CustomEase, SplitText);
-            const { default: LocomotiveScroll } = await import('locomotive-scroll')
-
-            // **2. nextTick 確保 DOM 都渲染完成後再實例化**
-            nextTick(() => {
-                locomotiveScrollInstance = new LocomotiveScroll({
-                    el: document.querySelector('[data-scroll-container]'),
-                    smooth: true,
-                    lerp: 0.01,         // 慢速插值 (可自由調整)
-                    multiplier: 1,    // 滾動速度倍數 (可自由調整)
-                    smartphone: { smooth: true },
-                    tablet: { smooth: true }
-                })
-
-                // **3. 告訴 ScrollTrigger 滾動資料從這個容器來** (scrollerProxy)
-                ScrollTrigger.scrollerProxy('[data-scroll-container]', {
-                    scrollTop(value) {
-                        if (arguments.length) {
-                            locomotiveScrollInstance.scrollTo(value, { duration: 0, disableLerp: true })
-                        }
-                        return locomotiveScrollInstance.scroll.instance.scroll.y
-                    },
-                    getBoundingClientRect() {
-                        return {
-                            top: 0,
-                            left: 0,
-                            width: window.innerWidth,
-                            height: window.innerHeight
-                        }
-                    },
-                    // 有時候也要處理 scrollLeft（若後續有左右滾動動畫）
-                    scrollLeft(value) {
-                        if (arguments.length) {
-                            locomotiveScrollInstance.scrollTo({ x: value, duration: 0, disableLerp: true })
-                        }
-                        return locomotiveScrollInstance.scroll.instance.scroll.x
-                    }
-                })
-
-                // **4. LocomotiveScroll 滾動時，同步通知 ScrollTrigger 更新**
-                locomotiveScrollInstance.on('scroll', ScrollTrigger.update)
-
-                // **5. 最後讓 ScrollTrigger refresh 一次，確保一切參考值都正確**
-                ScrollTrigger.addEventListener('refresh', () => {
-                    if (locomotiveScrollInstance) locomotiveScrollInstance.update()
-                })
-                ScrollTrigger.refresh()
-
-                preloadAllMedia()
-            })
-        }
+        preloadAllMedia();
 
         document.body.style.overflow = 'hidden';
 
@@ -1191,8 +1144,8 @@
             return Math.pow(x, 2.5);
         });
 
-        const windowHeight = height.value;
         if (isMobileDevice()) {
+            const windowHeight = height.value;
             document.documentElement.style.setProperty('--h', `${windowHeight}px`);
         }
     });
