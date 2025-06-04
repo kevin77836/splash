@@ -75,7 +75,7 @@
         </div>
     </div>
     <div data-scroll-wrapper class="scroll-wrapper">
-        <div data-scroll-content class="main-container">
+        <div data-scroll-content class="main-container-1">
             <div class="section main-section">
                 <div v-if="!isStarted" 
                     class="startButton" 
