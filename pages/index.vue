@@ -74,131 +74,133 @@
             </div>
         </div>
     </div>
-    <div data-scroll-container class="main-container">
-        <div class="section main-section">
-            <div v-if="!isStarted" 
-                 class="startButton" 
-                 @click="clickStart">
-                {{ loadingPercent }}
-            </div>
+    <div data-scroll-wrapper class="scroll-wrapper">
+        <div data-scroll-content class="main-container">
+            <div class="section main-section">
+                <div v-if="!isStarted" 
+                    class="startButton" 
+                    @click="clickStart">
+                    {{ loadingPercent }}
+                </div>
 
-            <div v-show="isStarted" class="marquee">
-                <div class="marquee-content-group">
-                    <span class="marquee-content-group-item">AR/VR/XR策展 ・ 網頁設計開發 ・ 品牌識別規劃 ・ 2D/3D動畫 ・ 互動設計/數位藝術 ・ AR/VR/XR策展 ・ 網頁設計開發 ・ 品牌識別規劃 ・ 2D/3D動畫 ・ 互動設計/數位藝術 ・&nbsp;</span>
-                </div>
-                <div class="marquee-content-group2">
-                    <span class="marquee-content-group-item">AR/VR/XR策展 ・ 網頁設計開發 ・ 品牌識別規劃 ・ 2D/3D動畫 ・ 互動設計/數位藝術 ・ AR/VR/XR策展 ・ 網頁設計開發 ・ 品牌識別規劃 ・ 2D/3D動畫 ・ 互動設計/數位藝術 ・&nbsp;</span>
+                <div v-show="isStarted" class="marquee">
+                    <div class="marquee-content-group">
+                        <span class="marquee-content-group-item">AR/VR/XR策展 ・ 網頁設計開發 ・ 品牌識別規劃 ・ 2D/3D動畫 ・ 互動設計/數位藝術 ・ AR/VR/XR策展 ・ 網頁設計開發 ・ 品牌識別規劃 ・ 2D/3D動畫 ・ 互動設計/數位藝術 ・&nbsp;</span>
+                    </div>
+                    <div class="marquee-content-group2">
+                        <span class="marquee-content-group-item">AR/VR/XR策展 ・ 網頁設計開發 ・ 品牌識別規劃 ・ 2D/3D動畫 ・ 互動設計/數位藝術 ・ AR/VR/XR策展 ・ 網頁設計開發 ・ 品牌識別規劃 ・ 2D/3D動畫 ・ 互動設計/數位藝術 ・&nbsp;</span>
+                    </div>
                 </div>
             </div>
-        </div>
-        <div v-show="isStarted" class="section aboutUs-section">
-            <div class="aboutUs-content-container">
-                <div class="aboutUs-content-group">
-                    <div class="aboutUs-section-content aboutUs-section-content-1">
-                        <span class="aboutUs-section-content-1-1">迸濺的</span>
-                        <hr class="aboutUs-section-hr-1" color="black" size="1">
-                        <span class="aboutUs-section-content-1-2">創意</span>
-                    </div>
-                    <div class="aboutUs-section-content aboutUs-section-content-2">
-                        <span class="aboutUs-section-content-2-1">結合</span>
-                        <span class="aboutUs-section-content-2-2">
-                            <div class="service-group">
-                                <div v-for="(item,index) in serviceData.slice(1,serviceData.length)" :key="index" class="service-group-item">
-                                    {{ item.title }}
+            <div v-show="isStarted" class="section aboutUs-section">
+                <div class="aboutUs-content-container">
+                    <div class="aboutUs-content-group">
+                        <div class="aboutUs-section-content aboutUs-section-content-1">
+                            <span class="aboutUs-section-content-1-1">迸濺的</span>
+                            <hr class="aboutUs-section-hr-1" color="black" size="1">
+                            <span class="aboutUs-section-content-1-2">創意</span>
+                        </div>
+                        <div class="aboutUs-section-content aboutUs-section-content-2">
+                            <span class="aboutUs-section-content-2-1">結合</span>
+                            <span class="aboutUs-section-content-2-2">
+                                <div class="service-group">
+                                    <div v-for="(item,index) in serviceData.slice(1,serviceData.length)" :key="index" class="service-group-item">
+                                        {{ item.title }}
+                                    </div>
                                 </div>
-                            </div>
-                        </span>
-                    </div>
-                    <div class="aboutUs-section-content aboutUs-section-content-3">
-                        <div class="section-content-3-group">
-                            <span class="aboutUs-section-content-3-1">呈現</span>
-                            <span class="aboutUs-section-content-3-2">
-                                <div class="iconGroup">
-                                    <span>素晴らしい</span>
-                                    <img src="/images/volume.png" alt="">
-                                </div>
-                                <div class="underline"></div>
                             </span>
                         </div>
-                        <span class="aboutUs-section-content-3-3">的體驗</span>
+                        <div class="aboutUs-section-content aboutUs-section-content-3">
+                            <div class="section-content-3-group">
+                                <span class="aboutUs-section-content-3-1">呈現</span>
+                                <span class="aboutUs-section-content-3-2">
+                                    <div class="iconGroup">
+                                        <span>素晴らしい</span>
+                                        <img src="/images/volume.png" alt="">
+                                    </div>
+                                    <div class="underline"></div>
+                                </span>
+                            </div>
+                            <span class="aboutUs-section-content-3-3">的體驗</span>
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
-        <div v-show="isStarted" class="section works-section">
-            <div v-if="isStarted" class="works-content-container">
-                <div class="works-content-group">
-                    <a v-for="(media,index) in reversedMediaResources" :key="'media'+index" href="media.link" :class="`works-content-item works-content-item-${index+1} ${media.column ? 'column' : ''}`">
-                        <video v-if="media.type === 'video'" :src="media.src" autoplay muted loop playsinline></video>
-                        <img v-else :src="media.src" alt="">
-                    </a>
-                </div>
-            </div> 
-        </div>
-        <div v-show="isStarted" class="section services-section">
-            <div v-for="(item, index) in serviceData" class="services-content" :class="`services-content-${index+1}`" :key="index">
-                <h2 class="services-title">{{ item.title }}</h2>
-                <div class="services-description">
-                    {{ item.description }}
-                </div>
+            <div v-show="isStarted" class="section works-section">
+                <div v-if="isStarted" class="works-content-container">
+                    <div class="works-content-group">
+                        <a v-for="(media,index) in reversedMediaResources" :key="'media'+index" href="media.link" :class="`works-content-item works-content-item-${index+1} ${media.column ? 'column' : ''}`">
+                            <video v-if="media.type === 'video'" :src="media.src" autoplay muted loop playsinline></video>
+                            <img v-else :src="media.src" alt="">
+                        </a>
+                    </div>
+                </div> 
             </div>
-        </div>
-        <div v-show="isStarted" class="section partners-section">
-            <div class="partners-content-container">
-                <div class="partners-content-group">
-                    <div class="partners-content-item partners-content-item-1">
-                        <img src="/partners/partners1.png" alt="">
-                    </div>
-                    <div class="partners-content-item partners-content-item-2">
-                        <img src="/partners/partners2.png" alt="">
-                    </div>
-                    <div class="partners-content-item partners-content-item-3">
-                        <img src="/partners/partners3.png" alt="">
-                    </div>
-                    <div class="partners-content-item partners-content-item-4">
-                        <img src="/partners/partners4.png" alt="">
-                    </div>
-                    <div class="partners-content-item partners-content-item-5">
-                        <img src="/partners/partners1.png" alt="">
-                    </div>
-                    <div class="partners-content-item partners-content-item-6">
-                        <img src="/partners/partners2.png" alt="">
-                    </div>
-                    <div class="partners-content-item partners-content-item-7">
-                        <img src="/partners/partners3.png" alt="">
-                    </div>
-                    <div class="partners-content-item partners-content-item-8">
-                        <img src="/partners/partners4.png" alt="">
-                    </div>
-                    <div class="partners-content-item partners-content-item-9">
-                        <img src="/partners/partners1.png" alt="">
-                    </div>
-                    <div class="partners-content-item partners-content-item-10">
-                        <img src="/partners/partners2.png" alt="">
-                    </div>
-                    <div class="partners-content-item partners-content-item-11">
-                        <img src="/partners/partners3.png" alt="">
-                    </div>
-                    <div class="partners-content-item partners-content-item-12">
-                        <img src="/partners/partners4.png" alt="">
+            <div v-show="isStarted" class="section services-section">
+                <div v-for="(item, index) in serviceData" class="services-content" :class="`services-content-${index+1}`" :key="index">
+                    <h2 class="services-title">{{ item.title }}</h2>
+                    <div class="services-description">
+                        {{ item.description }}
                     </div>
                 </div>
             </div>
-        </div>
-        <div v-show="isStarted" class="section contactUs-section">
-            <div class="contactUs-title">
-                Let's make a splash
+            <div v-show="isStarted" class="section partners-section">
+                <div class="partners-content-container">
+                    <div class="partners-content-group">
+                        <div class="partners-content-item partners-content-item-1">
+                            <img src="/partners/partners1.png" alt="">
+                        </div>
+                        <div class="partners-content-item partners-content-item-2">
+                            <img src="/partners/partners2.png" alt="">
+                        </div>
+                        <div class="partners-content-item partners-content-item-3">
+                            <img src="/partners/partners3.png" alt="">
+                        </div>
+                        <div class="partners-content-item partners-content-item-4">
+                            <img src="/partners/partners4.png" alt="">
+                        </div>
+                        <div class="partners-content-item partners-content-item-5">
+                            <img src="/partners/partners1.png" alt="">
+                        </div>
+                        <div class="partners-content-item partners-content-item-6">
+                            <img src="/partners/partners2.png" alt="">
+                        </div>
+                        <div class="partners-content-item partners-content-item-7">
+                            <img src="/partners/partners3.png" alt="">
+                        </div>
+                        <div class="partners-content-item partners-content-item-8">
+                            <img src="/partners/partners4.png" alt="">
+                        </div>
+                        <div class="partners-content-item partners-content-item-9">
+                            <img src="/partners/partners1.png" alt="">
+                        </div>
+                        <div class="partners-content-item partners-content-item-10">
+                            <img src="/partners/partners2.png" alt="">
+                        </div>
+                        <div class="partners-content-item partners-content-item-11">
+                            <img src="/partners/partners3.png" alt="">
+                        </div>
+                        <div class="partners-content-item partners-content-item-12">
+                            <img src="/partners/partners4.png" alt="">
+                        </div>
+                    </div>
+                </div>
             </div>
-            <div class="contactUs-description">
-                如果有任何疑問或者有報價洽詢的需求，歡迎聯繫我們，
-                我們會在收到訊息後三天內回覆，
-                請留下您的聯絡方式及簡要內容，方便讓我們了解您的需求。
-            </div>
-            <div class="contactUs-information">
-                <div class="phone">Phone: 0912-345-678</div>
-                <div class="email">Email: splash-digilab@gmail.com</div>
-                <div class="line">Line: @splash-digilab</div>
-                <div class="companyName">斯巴拉系數位互動有限公司</div>
+            <div v-show="isStarted" class="section contactUs-section">
+                <div class="contactUs-title">
+                    Let's make a splash
+                </div>
+                <div class="contactUs-description">
+                    如果有任何疑問或者有報價洽詢的需求，歡迎聯繫我們，
+                    我們會在收到訊息後三天內回覆，
+                    請留下您的聯絡方式及簡要內容，方便讓我們了解您的需求。
+                </div>
+                <div class="contactUs-information">
+                    <div class="phone">Phone: 0912-345-678</div>
+                    <div class="email">Email: splash-digilab@gmail.com</div>
+                    <div class="line">Line: @splash-digilab</div>
+                    <div class="companyName">斯巴拉系數位互動有限公司</div>
+                </div>
             </div>
         </div>
     </div>
@@ -206,6 +208,7 @@
 <script setup>
     import gsap from 'gsap';
     import { ScrollTrigger } from 'gsap/ScrollTrigger';
+    import { ScrollSmoother } from 'gsap/ScrollSmoother';
     import { CustomEase } from 'gsap/CustomEase';
     import { useWindowSize } from '@vueuse/core'
     import { SplitText } from 'gsap/SplitText';
@@ -221,10 +224,10 @@
     const isLandingPage = ref(true);
 
     let customEasing;
-    let locomotiveScrollInstance = null;
+    let smoother = null;
 
     if (process.client) {
-        gsap.registerPlugin(ScrollTrigger, CustomEase, SplitText);
+        gsap.registerPlugin(ScrollTrigger, CustomEase, SplitText, ScrollSmoother);
     }
 
     const serviceData = ref([
@@ -478,6 +481,7 @@
     const setupScrollAnimations = () => {
         if (process.client) {
             nextTick(() => {
+                setSmoother();
                 aboutUsSectionGsap();
                 worksSectionGsap();
                 servicesSectionGsap();
@@ -520,7 +524,7 @@
                 trigger: '.main-section',
                 start: 'top top',
                 end: `bottom+=150% top`,
-                scrub: 2,
+                scrub: true,
                 markers: false,
                 onUpdate: (self) => {
                     updatePosition(0, 0, 0, 0, -18, 0, self.progress);
@@ -576,7 +580,7 @@
                 trigger: '.works-section',
                 start: 'top bottom',
                 end: 'top top',
-                scrub: 2,
+                scrub: true,
                 markers: false,
                 onUpdate: (self) => {
                     updatePosition(0, -1, 30, 0, 0, -10, self.progress);
@@ -736,39 +740,39 @@
         }
 
         for (let i = 1; i <= animParams.totalCount; i++) {
-            if(width.value <= (768 - 1)){
-                animParams.xTransform = 0;
-                animParams.xStayTransform = 0;
-            }
-            gsap.timeline({
-                scrollTrigger: {
-                    trigger: `.services-content-${i}`,
-                    start: 'top bottm',
-                    markers: false,
-                    scrub: true,
-                }
-            }).set(`.services-content-${i}`, 
-                {
-                    x: animParams.xTransform,
-                    opacity: 0, 
-                }
-            )
+            // if(width.value <= (768 - 1)){
+            //     animParams.xTransform = 0;
+            //     animParams.xStayTransform = 0;
+            // }
+            // gsap.timeline({
+            //     scrollTrigger: {
+            //         trigger: `.services-content-${i}`,
+            //         start: 'top bottm',
+            //         markers: false,
+            //         scrub: true,
+            //     }
+            // }).set(`.services-content-${i}`, 
+            //     {
+            //         x: animParams.xTransform,
+            //         opacity: 0, 
+            //     }
+            // )
             
-            gsap.timeline({
-                scrollTrigger: {
-                    trigger: `.services-content-${i}`,
-                    start: 'top center',
-                    end: `${100/3}% center`,
-                    markers: false,
-                    scrub: true,
-                },
-            }).to(
-                `.services-content-${i}`,
-                {
-                    x: animParams.xStayTransform,
-                    opacity: 1, 
-                }
-            )
+            // gsap.timeline({
+            //     scrollTrigger: {
+            //         trigger: `.services-content-${i}`,
+            //         start: 'top center',
+            //         end: `${100/3}% center`,
+            //         markers: false,
+            //         scrub: true,
+            //     },
+            // }).to(
+            //     `.services-content-${i}`,
+            //     {
+            //         x: animParams.xStayTransform,
+            //         opacity: 1, 
+            //     }
+            // )
 
             gsap.timeline({
                 scrollTrigger: {
@@ -785,27 +789,28 @@
                         shrinkingFunction();
                     }
                 },
-            }).to(
-                `.services-content-${i}`,
-                {
-                    x: 0
-                }
-            )
+            })
+            // .to(
+            //     `.services-content-${i}`,
+            //     {
+            //         x: 0
+            //     }
+            // )
 
-            gsap.timeline({
-                scrollTrigger: {
-                    trigger: `.services-content-${i}`,
-                    start: `center center`,
-                    end: `${100*2/3}% center`,
-                    markers: false,
-                    scrub: true,
-                },
-            }).to(
-                `.services-content-${i}`,
-                {
-                    x: animParams.xStayTransform,
-                }
-            )
+            // gsap.timeline({
+            //     scrollTrigger: {
+            //         trigger: `.services-content-${i}`,
+            //         start: `center center`,
+            //         end: `${100*2/3}% center`,
+            //         markers: false,
+            //         scrub: true,
+            //     },
+            // }).to(
+            //     `.services-content-${i}`,
+            //     {
+            //         x: animParams.xStayTransform,
+            //     }
+            // )
 
             gsap.timeline({
                 scrollTrigger: {
@@ -822,13 +827,14 @@
                         changeMaterialType(i-1);
                     }
                 },
-            }).to(
-                `.services-content-${i}`,
-                { 
-                    x: animParams.xTransform,
-                    opacity: 0, 
-                }
-            )
+            })
+            // .to(
+            //     `.services-content-${i}`,
+            //     { 
+            //         x: animParams.xTransform,
+            //         opacity: 0, 
+            //     }
+            // )
             
         }
     }
@@ -847,7 +853,7 @@
                 trigger: '.partners-section',
                 start: `top ${(100 * 2) / 3}%`,
                 end: 'top top',
-                scrub: 2,
+                scrub: true,
                 markers: false,
                 onUpdate: (self) => {
                     if(width.value>(768 - 1)){
@@ -876,39 +882,26 @@
             1: {x: 50, y: -350, z: 3300},
             2: {x: 400, y: -150, z: 3400},
             3: {x: 580, y: 50, z: 3300},
-            
-            // 右下區域
             4: {x: 350, y: 150, z: 3400},
             5: {x: 220, y: 0, z: 3350},
             6: {x: 200, y: 300, z: 3400},
-            
-            // 左下區域
             7: {x: -180, y: 350, z: 3300},
             8: {x: -400, y: 200, z: 3400},
             9: {x: -190, y: 100, z: 3200},
-            
-            // 左上區域
             10: {x: -550, y: 50, z: 3300},
             11: {x: -500, y: -250, z: 3300},
             12: {x: -300, y: -150, z: 3200},
         };
         const mobilePositions = {
-            // 上方區域
             1: {x: 250, y: -550, z: 1100},
             2: {x: -200, y: -450, z: 1300},
             3: {x: 150, y: -350, z: 1200},
-            
-            // 上中區域
             4: {x: -300, y: -250, z: 1200},
             5: {x: 200, y: -150, z: 1000},
             6: {x: -150, y: -50, z: 1100},
-            
-            // 中心區域
             7: {x: 300, y: 50, z: 1200},
             8: {x: -250, y: 150, z: 1300},
             9: {x: 200, y: 250, z: 1100},
-            
-            // 下中區域
             10: {x: -300, y: 350, z: 1400},
             11: {x: 200, y: 450, z: 1200},
             12: {x: -200, y: 550, z: 1300},
@@ -920,7 +913,7 @@
                 start: 'top top', // 從頁面頂部開始
                 end: 'bottom bottom', // 動態計算結束點
                 scrub: true, // 平滑的滾動效果
-                markers: false,
+                markers: true,
                 onUpdate: (self) => {
                     updatePosition(0, 0, 0, 0, 0, 20, self.progress);
                 },
@@ -929,9 +922,6 @@
         let contentGroupTransformZ;
         if(width.value > (768 - 1)){
             contentGroupTransformZ = 400;
-            partnersSectionTimeline.to('.partners-content-group', {
-                '--transform-z': 400,
-            },0);
         }else if(width.value > (576 - 1)){
             contentGroupTransformZ = 140;
         }else{
@@ -939,7 +929,6 @@
         }
         partnersSectionTimeline.to('.partners-content-group', {
             '--transform-z': contentGroupTransformZ,
-            ease: "power4.out",
         },0);
         
         const position = width.value > (768 - 1) ? desktopPositions : mobilePositions;
@@ -948,12 +937,9 @@
                 '--transform-x': position[i].x,
                 '--transform-y': position[i].y,
                 '--transform-z': position[i].z,
-                duration: 1,
-                ease: "power4.out",
-            },0);
-            partnersSectionTimeline.to(`.partners-content-item-${i}`, {
                 opacity: 1,
-                duration: 0.5,
+                duration: 0.3,
+                ease: "power4.out",
             },0);
         }
     }
@@ -963,7 +949,7 @@
                 trigger: '.contactUs-section',
                 start: 'top bottom',
                 end: 'bottom bottom',
-                scrub: 2,
+                scrub: true,
                 markers: false,
                 onUpdate: (self) => {
                     updatePosition(0, 0, 20, 0, 0, 30, self.progress);
@@ -977,6 +963,19 @@
             },    
         });
     }
+    const setSmoother = async () => {
+        await nextTick()
+        smoother = ScrollSmoother.create({
+            wrapper: '[data-scroll-wrapper]',
+            content: '[data-scroll-content]',
+            smooth: 1,
+            effects: true,
+            normalizeScroll: true,
+        })
+        // ScrollTrigger.addEventListener('refresh', () => smoother?.update())
+        ScrollTrigger.refresh()
+    }
+
     const updatePosition = (fromX, fromY, fromZ, toX, toY, toZ, progress) => {
         if (splashRef.value) {
             const x = (toX - fromX) * progress;
