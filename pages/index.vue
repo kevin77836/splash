@@ -481,7 +481,9 @@
     const setupScrollAnimations = () => {
         if (process.client) {
             nextTick(() => {
-                setSmoother();
+                if (!isMobileDevice()) {
+                    setSmoother();
+                }
                 aboutUsSectionGsap();
                 worksSectionGsap();
                 servicesSectionGsap();
@@ -913,7 +915,7 @@
                 start: 'top top', // 從頁面頂部開始
                 end: 'bottom bottom', // 動態計算結束點
                 scrub: true, // 平滑的滾動效果
-                markers: true,
+                markers: false,
                 onUpdate: (self) => {
                     updatePosition(0, 0, 0, 0, 0, 20, self.progress);
                 },
