@@ -1,6 +1,5 @@
 .main-container{
     height: var(--h);
-    // overflow: auto;
     .section{
         position: relative;
         width: 100%;
@@ -83,8 +82,6 @@
         --bg-opacity: 0.75;
         background-color:rgba($color: #F2F2F2, $alpha: var(--bg-opacity));
         .aboutUs-content-container{
-            position: sticky;
-            top: 0;
             overflow: hidden;
             .aboutUs-content-group{
                 width: fit-content;
@@ -212,9 +209,6 @@
         .works-content-container{
             width: 100%;
             height: 100dvh;
-            position: sticky;
-            top: 0;
-            left: 0;
             overflow: hidden;
             .works-content-group{
                 width: 100%;
@@ -295,9 +289,6 @@
         .partners-content-container{
             width: 100%;
             height: 100dvh;
-            position: sticky;
-            top: 0;
-            left: 0;
             overflow: hidden;
             perspective: 250px;
             transform-style: preserve-3d;

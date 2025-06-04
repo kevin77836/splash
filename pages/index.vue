@@ -487,6 +487,15 @@
         }
     };
     const aboutUsSectionGsap = () => {
+        ScrollTrigger.create({
+            trigger: '.aboutUs-section',
+            start: 'top top',
+            end: 'bottom top',
+            pin: '.aboutUs-content-container',
+            pinSpacing: false,
+            scrub: false,
+        });
+
         let serviceMarqueeInterval = null;
         const startServiceMarquee = () => {
             if(serviceMarqueeInterval) return;
@@ -511,7 +520,7 @@
                 trigger: '.main-section',
                 start: 'top top',
                 end: `bottom+=150% top`,
-                scrub: true,
+                scrub: 2,
                 markers: false,
                 onUpdate: (self) => {
                     updatePosition(0, 0, 0, 0, -18, 0, self.progress);
@@ -553,12 +562,21 @@
             .to('.aboutUs-content-group', { opacity: 0, transform: 'scale(5)', duration: 0.2, ease: "power4.in", },1.3)
     }
     const worksSectionGsap = () => {
+        ScrollTrigger.create({
+            trigger: '.works-section',
+            start: 'top top',
+            end: 'bottom top',
+            pin: '.works-content-container',
+            pinSpacing: false,
+            scrub: false,
+        });
+
         gsap.timeline({
             scrollTrigger: {
                 trigger: '.works-section',
                 start: 'top bottom',
                 end: 'top top',
-                scrub: true,
+                scrub: 2,
                 markers: false,
                 onUpdate: (self) => {
                     updatePosition(0, -1, 30, 0, 0, -10, self.progress);
@@ -815,12 +833,21 @@
         }
     }
     const partnersSectionGsap = () => {
+        ScrollTrigger.create({
+            trigger: '.partners-section',
+            start: 'top top',
+            end: 'bottom top',
+            pin: '.partners-content-container',
+            pinSpacing: false,
+            scrub: false,
+        });
+
         gsap.timeline({
             scrollTrigger: {
                 trigger: '.partners-section',
                 start: `top ${(100 * 2) / 3}%`,
                 end: 'top top',
-                scrub: true,
+                scrub: 2,
                 markers: false,
                 onUpdate: (self) => {
                     if(width.value>(768 - 1)){
@@ -936,7 +963,7 @@
                 trigger: '.contactUs-section',
                 start: 'top bottom',
                 end: 'bottom bottom',
-                scrub: true,
+                scrub: 2,
                 markers: false,
                 onUpdate: (self) => {
                     updatePosition(0, 0, 20, 0, 0, 30, self.progress);
