@@ -52,15 +52,15 @@ const sphereParams = reactive({
   maxRadius: 0.5,      // 最大半徑
   minLength: 3.0,      // 最小目標長度
   maxLength: 10.0,      // 最大目標長度
-  segmentDetail: 6,   // 幾何體細分
+  segmentDetail: 12,   // 幾何體細分
   minScale: 0        // 最小縮放值(原點狀態)
 });
 
 // --- 流動動畫參數 ---
 const animParams = reactive({
   // 基本設定
-  mobileResolution: 75,
-  resolution: 80,                // Marching Cubes 解析度
+  mobileResolution: 80,
+  resolution: 100,                // Marching Cubes 解析度
   numSegments: 50,                // 每條線分段數量
   subtract: 20,                   // Metaball 減法參數
   
@@ -926,7 +926,7 @@ async function initializeScene() {
     resolution = animParams.mobileResolution;
   }
   const derivedIsolation = 150;
-  effect = new MarchingCubes(resolution, material, true, true, 7500);
+  effect = new MarchingCubes(resolution, material, true, true, 50000);
   effect.isolation = derivedIsolation;
   effect.scale.set(8, 8, 8);
   effect.enableUvs = false;

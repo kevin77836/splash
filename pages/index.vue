@@ -142,10 +142,29 @@
                     <div class="services-description">
                         {{ item.description }}
                     </div>
+                    <div class="services-projects-group">
+                        <div class="services-projects" v-for="(project,projectsIndex) in item.projects" :key="'services'+ index + projectsIndex">
+                            <div class="banner">
+                                <video v-if="fetchMediaById(project).type === 'video'" :src="fetchMediaById(project).src" autoplay muted loop playsinline></video>
+                                <img v-else :src="fetchMediaById(project).src" alt="">
+                            </div>
+                            <div class="infoGroup">
+                                <div class="title">{{ fetchMediaById(project).title }}</div>
+                                <div class="descriptionWrap">
+                                    <div class="description">{{ fetchMediaById(project).description }}</div>
+                                </div>
+                                <div class="cta">查看專案</div>
+                            </div>
+                        </div>
+                    </div>
+
                 </div>
             </div>
             <div v-show="isStarted" class="section partners-section">
                 <div class="partners-content-container">
+                    <!-- <div class="partners-content-title">
+                        Partners
+                    </div> -->
                     <div class="partners-content-group">
                         <div class="partners-content-item partners-content-item-1">
                             <img src="/partners/partners1.png" alt="">
@@ -241,32 +260,47 @@
             title: 'AR/VR/XR策展',
             description: '策劃並開發、執行 Web AR/ XR 沉浸式展覽、行銷活動或產品展示，打造虛實整合體驗。',
             splitTitle: [],
-            splitDescription: []
+            splitDescription: [],
+            projects:[
+                1,3,9
+            ]
         },
         {
             title: '網頁設計開發',
             description: '從前端網站設計到3D互動前端，整合 Nuxt、Three.js 等技術，實現網頁創新體驗。',
             splitTitle: [],
-            splitDescription: []
+            splitDescription: [],
+            projects:[
+                2,11
+            ]
         },
         {
             title: '品牌識別規劃',
             description: '提供品牌識別與視覺系統規劃服務，滿足品牌在實體門店到數位體驗中的各式需求。',
             splitTitle: [],
-            splitDescription: []
+            splitDescription: [],
+            projects:[
+                4,13
+            ]
         },
         {
             title: '2D/3D動畫',
             description: '製作 3D 動畫、CGI 與 Web AR 結合的視覺內容，豐富數位敘事層次。',
             splitTitle: [],
-            splitDescription: []
+            splitDescription: [],
+            projects:[
+                1,7
+            ]
         },
-        {
-            title: '互動設計/數位藝術',
-            description: '專注於直覺互動體驗，從動作感應裝置到展覽互動系統，強化體驗參與感。',
-            splitTitle: [],
-            splitDescription: []
-        },
+        // {
+        //     title: '互動設計/數位藝術',
+        //     description: '專注於直覺互動體驗，從動作感應裝置到展覽互動系統，強化體驗參與感。',
+        //     splitTitle: [],
+        //     splitDescription: [],
+        //     projects:[
+        //         1,2,3
+        //     ]
+        // },
     ])
 
     // 文字動態特效
@@ -394,27 +428,30 @@
 
     // 新增：媒體資源列表
     const mediaResources = ref([
-        { type: 'video', src: '/works/works15.mp4', link: '#', column: true },
-        { type: 'video', src: '/works/works14.mp4', link: '#', column: true },
-        { type: 'video', src: '/works/works13.mp4', link: '#', column: false },
-        { type: 'image', src: '/works/works12.webp', link: '#', column: false },
-        { type: 'video', src: '/works/works11.mp4', link: '#', column: true },
-        { type: 'video', src: '/works/works10.mp4', link: '#', column: true },
-        { type: 'video', src: '/works/works9.mp4', link: '#', column: true },
-        { type: 'image', src: '/works/works8.webp', link: '#', column: false },
-        { type: 'video', src: '/works/works7.mp4', link: '#', column: false },
-        { type: 'video', src: '/works/works6.mp4', link: '#', column: true },
-        { type: 'video', src: '/works/works5.mp4', link: '#', column: true },
-        { type: 'image', src: '/works/works4.webp', link: '#', column: false },
-        { type: 'video', src: '/works/works3.mp4', link: '#', column: false },
-        { type: 'video', src: '/works/works2.mp4', link: '#', column: false },
-        { type: 'video', src: '/works/works1.mp4', link: '#', column: false }
+        { id: 15,type: 'video', src: '/works/works15.mp4', link: '#', column: true, title:'專案標題', description:'專案內文專案內文專案內文專案內文專案內文專案內文專案內文專案內文專案內文專案內文專案內文專案內文專案內文專案內文專案內文' },
+        { id: 14,type: 'video', src: '/works/works14.mp4', link: '#', column: true, title:'專案標題', description:'專案內文專案內文專案內文專案內文專案內文專案內文專案內文專案內文專案內文專案內文專案內文專案內文專案內文專案內文專案內文' },
+        { id: 13,type: 'video', src: '/works/works13.mp4', link: '#', column: false, title:'專案標題', description:'專案內文專案內文專案內文專案內文專案內文專案內文專案內文專案內文專案內文專案內文專案內文專案內文專案內文專案內文專案內文' },
+        { id: 12,type: 'image', src: '/works/works12.webp', link: '#', column: false, title:'專案標題', description:'專案內文專案內文專案內文專案內文專案內文專案內文專案內文專案內文專案內文專案內文專案內文專案內文專案內文專案內文專案內文' },
+        { id: 11,type: 'video', src: '/works/works11.mp4', link: '#', column: true, title:'專案標題', description:'專案內文專案內文專案內文專案內文專案內文專案內文專案內文專案內文專案內文專案內文專案內文專案內文專案內文專案內文專案內文' },
+        { id: 10,type: 'video', src: '/works/works10.mp4', link: '#', column: true, title:'專案標題', description:'專案內文專案內文專案內文專案內文專案內文專案內文專案內文專案內文專案內文專案內文專案內文專案內文專案內文專案內文專案內文' },
+        { id: 9,type: 'video', src: '/works/works9.mp4', link: '#', column: true, title:'AR | 打狗祭 2024 × AR 小怪獸現身!', description:'今年，小怪獸們不只盤據舞台，更將透過 AR 擴增實境，衝破次元，降臨你的世界！📱✨' },
+        { id: 8,type: 'image', src: '/works/works8.webp', link: '#', column: false, title:'專案標題', description:'專案內文專案內文專案內文專案內文專案內文專案內文專案內文專案內文專案內文專案內文專案內文專案內文專案內文專案內文專案內文' },
+        { id: 7,type: 'video', src: '/works/works7.mp4', link: '#', column: false, title:'專案標題', description:'專案內文專案內文專案內文專案內文專案內文專案內文專案內文專案內文專案內文專案內文專案內文專案內文專案內文專案內文專案內文' },
+        { id: 6,type: 'video', src: '/works/works6.mp4', link: '#', column: true, title:'專案標題', description:'專案內文專案內文專案內文專案內文專案內文專案內文專案內文專案內文專案內文專案內文專案內文專案內文專案內文專案內文專案內文' },
+        { id: 5,type: 'video', src: '/works/works5.mp4', link: '#', column: true, title:'專案標題', description:'專案內文專案內文專案內文專案內文專案內文專案內文專案內文專案內文專案內文專案內文專案內文專案內文專案內文專案內文專案內文' },
+        { id: 4,type: 'image', src: '/works/works4.webp', link: '#', column: false, title:'專案標題', description:'專案內文專案內文專案內文專案內文專案內文專案內文專案內文專案內文專案內文專案內文專案內文專案內文專案內文專案內文專案內文' },
+        { id: 3,type: 'video', src: '/works/works3.mp4', link: '#', column: false, title:'AR Card / 3D Animation | 黑金派對 2024 – 可可占星術', description:'《黑金派對 2024 – 可可占星術》可可（Cacao）一詞源自瑪雅銘文的 Kakaw，在古瑪雅文化中，被視為蘊藏神秘力量的珍寶。而在《黑金派對 2024》，這股神秘魔力將透過 AR 可可占星術，為你揭開內心深處的秘密！' },
+        { id: 2,type: 'video', src: '/works/works2.mp4', link: '#', column: false, title:'專案標題', description:'專案內文專案內文專案內文專案內文專案內文專案內文專案內文專案內文專案內文專案內文專案內文專案內文專案內文專案內文專案內文' },
+        { id: 1,type: 'video', src: '/works/works1.mp4', link: '#', column: false, title:'Web AR | 2024 康士坦的變化球 KST 眠月線演唱會 高雄站', description:'《2024 康士坦的變化球 KST 眠月線演唱會 高雄站》在康士坦變化球《眠月線》高雄演唱會，打造了一場獨特的 Web AR 互動體驗，透過手機瀏覽器無須下載App即可開啟活動體驗，親身走進《眠月線》MV的夢境與現實交錯之中，尋找遺落的記憶碎片。' }
     ]);
     // 新增：反轉後的媒體資源列表
     const reversedMediaResources = computed(() => {
         return [...mediaResources.value].reverse();
     });
 
+    function fetchMediaById(id) {
+        return mediaResources.value.find(item => item.id === id);
+    }
     // 新增：計算載入進度
     const loadingPercent = computed(() => {
         const percent = Math.floor((loadedItems.value / (mediaResources.value.length + 1)) * 100);
@@ -725,20 +762,11 @@
             scrollTrigger: {
                 trigger: `.services-content-1`,
                 start: 'top bottom',
-                end: `${100/3}% center`,
+                end: `top+=300px center`,
                 scrub: false,
                 markers: false,
                 onEnter: () => {
                     shrinkingFunction()
-                },
-                onLeave: () => {
-                    growingFunction();
-                },
-                onEnterBack: () => {
-                    shrinkingFunction()
-                },
-                onLeaveBack: () => {
-                    // growingFunction()
                 },
                 onUpdate: (self) => {
                     if(width.value>(768 - 1)){
@@ -750,14 +778,7 @@
             },
         })
 
-        // 動畫時間參數
-        const animParams = {
-            totalCount: 6,
-            xTransform: 50,
-            xStayTransform: 5,
-        }
-
-        for (let i = 1; i <= animParams.totalCount; i++) {
+        for (let i = 1; i <= serviceData.value.length; i++) {
             // if(width.value <= (768 - 1)){
             //     animParams.xTransform = 0;
             //     animParams.xStayTransform = 0;
@@ -795,7 +816,7 @@
             gsap.timeline({
                 scrollTrigger: {
                     trigger: `.services-content-${i}`,
-                    start: `${100/3}% center`,
+                    start: `top+=300px center`,
                     end: `center center`,
                     markers: false,
                     scrub: true,
@@ -833,7 +854,7 @@
             gsap.timeline({
                 scrollTrigger: {
                     trigger: `.services-content-${i}`,
-                    start: `${100*2/3}% center`,
+                    start: `bottom-=300px center`,
                     end: `bottom center`,
                     markers: false,
                     scrub: true,
@@ -887,10 +908,6 @@
                 onEnterBack: () => {
                     shrinkingFunction();
                 },
-                onLeaveBack: () => {
-                    growingFunction();
-                    changeMaterialType(5);
-                }
             },    
         });
 
@@ -937,6 +954,7 @@
                 },
             }
         });
+
         let contentGroupTransformZ;
         if(width.value > (768 - 1)){
             contentGroupTransformZ = 400;
@@ -945,8 +963,23 @@
         }else{
             contentGroupTransformZ = 120;
         }
+
+        partnersSectionTimeline.to('.partners-content-title', {
+            opacity: 1,
+            duration: 0.3,
+        },0);
+        // partnersSectionTimeline.to('.partners-content-title', {
+        //     opacity: 0,
+        //     duration: 0.3,
+        // },0.7);
+        partnersSectionTimeline.to('.partners-content-title', {
+            scale: 2,
+            duration: 1,
+        },0);
         partnersSectionTimeline.to('.partners-content-group', {
             '--transform-z': contentGroupTransformZ,
+            ease: CustomEase.create("custom", "M0,0 C0,0.5 1,0.5 1,1 "),
+            duration: 1,
         },0);
         
         const position = width.value > (768 - 1) ? desktopPositions : mobilePositions;

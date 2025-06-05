@@ -126,7 +126,7 @@
                     </div>
                 </div>
             </div>
-            <div v-show="isStarted" class="section works-section">
+            <!-- <div v-show="isStarted" class="section works-section">
                 <div v-if="isStarted" class="works-content-container">
                     <div class="works-content-group">
                         <a v-for="(media,index) in reversedMediaResources" :key="'media'+index" href="media.link" :class="`works-content-item works-content-item-${index+1} ${media.column ? 'column' : ''}`">
@@ -135,12 +135,17 @@
                         </a>
                     </div>
                 </div> 
-            </div>
+            </div> -->
             <div v-show="isStarted" class="section services-section">
                 <div v-for="(item, index) in serviceData" class="services-content" :class="`services-content-${index+1}`" :key="index">
-                    <h2 class="services-title">{{ item.title }}</h2>
-                    <div class="services-description">
-                        {{ item.description }}
+                    <div class="services-content-container">
+                        <h2 class="services-title">{{ item.title }}</h2>
+                        <div class="services-works-content-group">
+                            <a v-for="(media,index) in reversedMediaResources" :key="'media'+index" href="media.link" :class="`services-works-content-item services-works-content-item-${index+1} ${media.column ? 'column' : ''}`">
+                                <video v-if="media.type === 'video'" :src="media.src" autoplay muted loop playsinline></video>
+                                <img v-else :src="media.src" alt="">
+                            </a>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -261,12 +266,12 @@
             splitTitle: [],
             splitDescription: []
         },
-        {
-            title: '互動設計/數位藝術',
-            description: '專注於直覺互動體驗，從動作感應裝置到展覽互動系統，強化體驗參與感。',
-            splitTitle: [],
-            splitDescription: []
-        },
+        // {
+        //     title: '互動設計/數位藝術',
+        //     description: '專注於直覺互動體驗，從動作感應裝置到展覽互動系統，強化體驗參與感。',
+        //     splitTitle: [],
+        //     splitDescription: []
+        // },
     ])
 
     // 文字動態特效
@@ -485,7 +490,7 @@
                     setSmoother();
                 }
                 aboutUsSectionGsap();
-                worksSectionGsap();
+                // worksSectionGsap();
                 servicesSectionGsap();
                 partnersSectionGsap();
                 contactUsSectionGsap();
@@ -725,81 +730,59 @@
             scrollTrigger: {
                 trigger: `.services-content-1`,
                 start: 'top bottom',
-                end: `${100/3}% center`,
+                end: `${100/3}% top`,
                 scrub: false,
                 markers: false,
-                onEnter: () => {
-                    shrinkingFunction()
-                },
-                onLeave: () => {
-                    growingFunction();
-                },
-                onEnterBack: () => {
-                    shrinkingFunction()
-                },
-                onLeaveBack: () => {
-                    // growingFunction()
-                },
                 onUpdate: (self) => {
-                    if(width.value>(768 - 1)){
-                        updatePosition(0, 0, 0, -8, 0, 0, self.progress);
-                    }else{
-                        updatePosition(0, 0, 0, 0, -2, 0, self.progress);
-                    }
+                    updatePosition(0, -1, 30, 0, 0, -10, self.progress);
                 },
             },
         })
 
-        // 動畫時間參數
-        const animParams = {
-            totalCount: 6,
-            xTransform: 50,
-            xStayTransform: 5,
-        }
-
-        for (let i = 1; i <= animParams.totalCount; i++) {
-            // if(width.value <= (768 - 1)){
-            //     animParams.xTransform = 0;
-            //     animParams.xStayTransform = 0;
-            // }
-            // gsap.timeline({
-            //     scrollTrigger: {
-            //         trigger: `.services-content-${i}`,
-            //         start: 'top bottm',
-            //         markers: false,
-            //         scrub: true,
-            //     }
-            // }).set(`.services-content-${i}`, 
-            //     {
-            //         x: animParams.xTransform,
-            //         opacity: 0, 
-            //     }
-            // )
-            
-            // gsap.timeline({
-            //     scrollTrigger: {
-            //         trigger: `.services-content-${i}`,
-            //         start: 'top center',
-            //         end: `${100/3}% center`,
-            //         markers: false,
-            //         scrub: true,
-            //     },
-            // }).to(
-            //     `.services-content-${i}`,
-            //     {
-            //         x: animParams.xStayTransform,
-            //         opacity: 1, 
-            //     }
-            // )
+        for (let i = 1; i <= serviceData.value.length; i++) {
+            ScrollTrigger.create({
+                trigger: `.services-content-${i}`,
+                start: 'top top',
+                end: 'bottom top',
+                pin: `.services-content-${i} .services-content-container`,
+                pinSpacing: false,
+                scrub: false,
+                markers: true
+            });
 
             gsap.timeline({
                 scrollTrigger: {
                     trigger: `.services-content-${i}`,
-                    start: `${100/3}% center`,
-                    end: `center center`,
+                    start: 'top top',
+                    end: `${100/3}% top`,
                     markers: false,
                     scrub: true,
+                    onUpdate: (self) => {
+                        if(i!== 1){
+                            updatePosition(0, 0, 20, 0, 0, -20, self.progress);
+                        }
+                    },
+                },
+            })
+
+            const tl = gsap.timeline({
+                scrollTrigger: {
+                    trigger: `.services-content-${i}`,
+                    start: `${100/3}% top`,
+                    end: `bottom top`,
+                    markers: false,
+                    scrub: true,
+                    onUpdate: (self) => {
+                        updatePosition(0, 0, -20, 0, 0, 20, self.progress);
+                    },
                     onEnter: () => {
+                        growingFunction();
+                        changeMaterialType(i-1);
+                    },
+                    onLeave: ()=>{
+                        shrinkingFunction();
+                    },
+                    onEnterBack: ()=>{
                         growingFunction();
                         changeMaterialType(i-1);
                     },
@@ -807,53 +790,129 @@
                         shrinkingFunction();
                     }
                 },
-            })
-            // .to(
-            //     `.services-content-${i}`,
-            //     {
-            //         x: 0
-            //     }
-            // )
-
-            // gsap.timeline({
-            //     scrollTrigger: {
-            //         trigger: `.services-content-${i}`,
-            //         start: `center center`,
-            //         end: `${100*2/3}% center`,
-            //         markers: false,
-            //         scrub: true,
-            //     },
-            // }).to(
-            //     `.services-content-${i}`,
-            //     {
-            //         x: animParams.xStayTransform,
-            //     }
-            // )
+            }).to(`.services-content-${i} .services-content-container .services-title`,
+                {
+                    '--scale': 2, 
+                }
+            )
 
             gsap.timeline({
                 scrollTrigger: {
                     trigger: `.services-content-${i}`,
-                    start: `${100*2/3}% center`,
-                    end: `bottom center`,
+                    start: `${100/3}% top`,
+                    end: `${100/3}%+=200px top`,
                     markers: false,
                     scrub: true,
-                    onEnter: () => {
-                        shrinkingFunction();
-                    },
-                    onLeaveBack: () => {
-                        growingFunction();
-                        changeMaterialType(i-1);
-                    }
                 },
-            })
-            // .to(
-            //     `.services-content-${i}`,
-            //     { 
-            //         x: animParams.xTransform,
-            //         opacity: 0, 
-            //     }
-            // )
-            
+            }).to(`.services-content-${i} .services-content-container .services-title`,
+                {
+                    opacity: 1, 
+                }
+            )
+            gsap.timeline({
+                scrollTrigger: {
+                    trigger: `.services-content-${i}`,
+                    start: `bottom-=200px top`,
+                    end: `bottom top`,
+                    markers: false,
+                    scrub: true,
+                }
+            }).to(`.services-content-${i} .services-content-container .services-title`,
+                {
+                    opacity: 0, 
+                }
+            )
+
+
+            const itemCount = 15;
+            const zDistance = 10000;
+            let totalDistance;
+            if(width.value > (1400 - 1)){
+                totalDistance = 3500;
+            }else if(width.value > (1200 - 1)){
+                totalDistance = 3000;
+            }else if(width.value > (992 - 1)){
+                totalDistance = 2500;
+            }else if(width.value > (768 - 1)){
+                totalDistance = 2500;
+            }else{
+                totalDistance = 2500;
+            }
+            const radToDeg = rad => rad * 180 / Math.PI;
+            const clampAngle = angle => ((angle % 360) + 360) % 360;
+            const getCornerDataFromScreen = () => {
+                const halfW = width.value / 2;
+                const halfH = height.value / 2;
+
+                return {
+                    topLeft: {
+                        angle: clampAngle(radToDeg(Math.atan2(-halfH, -halfW))),
+                    },
+                    topRight: {
+                        angle: clampAngle(radToDeg(Math.atan2(-halfH, halfW))),
+                    },
+                    bottomLeft: {
+                        angle: clampAngle(radToDeg(Math.atan2(halfH, -halfW))),
+                    },
+                    bottomRight: {
+                        angle: clampAngle(radToDeg(Math.atan2(halfH, halfW))),
+                    },
+                };
+            };
+            const cornerOrder = [
+                'topLeft', 
+                'topRight', 
+                'bottomRight', 
+                'bottomLeft'
+            ];
+            const generateAngleSequence = (count) => {
+                const cornerData = getCornerDataFromScreen();
+                const sequence = [];
+
+                for (let i = 0; i < count; i++) {
+                    const cornerKey = cornerOrder[i % cornerOrder.length];
+                    const baseAngle = cornerData[cornerKey].angle;
+                    const randomOffset = Math.random() * 40 - 20; // ±45 度
+                    const finalAngle = baseAngle + randomOffset;
+
+                    sequence.push(finalAngle);
+                }
+
+                return sequence;
+            };
+            const worksAngleData = generateAngleSequence(itemCount);
+            function polarToCartesian(angleDeg, distance) {
+                const rad = angleDeg * Math.PI / 180;
+                return {
+                    x: Math.round(distance * Math.cos(rad)),
+                    y: Math.round(distance * Math.sin(rad)),
+                };
+            }
+            const durationTime = 1;
+            const opacityDuration = 0.3;
+            const delayPercent = 0.15;
+            for (let worksItem = 0; worksItem < itemCount; worksItem++) {
+                const { x, y } = polarToCartesian(worksAngleData[worksItem], totalDistance);
+
+                
+                const itemSelector = `.services-content-${i} .services-content-container .services-works-content-group .services-works-content-item-${worksItem + 1}`;
+                const start = (durationTime * delayPercent) * (worksItem-1);
+
+                // 位移動畫
+                tl.to(itemSelector, {
+                    '--transform-x': x,
+                    '--transform-y': y,
+                    '--transform-z': zDistance,
+                    duration: durationTime,
+                    ease: "power1.out",
+                }, start);
+
+                // 透明動畫（延遲 opacityDelayRatio 啟動）
+                tl.to(itemSelector, {
+                    opacity: 1,
+                    duration: opacityDuration / durationTime,
+                }, start);
+            }
         }
     }
     const partnersSectionGsap = () => {
@@ -866,33 +925,18 @@
             scrub: false,
         });
 
-        gsap.timeline({
-            scrollTrigger: {
-                trigger: '.partners-section',
-                start: `top ${(100 * 2) / 3}%`,
-                end: 'top top',
-                scrub: true,
-                markers: false,
-                onUpdate: (self) => {
-                    if(width.value>(768 - 1)){
-                        updatePosition(-8, 0, 0, 0, 0, 0, self.progress);
-                    }else{
-                        updatePosition(0, -2, 0, 0, 0, 0, self.progress);
-                    }
-                },
-                onLeave: () => {
-                    changeMaterialType(0);
-                    growingFunction();
-                },
-                onEnterBack: () => {
-                    shrinkingFunction();
-                },
-                onLeaveBack: () => {
-                    growingFunction();
-                    changeMaterialType(5);
-                }
-            },    
-        });
+        // gsap.timeline({
+        //     scrollTrigger: {
+        //         trigger: '.partners-section',
+        //         start: `top center`,
+        //         end: 'top top',
+        //         scrub: true,
+        //         markers: false,
+        //         onUpdate: (self) => {
+        //             updatePosition(0, 0, 0, 0, 0, -10, self.progress);
+        //         },
+        //     },    
+        // });
 
         const itemCount = 12; // 元素總數
 
@@ -933,8 +977,15 @@
                 scrub: true, // 平滑的滾動效果
                 markers: false,
                 onUpdate: (self) => {
-                    updatePosition(0, 0, 0, 0, 0, 20, self.progress);
+                    updatePosition(0, 0, 20, 0, 0, 30, self.progress);
                 },
+                onEnter: () =>{
+                    growingFunction();
+                    changeMaterialType(0);
+                },
+                onLeaveBack: () => {
+                    shrinkingFunction();
+                }
             }
         });
         let contentGroupTransformZ;
@@ -947,6 +998,7 @@
         }
         partnersSectionTimeline.to('.partners-content-group', {
             '--transform-z': contentGroupTransformZ,
+            ease: CustomEase.create("custom", "M0,0 C0,0.5 1,0.5 1,1 ")
         },0);
         
         const position = width.value > (768 - 1) ? desktopPositions : mobilePositions;
