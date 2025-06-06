@@ -142,7 +142,7 @@
                     <div class="services-description">
                         {{ item.description }}
                     </div>
-                    <div class="services-projects-group">
+                    <div v-if="item.projects?.length" class="services-projects-group">
                         <div class="services-projects" v-for="(project,projectsIndex) in item.projects" :key="'services'+ index + projectsIndex">
                             <div class="banner">
                                 <video v-if="fetchMediaById(project).type === 'video'" :src="fetchMediaById(project).src" autoplay muted loop playsinline></video>
@@ -254,13 +254,15 @@
             title: 'Services',
             description: 'Splash DigiLab 結合設計創意與前端開發，擅長跨界沉浸式互動體驗，服務範圍包含 XR 展演策劃、UI/UX 設計、網頁開發、品牌設計、數位藝術、互動設計等。',
             splitTitle: [],
-            splitDescription: []
+            splitDescription: [],
+            splitActive: false
         },
         {
             title: 'AR/VR/XR策展',
             description: '策劃並開發、執行 Web AR/ XR 沉浸式展覽、行銷活動或產品展示，打造虛實整合體驗。',
             splitTitle: [],
             splitDescription: [],
+            splitActive: false,
             projects:[
                 1,3,9
             ]
@@ -270,6 +272,7 @@
             description: '從前端網站設計到3D互動前端，整合 Nuxt、Three.js 等技術，實現網頁創新體驗。',
             splitTitle: [],
             splitDescription: [],
+            splitActive: false,
             projects:[
                 2,11
             ]
@@ -279,6 +282,7 @@
             description: '提供品牌識別與視覺系統規劃服務，滿足品牌在實體門店到數位體驗中的各式需求。',
             splitTitle: [],
             splitDescription: [],
+            splitActive: false,
             projects:[
                 4,13
             ]
@@ -288,6 +292,7 @@
             description: '製作 3D 動畫、CGI 與 Web AR 結合的視覺內容，豐富數位敘事層次。',
             splitTitle: [],
             splitDescription: [],
+            splitActive: false,
             projects:[
                 1,7
             ]
@@ -304,127 +309,127 @@
     ])
 
     // 文字動態特效
-    // const textAnimation = {
-    //     init() {
-    //         if (process.client) {
-    //             for(let i = 0; i < serviceData.value.length; i++) {
-    //                 // 為標題創建 SplitText
-    //                 const titleElement = document.querySelector(`.services-content-${i+1} .services-title`);
-    //                 if (titleElement) {
-    //                     serviceData.value[i].splitTitle = new SplitText(titleElement, {
-    //                         type: "chars",
-    //                         charsClass: "char"
-    //                     });
-    //                     // 保存原始文字並設置初始可見性
-    //                     serviceData.value[i].splitTitle.chars.forEach(char => {
-    //                         char.dataset.originalText = char.textContent;
-    //                         char.style.visibility = 'hidden';
-    //                         char.textContent = '';
-    //                     });
-    //                 }
+    const textAnimation = {
+        init() {
+            if (process.client) {
+                for(let i = 0; i < serviceData.value.length; i++) {
+                    // 為標題創建 SplitText
+                    const titleElement = document.querySelector(`.services-content-${i+1} .services-title`);
+                    if (titleElement) {
+                        serviceData.value[i].splitTitle = new SplitText(titleElement, {
+                            type: "chars",
+                            charsClass: "char"
+                        });
+                        // 保存原始文字並設置初始可見性
+                        serviceData.value[i].splitTitle.chars.forEach(char => {
+                            char.dataset.originalText = char.textContent;
+                            char.style.visibility = 'hidden';
+                            char.textContent = '';
+                        });
+                    }
 
-    //                 // 為描述創建 SplitText
-    //                 const descElement = document.querySelector(`.services-content-${i+1} .services-description`);
-    //                 if (descElement) {
-    //                     serviceData.value[i].splitDescription = new SplitText(descElement, {
-    //                         type: "chars",
-    //                         charsClass: "char"
-    //                     });
-    //                     // 保存原始文字並設置初始可見性
-    //                     serviceData.value[i].splitDescription.chars.forEach(char => {
-    //                         char.dataset.originalText = char.textContent;
-    //                         char.style.visibility = 'hidden';
-    //                         char.textContent = '';
-    //                     });
-    //                 }
-    //             }
-    //         }
-    //     },
+                    // 為描述創建 SplitText
+                    const descElement = document.querySelector(`.services-content-${i+1} .services-description`);
+                    if (descElement) {
+                        serviceData.value[i].splitDescription = new SplitText(descElement, {
+                            type: "chars",
+                            charsClass: "char"
+                        });
+                        // 保存原始文字並設置初始可見性
+                        serviceData.value[i].splitDescription.chars.forEach(char => {
+                            char.dataset.originalText = char.textContent;
+                            char.style.visibility = 'hidden';
+                            char.textContent = '';
+                        });
+                    }
+                }
+            }
+        },
 
-    //     getRandomLetter() {
-    //         const letters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ結合設計創意與前端開發擅長跨界沉浸式互動體驗';
-    //         return letters[Math.floor(Math.random() * letters.length)];
-    //     },
+        getRandomLetter() {
+            const letters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ結合設計創意與前端開發擅長跨界沉浸式互動體驗';
+            return letters[Math.floor(Math.random() * letters.length)];
+        },
 
-    //     animate(index) {
-    //         if (!process.client) return;
+        animate(index) {
+            if (!process.client) return;
 
-    //         const titleChars = serviceData.value[index].splitTitle.chars;
-    //         const descriptionChars = serviceData.value[index].splitDescription.chars;
+            const titleChars = serviceData.value[index].splitTitle.chars;
+            const descriptionChars = serviceData.value[index].splitDescription.chars;
 
-    //         // 先將所有字元設為空
-    //         titleChars.forEach(char => {
-    //             char.textContent = '';
-    //             char.style.visibility = 'hidden';
-    //         });
-    //         descriptionChars.forEach(char => {
-    //             char.textContent = '';
-    //             char.style.visibility = 'hidden';
-    //         });
+            // 先將所有字元設為空
+            titleChars.forEach(char => {
+                char.textContent = '';
+                char.style.visibility = 'hidden';
+            });
+            descriptionChars.forEach(char => {
+                char.textContent = '';
+                char.style.visibility = 'hidden';
+            });
 
-    //         // 創建標題動畫時間軸
-    //         const titleTimeline = gsap.timeline();
+            // 創建標題動畫時間軸
+            const titleTimeline = gsap.timeline();
 
-    //         // 為每個標題字元創建動畫
-    //         titleChars.forEach((char, charIndex) => {
-    //             const charTimeline = gsap.timeline();
+            // 為每個標題字元創建動畫
+            titleChars.forEach((char, charIndex) => {
+                const charTimeline = gsap.timeline();
                 
-    //             // 添加單個字元的動畫到時間軸
-    //             charTimeline
-    //                 .set(char, { visibility: 'visible' }) // 顯示字元
-    //                 .to({}, { 
-    //                     duration: 0.05,
-    //                     onStart: () => {
-    //                         // 開始隨機字動態
-    //                         const randomInterval = setInterval(() => {
-    //                             char.textContent = textAnimation.getRandomLetter();
-    //                         }, 5);
+                // 添加單個字元的動畫到時間軸
+                charTimeline
+                    .set(char, { visibility: 'visible' }) // 顯示字元
+                    .to({}, { 
+                        duration: 0.05,
+                        onStart: () => {
+                            // 開始隨機字動態
+                            const randomInterval = setInterval(() => {
+                                char.textContent = textAnimation.getRandomLetter();
+                            }, 5);
 
-    //                         // 0.5秒後清除隨機字動態
-    //                         setTimeout(() => {
-    //                             clearInterval(randomInterval);
-    //                             char.textContent = char.dataset.originalText;
-    //                         }, 50);
-    //                     }
-    //                 })
+                            // 0.5秒後清除隨機字動態
+                            setTimeout(() => {
+                                clearInterval(randomInterval);
+                                char.textContent = char.dataset.originalText;
+                            }, 50);
+                        }
+                    })
 
-    //             // 將此字元的動畫添加到主時間軸
-    //             titleTimeline.add(charTimeline, charIndex * 0.05); // 0.6 = 0.5(動畫) + 0.1(延遲)
-    //         });
+                // 將此字元的動畫添加到主時間軸
+                titleTimeline.add(charTimeline, charIndex * 0.05); // 0.6 = 0.5(動畫) + 0.1(延遲)
+            });
 
-    //         // 等標題完成後開始描述文字動畫
-    //         titleTimeline.add(() => {
-    //             const descriptionTimeline = gsap.timeline();
+            // 等標題完成後開始描述文字動畫
+            titleTimeline.add(() => {
+                const descriptionTimeline = gsap.timeline();
 
-    //             // 為每個描述字元創建動畫
-    //             descriptionChars.forEach((char, charIndex) => {
-    //                 const charTimeline = gsap.timeline();
+                // 為每個描述字元創建動畫
+                descriptionChars.forEach((char, charIndex) => {
+                    const charTimeline = gsap.timeline();
                     
-    //                 // 添加單個字元的動畫到時間軸
-    //                 charTimeline
-    //                     .set(char, { visibility: 'visible' }) // 顯示字元
-    //                     .to({}, { 
-    //                         duration: 0.02,
-    //                         onStart: () => {
-    //                             // 開始隨機字動態
-    //                             const randomInterval = setInterval(() => {
-    //                                 char.textContent = textAnimation.getRandomLetter();
-    //                             }, 2);
+                    // 添加單個字元的動畫到時間軸
+                    charTimeline
+                        .set(char, { visibility: 'visible' }) // 顯示字元
+                        .to({}, { 
+                            duration: 0.02,
+                            onStart: () => {
+                                // 開始隨機字動態
+                                const randomInterval = setInterval(() => {
+                                    char.textContent = textAnimation.getRandomLetter();
+                                }, 2);
 
-    //                             // 0.5秒後清除隨機字動態
-    //                             setTimeout(() => {
-    //                                 clearInterval(randomInterval);
-    //                                 char.textContent = char.dataset.originalText;
-    //                             }, 20);
-    //                         }
-    //                     })
+                                // 0.5秒後清除隨機字動態
+                                setTimeout(() => {
+                                    clearInterval(randomInterval);
+                                    char.textContent = char.dataset.originalText;
+                                }, 20);
+                            }
+                        })
 
-    //                 // 將此字元的動畫添加到描述時間軸
-    //                 descriptionTimeline.add(charTimeline, charIndex * 0.02); // 0.6 = 0.5(動畫) + 0.1(延遲)
-    //             });
-    //         });
-    //     }
-    // };
+                    // 將此字元的動畫添加到描述時間軸
+                    descriptionTimeline.add(charTimeline, charIndex * 0.02); // 0.6 = 0.5(動畫) + 0.1(延遲)
+                });
+            });
+        }
+    };
 
     // 新增：媒體資源列表
     const mediaResources = ref([
@@ -449,10 +454,37 @@
         return [...mediaResources.value].reverse();
     });
 
+    const materialData =[
+        {
+            value: 'default',
+            backgroundColor: '#F2F2F2',
+        },
+        {
+            value: 'arVrXr',
+            backgroundColor: '#F2F2F2',
+        },
+        {
+            value: 'digiArt',
+            backgroundColor: '#F2F2F2',
+        },
+        {
+            value: 'uiuxDev',
+            backgroundColor: '#F2F2F2',
+        },
+        {
+            value: 'animate',
+            backgroundColor: '#F2F2F2',
+        },
+        {
+            value: 'graphic',
+            backgroundColor: '#F2F2F2',
+        },
+    ]
+
     function fetchMediaById(id) {
         return mediaResources.value.find(item => item.id === id);
     }
-    // 新增：計算載入進度
+
     const loadingPercent = computed(() => {
         const percent = Math.floor((loadedItems.value / (mediaResources.value.length + 1)) * 100);
         if(percent == 100){
@@ -462,7 +494,6 @@
             return `${percent}%`;
         }
     });
-    // 新增：預載入單個媒體資源
     const preloadMedia = (resource) => {
         return new Promise((resolve, reject) => {
             if (resource.type === 'video') {
@@ -486,7 +517,6 @@
             }
         });
     };
-    // 新增：預載入所有媒體資源
     const preloadAllMedia = async () => {
         try {
             await Promise.all(mediaResources.value.map((resource) => {
@@ -497,7 +527,6 @@
             console.error('Error loading media:', error);
         }
     };
-    // 處理資源載入完成事件
     const handleResourcesLoaded = () => {
         if (splashRef.value) {
             // for(let i=1;i<5;i++){
@@ -779,40 +808,6 @@
         })
 
         for (let i = 1; i <= serviceData.value.length; i++) {
-            // if(width.value <= (768 - 1)){
-            //     animParams.xTransform = 0;
-            //     animParams.xStayTransform = 0;
-            // }
-            // gsap.timeline({
-            //     scrollTrigger: {
-            //         trigger: `.services-content-${i}`,
-            //         start: 'top bottm',
-            //         markers: false,
-            //         scrub: true,
-            //     }
-            // }).set(`.services-content-${i}`, 
-            //     {
-            //         x: animParams.xTransform,
-            //         opacity: 0, 
-            //     }
-            // )
-            
-            // gsap.timeline({
-            //     scrollTrigger: {
-            //         trigger: `.services-content-${i}`,
-            //         start: 'top center',
-            //         end: `${100/3}% center`,
-            //         markers: false,
-            //         scrub: true,
-            //     },
-            // }).to(
-            //     `.services-content-${i}`,
-            //     {
-            //         x: animParams.xStayTransform,
-            //         opacity: 1, 
-            //     }
-            // )
-
             gsap.timeline({
                 scrollTrigger: {
                     trigger: `.services-content-${i}`,
@@ -823,34 +818,16 @@
                     onEnter: () => {
                         growingFunction();
                         changeMaterialType(i-1);
+                        if(!serviceData.value[i-1].splitActive){
+                            textAnimation.animate(i-1);
+                            serviceData.value[i-1].splitActive = true;
+                        }
                     },
                     onLeaveBack: () =>{
                         shrinkingFunction();
                     }
                 },
             })
-            // .to(
-            //     `.services-content-${i}`,
-            //     {
-            //         x: 0
-            //     }
-            // )
-
-            // gsap.timeline({
-            //     scrollTrigger: {
-            //         trigger: `.services-content-${i}`,
-            //         start: `center center`,
-            //         end: `${100*2/3}% center`,
-            //         markers: false,
-            //         scrub: true,
-            //     },
-            // }).to(
-            //     `.services-content-${i}`,
-            //     {
-            //         x: animParams.xStayTransform,
-            //     }
-            // )
-
             gsap.timeline({
                 scrollTrigger: {
                     trigger: `.services-content-${i}`,
@@ -867,14 +844,24 @@
                     }
                 },
             })
-            // .to(
-            //     `.services-content-${i}`,
-            //     { 
-            //         x: animParams.xTransform,
-            //         opacity: 0, 
-            //     }
-            // )
-            
+
+            gsap.fromTo( `.services-content-${i} .services-projects`,
+                { x: 50, opacity: 0 },
+                {
+                    x: 0,
+                    opacity: 1,
+                    duration: 1,
+                    ease: 'power4.out',
+                    delay: 0, 
+                    stagger: 0.5,
+                    scrollTrigger: {
+                        trigger: `.services-content-${i}`, 
+                        start: 'top+=300px center',
+                        scrub: false,
+                        markers: false,
+                    },
+                }
+            )
         }
     }
     const partnersSectionGsap = () => {
@@ -964,18 +951,6 @@
             contentGroupTransformZ = 120;
         }
 
-        partnersSectionTimeline.to('.partners-content-title', {
-            opacity: 1,
-            duration: 0.3,
-        },0);
-        // partnersSectionTimeline.to('.partners-content-title', {
-        //     opacity: 0,
-        //     duration: 0.3,
-        // },0.7);
-        partnersSectionTimeline.to('.partners-content-title', {
-            scale: 2,
-            duration: 1,
-        },0);
         partnersSectionTimeline.to('.partners-content-group', {
             '--transform-z': contentGroupTransformZ,
             ease: CustomEase.create("custom", "M0,0 C0,0.5 1,0.5 1,1 "),
@@ -1008,14 +983,10 @@
                 onEnter: ()=>{
                     shrinkingFunction();
                 },
-                onLeaveBack: ()=>{
-                    // growingFunction();
-                }
             },    
         });
     }
-    const setSmoother = async () => {
-        await nextTick()
+    const setSmoother = () => {
         smoother = ScrollSmoother.create({
             wrapper: '[data-scroll-wrapper]',
             content: '[data-scroll-content]',
@@ -1023,7 +994,6 @@
             effects: true,
             normalizeScroll: true,
         })
-        // ScrollTrigger.addEventListener('refresh', () => smoother?.update())
         ScrollTrigger.refresh()
     }
 
@@ -1038,32 +1008,6 @@
             splashRef.value.updatePosition(offsetX, offsetY, offsetZ);
         }
     }
-    const materialData =[
-        {
-            value: 'default',
-            backgroundColor: '#F2F2F2',
-        },
-        {
-            value: 'arVrXr',
-            backgroundColor: '#F2F2F2',
-        },
-        {
-            value: 'digiArt',
-            backgroundColor: '#F2F2F2',
-        },
-        {
-            value: 'uiuxDev',
-            backgroundColor: '#F2F2F2',
-        },
-        {
-            value: 'animate',
-            backgroundColor: '#F2F2F2',
-        },
-        {
-            value: 'graphic',
-            backgroundColor: '#F2F2F2',
-        },
-    ]
     const changeMaterialType = (index) => {
         if (splashRef.value) {
             splashRef.value.changeMaterialType(materialData[index].value);
@@ -1225,5 +1169,7 @@
             const windowHeight = height.value;
             document.documentElement.style.setProperty('--h', `${windowHeight}px`);
         }
+
+        textAnimation.init();
     });
 </script>
