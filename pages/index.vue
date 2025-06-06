@@ -791,7 +791,7 @@
             scrollTrigger: {
                 trigger: `.services-content-1`,
                 start: 'top bottom',
-                end: `top+=300px center`,
+                end: `top+=200px center`,
                 scrub: false,
                 markers: false,
                 onEnter: () => {
@@ -811,27 +811,54 @@
             gsap.timeline({
                 scrollTrigger: {
                     trigger: `.services-content-${i}`,
-                    start: `top+=300px center`,
+                    start: `top+=200px center`,
                     end: `center center`,
                     markers: false,
                     scrub: true,
                     onEnter: () => {
                         growingFunction();
                         changeMaterialType(i-1);
-                        if(!serviceData.value[i-1].splitActive){
-                            textAnimation.animate(i-1);
-                            serviceData.value[i-1].splitActive = true;
-                        }
+                        // if(!isMobileDevice()){
+                        //     textAnimation.animate(i-1);
+                        // }
                     },
                     onLeaveBack: () =>{
                         shrinkingFunction();
                     }
                 },
-            })
+            }).fromTo( `.services-content-${i} .services-title`,
+                { x: 50, opacity: 0 },
+                {
+                    x: 0,
+                    opacity: 1,
+                    duration: 1,
+                    ease: 'power4.out',
+                },0
+            ).fromTo( `.services-content-${i} .services-description`,
+                { x: 50, opacity: 0 },
+                {
+                    x: 0,
+                    opacity: 1,
+                    duration: 1,
+                    ease: 'power4.out',
+                    delay: 0.25, 
+                },0
+            ).fromTo( `.services-content-${i} .services-projects`,
+                { x: 50, opacity: 0 },
+                {
+                    x: 0,
+                    opacity: 1,
+                    duration: 1,
+                    ease: 'power4.out',
+                    stagger: 0.25,
+                }
+            )
+
+
             gsap.timeline({
                 scrollTrigger: {
                     trigger: `.services-content-${i}`,
-                    start: `bottom-=300px center`,
+                    start: `bottom-=200px center`,
                     end: `bottom center`,
                     markers: false,
                     scrub: true,
@@ -844,24 +871,6 @@
                     }
                 },
             })
-
-            gsap.fromTo( `.services-content-${i} .services-projects`,
-                { x: 50, opacity: 0 },
-                {
-                    x: 0,
-                    opacity: 1,
-                    duration: 1,
-                    ease: 'power4.out',
-                    delay: 0, 
-                    stagger: 0.5,
-                    scrollTrigger: {
-                        trigger: `.services-content-${i}`, 
-                        start: 'top+=300px center',
-                        scrub: false,
-                        markers: false,
-                    },
-                }
-            )
         }
     }
     const partnersSectionGsap = () => {
@@ -1170,6 +1179,6 @@
             document.documentElement.style.setProperty('--h', `${windowHeight}px`);
         }
 
-        textAnimation.init();
+        // textAnimation.init();
     });
 </script>
