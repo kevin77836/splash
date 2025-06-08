@@ -8,13 +8,14 @@
 
 :root {
   --h: 100vh;
+  --bgc: #E6E6E6;
 }
 
 html, body{
   --font-color: white;
   font-family: "Orbitron", sans-serif;
   font-style: normal;
-  background-color: #F2F2F2;
+  background-color: var(--bgc);
   transition: background-color 0.5s ease-in-out;
   position: relative;
   height: 100%;

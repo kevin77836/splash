@@ -139,10 +139,10 @@
             <div v-show="isStarted" class="section services-section">
                 <div v-for="(item, index) in serviceData" class="services-content" :class="`services-content-${index+1}`" :key="index">
                     <h2 class="services-title">{{ item.title }}</h2>
-                    <div class="services-description">
+                    <div v-if="index == 0" class="services-description">
                         {{ item.description }}
                     </div>
-                    <div v-if="item.projects?.length" class="services-projects-group">
+                    <div v-else class="services-projects-group">
                         <div class="services-projects" v-for="(project,projectsIndex) in item.projects" :key="'services'+ index + projectsIndex">
                             <div class="banner">
                                 <video v-if="fetchMediaById(project).type === 'video'" :src="fetchMediaById(project).src" autoplay muted loop playsinline></video>
@@ -150,21 +150,20 @@
                             </div>
                             <div class="infoGroup">
                                 <div class="title">{{ fetchMediaById(project).title }}</div>
-                                <div class="descriptionWrap">
+                                <!-- <div class="descriptionWrap">
                                     <div class="description">{{ fetchMediaById(project).description }}</div>
-                                </div>
+                                </div> -->
                                 <div class="cta">查看專案</div>
                             </div>
                         </div>
                     </div>
-
                 </div>
             </div>
             <div v-show="isStarted" class="section partners-section">
                 <div class="partners-content-container">
                     <!-- <div class="partners-content-title">
                         Partners
-                    </div> -->
+                    </div>  -->
                     <div class="partners-content-group">
                         <div class="partners-content-item partners-content-item-1">
                             <img src="/partners/partners1.png" alt="">
@@ -255,7 +254,8 @@
             description: 'Splash DigiLab 結合設計創意與前端開發，擅長跨界沉浸式互動體驗，服務範圍包含 XR 展演策劃、UI/UX 設計、網頁開發、品牌設計、數位藝術、互動設計等。',
             splitTitle: [],
             splitDescription: [],
-            splitActive: false
+            splitActive: false,
+            isActive: false,        
         },
         {
             title: 'AR/VR/XR策展',
@@ -263,6 +263,7 @@
             splitTitle: [],
             splitDescription: [],
             splitActive: false,
+            isActive: false,
             projects:[
                 1,3,9
             ]
@@ -273,6 +274,7 @@
             splitTitle: [],
             splitDescription: [],
             splitActive: false,
+            isActive: false,
             projects:[
                 2,11
             ]
@@ -283,6 +285,7 @@
             splitTitle: [],
             splitDescription: [],
             splitActive: false,
+            isActive: false,
             projects:[
                 4,13
             ]
@@ -293,6 +296,7 @@
             splitTitle: [],
             splitDescription: [],
             splitActive: false,
+            isActive: false,
             projects:[
                 1,7
             ]
@@ -329,19 +333,19 @@
                     }
 
                     // 為描述創建 SplitText
-                    const descElement = document.querySelector(`.services-content-${i+1} .services-description`);
-                    if (descElement) {
-                        serviceData.value[i].splitDescription = new SplitText(descElement, {
-                            type: "chars",
-                            charsClass: "char"
-                        });
-                        // 保存原始文字並設置初始可見性
-                        serviceData.value[i].splitDescription.chars.forEach(char => {
-                            char.dataset.originalText = char.textContent;
-                            char.style.visibility = 'hidden';
-                            char.textContent = '';
-                        });
-                    }
+                    // const descElement = document.querySelector(`.services-content-${i+1} .services-description`);
+                    // if (descElement) {
+                    //     serviceData.value[i].splitDescription = new SplitText(descElement, {
+                    //         type: "chars",
+                    //         charsClass: "char"
+                    //     });
+                    //     // 保存原始文字並設置初始可見性
+                    //     serviceData.value[i].splitDescription.chars.forEach(char => {
+                    //         char.dataset.originalText = char.textContent;
+                    //         char.style.visibility = 'hidden';
+                    //         char.textContent = '';
+                    //     });
+                    // }
                 }
             }
         },
@@ -362,10 +366,10 @@
                 char.textContent = '';
                 char.style.visibility = 'hidden';
             });
-            descriptionChars.forEach(char => {
-                char.textContent = '';
-                char.style.visibility = 'hidden';
-            });
+            // descriptionChars.forEach(char => {
+            //     char.textContent = '';
+            //     char.style.visibility = 'hidden';
+            // });
 
             // 創建標題動畫時間軸
             const titleTimeline = gsap.timeline();
@@ -398,36 +402,36 @@
             });
 
             // 等標題完成後開始描述文字動畫
-            titleTimeline.add(() => {
-                const descriptionTimeline = gsap.timeline();
+            // titleTimeline.add(() => {
+            //     const descriptionTimeline = gsap.timeline();
 
-                // 為每個描述字元創建動畫
-                descriptionChars.forEach((char, charIndex) => {
-                    const charTimeline = gsap.timeline();
+            //     // 為每個描述字元創建動畫
+            //     descriptionChars.forEach((char, charIndex) => {
+            //         const charTimeline = gsap.timeline();
                     
-                    // 添加單個字元的動畫到時間軸
-                    charTimeline
-                        .set(char, { visibility: 'visible' }) // 顯示字元
-                        .to({}, { 
-                            duration: 0.02,
-                            onStart: () => {
-                                // 開始隨機字動態
-                                const randomInterval = setInterval(() => {
-                                    char.textContent = textAnimation.getRandomLetter();
-                                }, 2);
+            //         // 添加單個字元的動畫到時間軸
+            //         charTimeline
+            //             .set(char, { visibility: 'visible' }) // 顯示字元
+            //             .to({}, { 
+            //                 duration: 0.02,
+            //                 onStart: () => {
+            //                     // 開始隨機字動態
+            //                     const randomInterval = setInterval(() => {
+            //                         char.textContent = textAnimation.getRandomLetter();
+            //                     }, 2);
 
-                                // 0.5秒後清除隨機字動態
-                                setTimeout(() => {
-                                    clearInterval(randomInterval);
-                                    char.textContent = char.dataset.originalText;
-                                }, 20);
-                            }
-                        })
+            //                     // 0.5秒後清除隨機字動態
+            //                     setTimeout(() => {
+            //                         clearInterval(randomInterval);
+            //                         char.textContent = char.dataset.originalText;
+            //                     }, 20);
+            //                 }
+            //             })
 
-                    // 將此字元的動畫添加到描述時間軸
-                    descriptionTimeline.add(charTimeline, charIndex * 0.02); // 0.6 = 0.5(動畫) + 0.1(延遲)
-                });
-            });
+            //         // 將此字元的動畫添加到描述時間軸
+            //         descriptionTimeline.add(charTimeline, charIndex * 0.02); // 0.6 = 0.5(動畫) + 0.1(延遲)
+            //     });
+            // });
         }
     };
 
@@ -435,18 +439,18 @@
     const mediaResources = ref([
         { id: 15,type: 'video', src: '/works/works15.mp4', link: '#', column: true, title:'專案標題', description:'專案內文專案內文專案內文專案內文專案內文專案內文專案內文專案內文專案內文專案內文專案內文專案內文專案內文專案內文專案內文' },
         { id: 14,type: 'video', src: '/works/works14.mp4', link: '#', column: true, title:'專案標題', description:'專案內文專案內文專案內文專案內文專案內文專案內文專案內文專案內文專案內文專案內文專案內文專案內文專案內文專案內文專案內文' },
-        { id: 13,type: 'video', src: '/works/works13.mp4', link: '#', column: false, title:'專案標題', description:'專案內文專案內文專案內文專案內文專案內文專案內文專案內文專案內文專案內文專案內文專案內文專案內文專案內文專案內文專案內文' },
+        { id: 13,type: 'video', src: '/works/works13.mp4', link: '#', column: false, title:'CIS | Composite Hybrid International Co.,Ltd.', description:'專案內文專案內文專案內文專案內文專案內文專案內文專案內文專案內文專案內文專案內文專案內文專案內文專案內文專案內文專案內文' },
         { id: 12,type: 'image', src: '/works/works12.webp', link: '#', column: false, title:'專案標題', description:'專案內文專案內文專案內文專案內文專案內文專案內文專案內文專案內文專案內文專案內文專案內文專案內文專案內文專案內文專案內文' },
-        { id: 11,type: 'video', src: '/works/works11.mp4', link: '#', column: true, title:'專案標題', description:'專案內文專案內文專案內文專案內文專案內文專案內文專案內文專案內文專案內文專案內文專案內文專案內文專案內文專案內文專案內文' },
+        { id: 11,type: 'video', src: '/works/works11.mp4', link: '#', column: true, title:'Web AR | 2024 康士坦的變化球 KST 眠月線演唱會 高雄站', description:'專案內文專案內文專案內文專案內文專案內文專案內文專案內文專案內文專案內文專案內文專案內文專案內文專案內文專案內文專案內文' },
         { id: 10,type: 'video', src: '/works/works10.mp4', link: '#', column: true, title:'專案標題', description:'專案內文專案內文專案內文專案內文專案內文專案內文專案內文專案內文專案內文專案內文專案內文專案內文專案內文專案內文專案內文' },
         { id: 9,type: 'video', src: '/works/works9.mp4', link: '#', column: true, title:'AR | 打狗祭 2024 × AR 小怪獸現身!', description:'今年，小怪獸們不只盤據舞台，更將透過 AR 擴增實境，衝破次元，降臨你的世界！📱✨' },
         { id: 8,type: 'image', src: '/works/works8.webp', link: '#', column: false, title:'專案標題', description:'專案內文專案內文專案內文專案內文專案內文專案內文專案內文專案內文專案內文專案內文專案內文專案內文專案內文專案內文專案內文' },
-        { id: 7,type: 'video', src: '/works/works7.mp4', link: '#', column: false, title:'專案標題', description:'專案內文專案內文專案內文專案內文專案內文專案內文專案內文專案內文專案內文專案內文專案內文專案內文專案內文專案內文專案內文' },
+        { id: 7,type: 'video', src: '/works/works7.mp4', link: '#', column: false, title:'AR Card / 3D Animation | 黑金派對 2024 – 可可占星術', description:'專案內文專案內文專案內文專案內文專案內文專案內文專案內文專案內文專案內文專案內文專案內文專案內文專案內文專案內文專案內文' },
         { id: 6,type: 'video', src: '/works/works6.mp4', link: '#', column: true, title:'專案標題', description:'專案內文專案內文專案內文專案內文專案內文專案內文專案內文專案內文專案內文專案內文專案內文專案內文專案內文專案內文專案內文' },
         { id: 5,type: 'video', src: '/works/works5.mp4', link: '#', column: true, title:'專案標題', description:'專案內文專案內文專案內文專案內文專案內文專案內文專案內文專案內文專案內文專案內文專案內文專案內文專案內文專案內文專案內文' },
-        { id: 4,type: 'image', src: '/works/works4.webp', link: '#', column: false, title:'專案標題', description:'專案內文專案內文專案內文專案內文專案內文專案內文專案內文專案內文專案內文專案內文專案內文專案內文專案內文專案內文專案內文' },
+        { id: 4,type: 'image', src: '/works/works4.webp', link: '#', column: false, title:'CIS | Da Zi Zai 東方美人茶', description:'專案內文專案內文專案內文專案內文專案內文專案內文專案內文專案內文專案內文專案內文專案內文專案內文專案內文專案內文專案內文' },
         { id: 3,type: 'video', src: '/works/works3.mp4', link: '#', column: false, title:'AR Card / 3D Animation | 黑金派對 2024 – 可可占星術', description:'《黑金派對 2024 – 可可占星術》可可（Cacao）一詞源自瑪雅銘文的 Kakaw，在古瑪雅文化中，被視為蘊藏神秘力量的珍寶。而在《黑金派對 2024》，這股神秘魔力將透過 AR 可可占星術，為你揭開內心深處的秘密！' },
-        { id: 2,type: 'video', src: '/works/works2.mp4', link: '#', column: false, title:'專案標題', description:'專案內文專案內文專案內文專案內文專案內文專案內文專案內文專案內文專案內文專案內文專案內文專案內文專案內文專案內文專案內文' },
+        { id: 2,type: 'video', src: '/works/works2.mp4', link: '#', column: false, title:'Web Development | Composite Hybrid 官方網站', description:'專案內文專案內文專案內文專案內文專案內文專案內文專案內文專案內文專案內文專案內文專案內文專案內文專案內文專案內文專案內文' },
         { id: 1,type: 'video', src: '/works/works1.mp4', link: '#', column: false, title:'Web AR | 2024 康士坦的變化球 KST 眠月線演唱會 高雄站', description:'《2024 康士坦的變化球 KST 眠月線演唱會 高雄站》在康士坦變化球《眠月線》高雄演唱會，打造了一場獨特的 Web AR 互動體驗，透過手機瀏覽器無須下載App即可開啟活動體驗，親身走進《眠月線》MV的夢境與現實交錯之中，尋找遺落的記憶碎片。' }
     ]);
     // 新增：反轉後的媒體資源列表
@@ -629,7 +633,7 @@
             .to('.aboutUs-section-content-3-1', { opacity: 1, filter: 'blur(0px)', duration: 0.1, ease: "power4.in", },0.7)
             .to('.aboutUs-section-content-3-2', { opacity: 1, filter: 'blur(0px)', duration: 0.1, ease: "power4.in", },0.8)
             .to('.aboutUs-section-content-3-2 .underline', { width: '100%', duration: 0.2, ease: "power4.in", },0.9)
-            .to('.aboutUs-section', { '--bg-opacity': '0', duration: 0, ease: "power4.in", },0.9)
+            .to('.aboutUs-section', { '--bg-opacity': '0', duration: 0, ease: "power4.in", },1)
             .to('.aboutUs-section-content-3-3', { opacity: 1, filter: 'blur(0px)', duration: 0.1, ease: "power4.in", },1.1)
             .to('.aboutUs-content-group', { opacity: 0, transform: 'scale(5)', duration: 0.2, ease: "power4.in", },1.3)
     }
@@ -731,7 +735,7 @@
                 scrub: true,
                 markers: false,
                 onUpdate: (self) => {
-                    updatePosition(0, 0, -10, 0, 0, 0, self.progress);
+                    updatePosition(0, 0, -10, 0, 0, 10, self.progress);
                 },
                 onLeave: () => {
                     for (let i = 0; i < itemCount; i++) {
@@ -799,61 +803,103 @@
                 },
                 onUpdate: (self) => {
                     if(width.value>(768 - 1)){
-                        updatePosition(0, 0, 0, -8, 0, 0, self.progress);
+                        updatePosition(0, 0, 10, -13.5, 0, 0, self.progress);
                     }else{
-                        updatePosition(0, 0, 0, 0, -2, 0, self.progress);
+                        updatePosition(0, 0, 10, 0, -2, 0, self.progress);
                     }
                 },
             },
         })
 
         for (let i = 1; i <= serviceData.value.length; i++) {
-            gsap.timeline({
+            const tiIn = gsap.timeline({
                 scrollTrigger: {
                     trigger: `.services-content-${i}`,
                     start: `top+=200px center`,
                     end: `center center`,
                     markers: false,
-                    scrub: true,
+                    scrub: false,
                     onEnter: () => {
                         growingFunction();
                         changeMaterialType(i-1);
-                        // if(!isMobileDevice()){
-                        //     textAnimation.animate(i-1);
-                        // }
+                        if(!isMobileDevice() && serviceData.value[i-1].isActive == false){
+                            textAnimation.animate(i-1);
+                        }
                     },
                     onLeaveBack: () =>{
                         shrinkingFunction();
                     }
                 },
-            }).fromTo( `.services-content-${i} .services-title`,
-                { x: 50, opacity: 0 },
-                {
-                    x: 0,
-                    opacity: 1,
-                    duration: 1,
-                    ease: 'power4.out',
-                },0
-            ).fromTo( `.services-content-${i} .services-description`,
-                { x: 50, opacity: 0 },
-                {
-                    x: 0,
-                    opacity: 1,
-                    duration: 1,
-                    ease: 'power4.out',
-                    delay: 0.25, 
-                },0
-            ).fromTo( `.services-content-${i} .services-projects`,
-                { x: 50, opacity: 0 },
-                {
-                    x: 0,
-                    opacity: 1,
-                    duration: 1,
-                    ease: 'power4.out',
-                    stagger: 0.25,
-                }
-            )
+            })
+            if(isMobileDevice()){
+                tiIn.fromTo(`.services-content-${i} .services-title`, 
+                    {
+                        opacity: 0,
+                    },
+                    {
+                        opacity: 1,
+                        duration: 0.5,
+                        ease: 'power1.inOut'
+                    }
+                )
+            }
 
+            if(i == 1){
+                gsap.set(`.services-content-${i} .services-description`, {
+                    opacity: 0
+                })
+                ScrollTrigger.create({
+                    trigger: `.services-content-${i} .services-description`,
+                    start: `top center+=200px`,
+                    scrub: false,
+                    markers: false,
+                    onEnter: () => {
+                        gsap.to(`.services-content-${i} .services-description`, {
+                            opacity: 1,
+                            duration: 0.5,
+                            ease: 'power1.inOut'
+                        })
+                    },
+                    onLeaveBack: () => {
+                        gsap.to(`.services-content-${i} .services-description`, {
+                            opacity: 0,
+                            duration: 0.5,
+                            ease: 'power1.inOut'
+                        })
+                    }
+                })
+            }
+
+            const els = gsap.utils.toArray(`.services-content-${i} .services-projects`)
+            if(els.length){
+                els.forEach(el => {
+                    // 初始化样式
+                    gsap.set(el, {
+                        opacity: 0
+                    })
+
+                    ScrollTrigger.create({
+                        trigger: el,
+                        start: `top center+=200px`,
+                        scrub: false,
+                        markers: false,
+                        onEnter: () => {
+                            gsap.to(el, {
+                                opacity: 1,
+                                duration: 0.5,
+                                ease: 'power1.inOut'
+                            })
+                        },
+                        onLeaveBack: () => {
+                                gsap.to(el, {
+                                opacity: 0,
+                                duration: 0.5,
+                                ease: 'power1.inOut'
+                            })
+                        }
+                    })
+                })
+            }
 
             gsap.timeline({
                 scrollTrigger: {
@@ -877,10 +923,11 @@
         ScrollTrigger.create({
             trigger: '.partners-section',
             start: 'top top',
-            end: 'bottom top',
+            end: 'bottom bottom',
             pin: '.partners-content-container',
             pinSpacing: false,
             scrub: false,
+            markers: false,
         });
 
         gsap.timeline({
@@ -892,7 +939,7 @@
                 markers: false,
                 onUpdate: (self) => {
                     if(width.value>(768 - 1)){
-                        updatePosition(-8, 0, 0, 0, 0, 0, self.progress);
+                        updatePosition(-13.5, 0, 0, 0, 0, 0, self.progress);
                     }else{
                         updatePosition(0, -2, 0, 0, 0, 0, self.progress);
                     }
@@ -905,7 +952,7 @@
                     shrinkingFunction();
                 },
             },    
-        });
+        })
 
         const itemCount = 12; // 元素總數
 
@@ -959,6 +1006,21 @@
         }else{
             contentGroupTransformZ = 120;
         }
+        // partnersSectionTimeline.to('.partners-content-title', {
+        //     opacity: 1,
+        //     duration: 0.3
+        // }, 0);
+
+        // partnersSectionTimeline.to('.partners-content-title', {
+        //     opacity: 0,
+        //     duration: 0.3
+        // }, 0.7);
+
+        // partnersSectionTimeline.to('.partners-content-title', {
+        //     scale: 1.5,
+        //     duration: 1,
+        //     ease: CustomEase.create("custom", "M0,0 C0,0.5 1,0.5 1,1 "),
+        // }, 0);
 
         partnersSectionTimeline.to('.partners-content-group', {
             '--transform-z': contentGroupTransformZ,
@@ -1177,8 +1239,8 @@
         if (isMobileDevice()) {
             const windowHeight = height.value;
             document.documentElement.style.setProperty('--h', `${windowHeight}px`);
+        }else{
+            textAnimation.init();
         }
-
-        // textAnimation.init();
     });
 </script>

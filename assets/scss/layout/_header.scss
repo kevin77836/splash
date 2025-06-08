@@ -96,9 +96,9 @@
         .hamburger-menu {
             z-index: 101;
             cursor: pointer;
-            padding: 0 0.75rem;
+            padding-left: 0.75rem;
             @include max-md{
-                padding: 0 0.5rem;
+                padding-left: 0.5rem;
             }
             .hamburger-icon {
                 position: relative;

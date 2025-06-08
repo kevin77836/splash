@@ -199,23 +199,11 @@ class MaterialManager {
         props: {
           color: 0x000000,
           transparent: true,
-          opacity: 0.2,
+          opacity: 0.15,
           wireframe: true
         }
       },
       animate: {
-        type: 'physical',
-        props: {
-          color: 0xfff8ee,
-          roughness: 0.05,
-          metalness: 0,
-          clearcoat: 1.0,
-          clearcoatRoughness: 0.02,
-          side: THREE.DoubleSide,
-          envMapIntensity: 2.0
-        }
-      },
-      graphic: {
         type: 'physical',
         props: {
           color: 0xffffff,
@@ -226,6 +214,18 @@ class MaterialManager {
           side: THREE.DoubleSide,
           transparent: true,
           envMapIntensity: 3.0
+        }
+      },
+      graphic: {
+        type: 'physical',
+        props: {
+          color: 0xfff8ee,
+          roughness: 0.05,
+          metalness: 0,
+          clearcoat: 1.0,
+          clearcoatRoughness: 0.02,
+          side: THREE.DoubleSide,
+          envMapIntensity: 2.0
         }
       }
     };
