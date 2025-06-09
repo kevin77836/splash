@@ -1,7 +1,7 @@
 .l-header{
     position: fixed;
     top: 4rem;
-    transition-duration: 1s;
+    transition-duration: 0.5s;
     background-blend-mode: difference;
     transition-timing-function: ease;
     opacity: 0;
@@ -36,17 +36,13 @@
         font-weight: normal;
         cursor: pointer;
         opacity: 1;
-        transition-duration: 1s;
+        transition-duration: 0.5s;
         transition-timing-function: ease;
         max-width: 100%;
         white-space:nowrap;
-        padding: 0 0.75rem;
         color: var(--header-color);
         @include max-xxl{
             font-size: 1rem;
-        }
-        @include max-lg{
-            padding: 0 0.5rem;
         }
         &.hidden{
             pointer-events: none;
@@ -55,16 +51,17 @@
             padding: 0;
         }
     }
+
     .header-saparator{
         flex-grow: 1;
         opacity: 1;
-        transition-duration: 1s;
+        transition-duration: 0.5s;
         transition-timing-function: ease;
         max-width: 100%;
-        padding: 0 0.75rem;
-        @include max-lg{
-            padding: 0 0.5rem;
-        }
+        // padding: 0 0.75rem;
+        // @include max-lg{
+        //     padding: 0 0.5rem;
+        // }
         .header-saparator-line{
             border-top: 1px solid var(--header-color);
             width: 100%;
@@ -78,12 +75,30 @@
     }
     .desktop-group {
         display: flex;
-        justify-content: space-between;
         align-items: center;
-        margin: 0 -0.75rem;
+        justify-content: center;
+        gap: 0rem;
+        transition: 0.5s;
         @include max-md {
             display: none;
-            margin: 0 -0.5rem;
+        }
+        &.isLandingPage{
+            justify-content: space-between;
+            gap: 1.5rem;
+        }
+        .header-link-group{
+            display: flex;
+            gap: 1.5rem;
+            flex-grow: 1;
+            align-items: center;
+            transition: 0.5s;
+            transition-timing-function: ease;
+            justify-content: center;
+            &.isLandingPage{
+                flex-grow: 0;
+                gap: 0.75rem;
+                justify-content: flex-end;
+            }
         }
     }
     .mobile-group {
@@ -92,14 +107,11 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
+            gap: 1rem;
         }
         .hamburger-menu {
             z-index: 101;
             cursor: pointer;
-            padding-left: 0.75rem;
-            @include max-md{
-                padding-left: 0.5rem;
-            }
             .hamburger-icon {
                 position: relative;
                 width: 1.5rem;

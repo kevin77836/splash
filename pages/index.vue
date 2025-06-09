@@ -5,45 +5,47 @@
         @animationComplete="handleAnimationComplete"
     />
     <div :class="{'active': isStarted}" class="l-header">
-        <div class="desktop-group">
+        <div class="desktop-group" :class="{'isLandingPage': !isLandingPage}">
             <div class="header-link" :class="{'hidden': isLandingPage}" @click="scrollToSection('main-section')">
                 Splash DigiLab
             </div>
             <div class="header-saparator" :class="{'hidden': isLandingPage}">
                 <div class="header-saparator-line"></div>
             </div>
-            <div class="header-link" @click="scrollToSection('aboutUs-section')">
-                About Us
-            </div>
-            <div class="header-saparator" :class="{'hidden': !isLandingPage}">
-                <div class="header-saparator-line"></div>
-            </div>
-            <div class="header-link" @click="scrollToSection('works-section')">
-                Works
-            </div>
-            <div class="header-saparator" :class="{'hidden': !isLandingPage}">
-                <div class="header-saparator-line"></div>
-            </div>
-            <div class="header-link" @click="scrollToSection('services-section')">
-                Services
-            </div>
-            <div class="header-saparator" :class="{'hidden': !isLandingPage}">
-                <div class="header-saparator-line"></div>
-            </div>
-            <div class="header-link" @click="scrollToSection('partners-section')">
-                Partners
-            </div>
-            <div class="header-saparator" :class="{'hidden': !isLandingPage}">
-                <div class="header-saparator-line"></div>
-            </div>
-            <div class="header-link" @click="scrollToSection('contactUs-section')">
-                Contact Us
+            <div class="header-link-group" :class="{'isLandingPage': !isLandingPage}">
+                <div class="header-link" @click="scrollToSection('aboutUs-section')">
+                    About Us
+                </div>
+                <div class="header-saparator" :class="{'hidden': !isLandingPage}">
+                    <div class="header-saparator-line"></div>
+                </div>
+                <div class="header-link" @click="scrollToSection('works-section')">
+                    Works
+                </div>
+                <div class="header-saparator" :class="{'hidden': !isLandingPage}">
+                    <div class="header-saparator-line"></div>
+                </div>
+                <div class="header-link" @click="scrollToSection('services-section')">
+                    Services
+                </div>
+                <div class="header-saparator" :class="{'hidden': !isLandingPage}">
+                    <div class="header-saparator-line"></div>
+                </div>
+                <div class="header-link" @click="scrollToSection('partners-section')">
+                    Partners
+                </div>
+                <div class="header-saparator" :class="{'hidden': !isLandingPage}">
+                    <div class="header-saparator-line"></div>
+                </div>
+                <div class="header-link" @click="scrollToSection('contactUs-section')">
+                    Contact Us
+                </div>
             </div>
         </div>
 
         <!-- 漢堡選單按鈕 -->
         <div class="mobile-group">
-            <div class="header-link" :class="{'hidden': isLandingPage}" @click="scrollToSection('main-section')">Splash DigiLab</div>
+            <div class="header-link" @click="scrollToSection('main-section')">Splash DigiLab</div>
             <div class="header-saparator">
                 <div class="header-saparator-line"></div>
             </div>
@@ -161,9 +163,12 @@
             </div>
             <div v-show="isStarted" class="section partners-section">
                 <div class="partners-content-container">
-                    <!-- <div class="partners-content-title">
+                    <div class="partners-content-title partners-content-title-1">
                         Partners
-                    </div>  -->
+                    </div> 
+                    <div class="partners-content-title partners-content-title-2">
+                        Partners
+                    </div> 
                     <div class="partners-content-group">
                         <div class="partners-content-item partners-content-item-1">
                             <img src="/partners/partners1.png" alt="">
@@ -252,16 +257,12 @@
         {
             title: 'Services',
             description: 'Splash DigiLab 結合設計創意與前端開發，擅長跨界沉浸式互動體驗，服務範圍包含 XR 展演策劃、UI/UX 設計、網頁開發、品牌設計、數位藝術、互動設計等。',
-            splitTitle: [],
-            splitDescription: [],
             splitActive: false,
             isActive: false,        
         },
         {
             title: 'AR/VR/XR策展',
             description: '策劃並開發、執行 Web AR/ XR 沉浸式展覽、行銷活動或產品展示，打造虛實整合體驗。',
-            splitTitle: [],
-            splitDescription: [],
             splitActive: false,
             isActive: false,
             projects:[
@@ -271,8 +272,6 @@
         {
             title: '網頁設計開發',
             description: '從前端網站設計到3D互動前端，整合 Nuxt、Three.js 等技術，實現網頁創新體驗。',
-            splitTitle: [],
-            splitDescription: [],
             splitActive: false,
             isActive: false,
             projects:[
@@ -282,8 +281,6 @@
         {
             title: '品牌識別規劃',
             description: '提供品牌識別與視覺系統規劃服務，滿足品牌在實體門店到數位體驗中的各式需求。',
-            splitTitle: [],
-            splitDescription: [],
             splitActive: false,
             isActive: false,
             projects:[
@@ -293,8 +290,6 @@
         {
             title: '2D/3D動畫',
             description: '製作 3D 動畫、CGI 與 Web AR 結合的視覺內容，豐富數位敘事層次。',
-            splitTitle: [],
-            splitDescription: [],
             splitActive: false,
             isActive: false,
             projects:[
@@ -313,127 +308,71 @@
     ])
 
     // 文字動態特效
-    const textAnimation = {
-        init() {
-            if (process.client) {
-                for(let i = 0; i < serviceData.value.length; i++) {
-                    // 為標題創建 SplitText
-                    const titleElement = document.querySelector(`.services-content-${i+1} .services-title`);
-                    if (titleElement) {
-                        serviceData.value[i].splitTitle = new SplitText(titleElement, {
-                            type: "chars",
-                            charsClass: "char"
-                        });
-                        // 保存原始文字並設置初始可見性
-                        serviceData.value[i].splitTitle.chars.forEach(char => {
-                            char.dataset.originalText = char.textContent;
-                            char.style.visibility = 'hidden';
-                            char.textContent = '';
-                        });
-                    }
+    const titleStore = new Map()
 
-                    // 為描述創建 SplitText
-                    // const descElement = document.querySelector(`.services-content-${i+1} .services-description`);
-                    // if (descElement) {
-                    //     serviceData.value[i].splitDescription = new SplitText(descElement, {
-                    //         type: "chars",
-                    //         charsClass: "char"
-                    //     });
-                    //     // 保存原始文字並設置初始可見性
-                    //     serviceData.value[i].splitDescription.chars.forEach(char => {
-                    //         char.dataset.originalText = char.textContent;
-                    //         char.style.visibility = 'hidden';
-                    //         char.textContent = '';
-                    //     });
-                    // }
-                }
-            }
+    const textAnimation = {
+        initTitle(index) {
+            if (!process.client) return
+            // 如果已初始化，跳过
+            if (titleStore[index]) return
+
+            const el = document.querySelector(`.services-content-${index+1} .services-title`)
+            if (!el) return
+
+            const original = el.textContent.trim()
+            // 用 SplitText 拆成字符节点
+            const split = new SplitText(el, { type: 'chars', charsClass: 'char' })
+
+            // 清空并隐藏所有字符
+            split.chars.forEach(c => {
+                c.dataset.original = c.textContent
+                c.style.visibility = 'hidden'
+                c.textContent = ''
+            })
+
+            titleStore[index] = { split, original }
         },
 
         getRandomLetter() {
-            const letters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ結合設計創意與前端開發擅長跨界沉浸式互動體驗';
-            return letters[Math.floor(Math.random() * letters.length)];
+            const letters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ結合設計創意與前端開發擅長跨界沉浸式互動體驗'
+            return letters.charAt(Math.floor(Math.random() * letters.length))
         },
 
-        animate(index) {
-            if (!process.client) return;
+        animateTitle(index) {
+            if (!process.client) return
+            this.initTitle(index)
+            const rec = titleStore[index]
+            if (!rec) return
 
-            const titleChars = serviceData.value[index].splitTitle.chars;
-            const descriptionChars = serviceData.value[index].splitDescription.chars;
+            const { split } = rec
+            const chars = split.chars
 
-            // 先將所有字元設為空
-            titleChars.forEach(char => {
-                char.textContent = '';
-                char.style.visibility = 'hidden';
-            });
-            // descriptionChars.forEach(char => {
-            //     char.textContent = '';
-            //     char.style.visibility = 'hidden';
-            // });
 
-            // 創建標題動畫時間軸
-            const titleTimeline = gsap.timeline();
+            chars.forEach(c => {
+                c.style.visibility = 'hidden'
+                c.textContent = ''
+            })
 
-            // 為每個標題字元創建動畫
-            titleChars.forEach((char, charIndex) => {
-                const charTimeline = gsap.timeline();
-                
-                // 添加單個字元的動畫到時間軸
-                charTimeline
-                    .set(char, { visibility: 'visible' }) // 顯示字元
-                    .to({}, { 
-                        duration: 0.05,
-                        onStart: () => {
-                            // 開始隨機字動態
-                            const randomInterval = setInterval(() => {
-                                char.textContent = textAnimation.getRandomLetter();
-                            }, 5);
-
-                            // 0.5秒後清除隨機字動態
-                            setTimeout(() => {
-                                clearInterval(randomInterval);
-                                char.textContent = char.dataset.originalText;
-                            }, 50);
-                        }
-                    })
-
-                // 將此字元的動畫添加到主時間軸
-                titleTimeline.add(charTimeline, charIndex * 0.05); // 0.6 = 0.5(動畫) + 0.1(延遲)
-            });
-
-            // 等標題完成後開始描述文字動畫
-            // titleTimeline.add(() => {
-            //     const descriptionTimeline = gsap.timeline();
-
-            //     // 為每個描述字元創建動畫
-            //     descriptionChars.forEach((char, charIndex) => {
-            //         const charTimeline = gsap.timeline();
-                    
-            //         // 添加單個字元的動畫到時間軸
-            //         charTimeline
-            //             .set(char, { visibility: 'visible' }) // 顯示字元
-            //             .to({}, { 
-            //                 duration: 0.02,
-            //                 onStart: () => {
-            //                     // 開始隨機字動態
-            //                     const randomInterval = setInterval(() => {
-            //                         char.textContent = textAnimation.getRandomLetter();
-            //                     }, 2);
-
-            //                     // 0.5秒後清除隨機字動態
-            //                     setTimeout(() => {
-            //                         clearInterval(randomInterval);
-            //                         char.textContent = char.dataset.originalText;
-            //                     }, 20);
-            //                 }
-            //             })
-
-            //         // 將此字元的動畫添加到描述時間軸
-            //         descriptionTimeline.add(charTimeline, charIndex * 0.02); // 0.6 = 0.5(動畫) + 0.1(延遲)
-            //     });
-            // });
-        }
-    };
+            // 时间轴动画
+            const tl = gsap.timeline()
+            chars.forEach((char, i) => {
+            tl.set(char, { visibility: 'visible' })
+                .to({}, {
+                duration: 0.05,
+                onStart: () => {
+                    // 随机字快速闪动
+                    const iv = setInterval(() => {
+                    char.textContent = this.getRandomLetter()
+                    }, 5)
+                    setTimeout(() => {
+                    clearInterval(iv)
+                    char.textContent = char.dataset.original
+                    }, 50)
+                }
+                }, i * 0.05)
+            })
+        },
+    }
 
     // 新增：媒體資源列表
     const mediaResources = ref([
@@ -803,7 +742,7 @@
                 },
                 onUpdate: (self) => {
                     if(width.value>(768 - 1)){
-                        updatePosition(0, 0, 10, -12, 0, 0, self.progress);
+                        updatePosition(0, 0, 10, -13.5, 0, 0, self.progress);
                     }else{
                         updatePosition(0, 0, 10, 0, -2, 0, self.progress);
                     }
@@ -823,26 +762,27 @@
                         growingFunction();
                         changeMaterialType(i-1);
                         if(!isMobileDevice() && serviceData.value[i-1].isActive == false){
-                            textAnimation.animate(i-1);
+                            textAnimation.animateTitle(i-1);
+                            serviceData.value[i-1].isActive = true
+                        }
+                        if(isMobileDevice()){
+                            tiIn.fromTo(`.services-content-${i} .services-title`, 
+                                {
+                                    opacity: 0,
+                                },
+                                {
+                                    opacity: 1,
+                                    duration: 0.5,
+                                    ease: 'power1.inOut'
+                                },
+                            )
                         }
                     },
                     onLeaveBack: () =>{
                         shrinkingFunction();
-                    }
+                    },
                 },
             })
-            if(isMobileDevice()){
-                tiIn.fromTo(`.services-content-${i} .services-title`, 
-                    {
-                        opacity: 0,
-                    },
-                    {
-                        opacity: 1,
-                        duration: 0.5,
-                        ease: 'power1.inOut'
-                    }
-                )
-            }
 
             gsap.set(`.services-content-${i} .services-description`, {
                 opacity: 0
@@ -856,6 +796,7 @@
                     gsap.to(`.services-content-${i} .services-description`, {
                         opacity: 1,
                         duration: 0.5,
+                        delay: 0.25,
                         ease: 'power1.inOut'
                     })
                 },
@@ -863,6 +804,7 @@
                     gsap.to(`.services-content-${i} .services-description`, {
                         opacity: 0,
                         duration: 0.5,
+                        delay: 0.25,
                         ease: 'power1.inOut'
                     })
                 }
@@ -889,7 +831,7 @@
                             })
                         },
                         onLeaveBack: () => {
-                                gsap.to(el, {
+                            gsap.to(el, {
                                 opacity: 0,
                                 duration: 0.5,
                                 ease: 'power1.inOut'
@@ -937,7 +879,7 @@
                 markers: false,
                 onUpdate: (self) => {
                     if(width.value>(768 - 1)){
-                        updatePosition(-12, 0, 0, 0, 0, 0, self.progress);
+                        updatePosition(-13.5, 0, 0, 0, 0, 0, self.progress);
                     }else{
                         updatePosition(0, -2, 0, 0, 0, 0, self.progress);
                     }
@@ -1004,15 +946,20 @@
         }else{
             contentGroupTransformZ = 120;
         }
-        // partnersSectionTimeline.to('.partners-content-title', {
-        //     opacity: 1,
-        //     duration: 0.3
-        // }, 0);
+        partnersSectionTimeline.to('.partners-content-title', {
+            opacity: 1,
+            duration: 0.3
+        }, 0);
 
-        // partnersSectionTimeline.to('.partners-content-title', {
-        //     opacity: 0,
-        //     duration: 0.3
-        // }, 0.7);
+        partnersSectionTimeline.to('.partners-content-title', {
+            '--transform': 150,
+            duration: 1
+        }, 0);
+
+        partnersSectionTimeline.to('.partners-content-title', {
+            opacity: 0,
+            duration: 0.3
+        }, 0.7);
 
         // partnersSectionTimeline.to('.partners-content-title', {
         //     scale: 1.5,
@@ -1238,7 +1185,7 @@
             const windowHeight = height.value;
             document.documentElement.style.setProperty('--h', `${windowHeight}px`);
         }else{
-            textAnimation.init();
+            serviceData.value.forEach((_, i) => textAnimation.initTitle(i))
         }
     });
 </script>
