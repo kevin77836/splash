@@ -139,10 +139,10 @@
             <div v-show="isStarted" class="section services-section">
                 <div v-for="(item, index) in serviceData" class="services-content" :class="`services-content-${index+1}`" :key="index">
                     <h2 class="services-title">{{ item.title }}</h2>
-                    <div v-if="index == 0" class="services-description">
+                    <div class="services-description">
                         {{ item.description }}
                     </div>
-                    <div v-else class="services-projects-group">
+                    <div v-if="index !== 0" class="services-projects-group">
                         <div class="services-projects" v-for="(project,projectsIndex) in item.projects" :key="'services'+ index + projectsIndex">
                             <div class="banner">
                                 <video v-if="fetchMediaById(project).type === 'video'" :src="fetchMediaById(project).src" autoplay muted loop playsinline></video>
@@ -803,7 +803,7 @@
                 },
                 onUpdate: (self) => {
                     if(width.value>(768 - 1)){
-                        updatePosition(0, 0, 10, -13.5, 0, 0, self.progress);
+                        updatePosition(0, 0, 10, -12, 0, 0, self.progress);
                     }else{
                         updatePosition(0, 0, 10, 0, -2, 0, self.progress);
                     }
@@ -844,31 +844,29 @@
                 )
             }
 
-            if(i == 1){
-                gsap.set(`.services-content-${i} .services-description`, {
-                    opacity: 0
-                })
-                ScrollTrigger.create({
-                    trigger: `.services-content-${i} .services-description`,
-                    start: `top center+=200px`,
-                    scrub: false,
-                    markers: false,
-                    onEnter: () => {
-                        gsap.to(`.services-content-${i} .services-description`, {
-                            opacity: 1,
-                            duration: 0.5,
-                            ease: 'power1.inOut'
-                        })
-                    },
-                    onLeaveBack: () => {
-                        gsap.to(`.services-content-${i} .services-description`, {
-                            opacity: 0,
-                            duration: 0.5,
-                            ease: 'power1.inOut'
-                        })
-                    }
-                })
-            }
+            gsap.set(`.services-content-${i} .services-description`, {
+                opacity: 0
+            })
+            ScrollTrigger.create({
+                trigger: `.services-content-${i} .services-description`,
+                start: `top center+=200px`,
+                scrub: false,
+                markers: false,
+                onEnter: () => {
+                    gsap.to(`.services-content-${i} .services-description`, {
+                        opacity: 1,
+                        duration: 0.5,
+                        ease: 'power1.inOut'
+                    })
+                },
+                onLeaveBack: () => {
+                    gsap.to(`.services-content-${i} .services-description`, {
+                        opacity: 0,
+                        duration: 0.5,
+                        ease: 'power1.inOut'
+                    })
+                }
+            })
 
             const els = gsap.utils.toArray(`.services-content-${i} .services-projects`)
             if(els.length){
@@ -939,7 +937,7 @@
                 markers: false,
                 onUpdate: (self) => {
                     if(width.value>(768 - 1)){
-                        updatePosition(-13.5, 0, 0, 0, 0, 0, self.progress);
+                        updatePosition(-12, 0, 0, 0, 0, 0, self.progress);
                     }else{
                         updatePosition(0, -2, 0, 0, 0, 0, self.progress);
                     }
@@ -957,32 +955,32 @@
         const itemCount = 12; // 元素總數
 
         const desktopPositions = {
-            1: {x: 50, y: -350, z: 3300},
-            2: {x: 400, y: -150, z: 3400},
-            3: {x: 580, y: 50, z: 3300},
-            4: {x: 350, y: 150, z: 3400},
-            5: {x: 220, y: 0, z: 3350},
-            6: {x: 200, y: 300, z: 3400},
-            7: {x: -180, y: 350, z: 3300},
-            8: {x: -400, y: 200, z: 3400},
+            1: {x: 50, y: -350, z: 3200},
+            2: {x: 400, y: -150, z: 3200},
+            3: {x: 580, y: 50, z: 3200},
+            4: {x: 350, y: 150, z: 3200},
+            5: {x: 220, y: 0, z: 3200},
+            6: {x: 200, y: 300, z: 3200},
+            7: {x: -180, y: 350, z: 3200},
+            8: {x: -400, y: 200, z: 3200},
             9: {x: -190, y: 100, z: 3200},
-            10: {x: -550, y: 50, z: 3300},
-            11: {x: -500, y: -250, z: 3300},
+            10: {x: -550, y: 50, z: 3200},
+            11: {x: -500, y: -250, z: 3200},
             12: {x: -300, y: -150, z: 3200},
         };
         const mobilePositions = {
-            1: {x: 250, y: -550, z: 1100},
-            2: {x: -200, y: -450, z: 1300},
+            1: {x: 250, y: -550, z: 1200},
+            2: {x: -200, y: -450, z: 1200},
             3: {x: 150, y: -350, z: 1200},
             4: {x: -300, y: -250, z: 1200},
-            5: {x: 200, y: -150, z: 1000},
-            6: {x: -150, y: -50, z: 1100},
+            5: {x: 200, y: -150, z: 1200},
+            6: {x: -150, y: -50, z: 1200},
             7: {x: 300, y: 50, z: 1200},
-            8: {x: -250, y: 150, z: 1300},
-            9: {x: 200, y: 250, z: 1100},
-            10: {x: -300, y: 350, z: 1400},
+            8: {x: -250, y: 150, z: 1200},
+            9: {x: 200, y: 250, z: 1200},
+            10: {x: -300, y: 350, z: 1200},
             11: {x: 200, y: 450, z: 1200},
-            12: {x: -200, y: 550, z: 1300},
+            12: {x: -200, y: 550, z: 1200},
         };
 
         const partnersSectionTimeline = gsap.timeline({
