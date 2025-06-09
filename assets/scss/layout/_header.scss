@@ -9,11 +9,11 @@
     left: 30%;
     z-index: 10;
     --header-color: black;
-    --mobile-menu-background-color: rgba(255, 255, 255, 0.95);
+    --mobile-menu-background-color: rgba(230, 230, 230, 0.95);
     @include max-xxl{
         top: 2rem;
     }
-    @include max-md{
+    @include max-lg{
         width: calc(100% - 40%);
         left: 20%;
         top: 1rem;
@@ -26,7 +26,7 @@
             width: calc(100% - 4rem);
             left: 2rem;
         }
-        @include max-md{
+        @include max-lg{
             width: calc(100% - 2rem);
             left: 1em;
         }
@@ -79,7 +79,7 @@
         justify-content: center;
         gap: 0rem;
         transition: 0.5s;
-        @include max-md {
+        @include max-lg {
             display: none;
         }
         &.isLandingPage{
@@ -93,17 +93,16 @@
             align-items: center;
             transition: 0.5s;
             transition-timing-function: ease;
-            justify-content: center;
+            justify-content: flex-end;
             &.isLandingPage{
                 flex-grow: 0;
                 gap: 0.75rem;
-                justify-content: flex-end;
             }
         }
     }
     .mobile-group {
         display: none;
-        @include max-md {
+        @include max-lg {
             display: flex;
             justify-content: space-between;
             align-items: center;

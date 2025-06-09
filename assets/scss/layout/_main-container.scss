@@ -79,7 +79,7 @@
     .aboutUs-section{
         height: calc(var(--h) * 3);
         --bg-opacity: 0.75;
-        background-color:rgba($color: var(--bgc), $alpha: var(--bg-opacity));
+        background-color:rgba(230, 230, 230, var(--bg-opacity));
         .aboutUs-content-container{
             overflow: hidden;
             .aboutUs-content-group{
@@ -254,8 +254,11 @@
         display: flex;
         flex-direction: column;
         align-items: flex-end;
-        padding-right: 2rem;
-        @include max-md{
+        padding-right: 4rem;
+        @include max-xxl{
+            padding-right: 2rem;
+        }
+        @include max-lg{
             padding-right: 1rem;
         }
         .services-content{
@@ -266,7 +269,7 @@
             flex-direction: column;
             justify-content: center;
             opacity: 1;
-            @include max-md{
+            @include max-lg{
                 width: 95%;
                 justify-content: flex-end;
             }
@@ -402,7 +405,7 @@
                 position: absolute;
                 font-size: 15rem;
                 z-index: -10000;
-                color: rgba($color: #000000, $alpha: 0.05);
+                color: rgba($color: #ffffff, $alpha: 0.25);
                 letter-spacing: 3rem;
                 margin-left: 3rem;
                 opacity: 0;
@@ -431,15 +434,15 @@
                 --transform-z: 0;
                 transform: translate3d(0, 0, calc(0px + var(--transform-z, 0) * 1px));
                 @include max-md{
-                    transform: translate3d(0, 0, calc(350px + var(--transform-z, 0) * 1px));
+                    transform: translate3d(0, 0, calc(0px + var(--transform-z, 0) * 1px));
                 }
                 .partners-content-item{
                     position: absolute;
                     top: 50%;
                     left: 50%;
-                    --partnersWidth: 200px;
+                    --partnersWidth: 75px;
                     @include max-md{
-                        --partnersWidth: 250px;
+                        --partnersWidth: 50px;
                     }
                     width: var(--partnersWidth);
                     height: calc(var(--partnersWidth) * 9 / 16);
@@ -454,7 +457,7 @@
                     transform: translate3d(
                         calc(-50% + var(--transform-x, 0) * 1px), 
                         calc(-50% + var(--transform-y, 0) * 1px), 
-                        calc(-3500px + var(--transform-z, 0) * 1px)
+                        calc(50px + var(--transform-z, 0) * 1px)
                     );
                     display: flex;
                     align-items: center;

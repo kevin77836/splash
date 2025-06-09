@@ -741,10 +741,10 @@
                     shrinkingFunction()
                 },
                 onUpdate: (self) => {
-                    if(width.value>(768 - 1)){
+                    if(width.value>(992 - 1)){
                         updatePosition(0, 0, 10, -13.5, 0, 0, self.progress);
                     }else{
-                        updatePosition(0, 0, 10, 0, -2, 0, self.progress);
+                        updatePosition(0, 0, 10, 0, -3, 0, self.progress);
                     }
                 },
             },
@@ -765,80 +765,47 @@
                             textAnimation.animateTitle(i-1);
                             serviceData.value[i-1].isActive = true
                         }
-                        if(isMobileDevice()){
-                            tiIn.fromTo(`.services-content-${i} .services-title`, 
-                                {
-                                    opacity: 0,
-                                },
-                                {
-                                    opacity: 1,
-                                    duration: 0.5,
-                                    ease: 'power1.inOut'
-                                },
-                            )
-                        }
                     },
                     onLeaveBack: () =>{
                         shrinkingFunction();
                     },
                 },
             })
+            if(isMobileDevice()){
+                gsap.set(`.services-content-${i} .services-title`, {
+                    opacity: 0
+                })
+
+                tiIn.to(`.services-content-${i} .services-title`, {
+                    opacity: 1,
+                    duration: 0.5,
+                    ease: 'power1.inOut'
+                }, 0)
+            }
 
             gsap.set(`.services-content-${i} .services-description`, {
                 opacity: 0
             })
-            ScrollTrigger.create({
-                trigger: `.services-content-${i} .services-description`,
-                start: `top center+=200px`,
-                scrub: false,
-                markers: false,
-                onEnter: () => {
-                    gsap.to(`.services-content-${i} .services-description`, {
-                        opacity: 1,
-                        duration: 0.5,
-                        delay: 0.25,
-                        ease: 'power1.inOut'
-                    })
-                },
-                onLeaveBack: () => {
-                    gsap.to(`.services-content-${i} .services-description`, {
-                        opacity: 0,
-                        duration: 0.5,
-                        delay: 0.25,
-                        ease: 'power1.inOut'
-                    })
-                }
-            })
+
+            tiIn.to(`.services-content-${i} .services-description`, {
+                opacity: 1,
+                duration: 0.5,
+                ease: 'power1.inOut'
+            }, 0.2)
 
             const els = gsap.utils.toArray(`.services-content-${i} .services-projects`)
             if(els.length){
                 els.forEach(el => {
-                    // 初始化样式
                     gsap.set(el, {
                         opacity: 0
                     })
-
-                    ScrollTrigger.create({
-                        trigger: el,
-                        start: `top center+=200px`,
-                        scrub: false,
-                        markers: false,
-                        onEnter: () => {
-                            gsap.to(el, {
-                                opacity: 1,
-                                duration: 0.5,
-                                ease: 'power1.inOut'
-                            })
-                        },
-                        onLeaveBack: () => {
-                            gsap.to(el, {
-                                opacity: 0,
-                                duration: 0.5,
-                                ease: 'power1.inOut'
-                            })
-                        }
-                    })
                 })
+                tiIn.to(els,{
+                    opacity: 1,
+                    duration: 0.5,
+                    ease: 'power1.inOut',
+                    stagger: 0.2
+                }, 0.4)
             }
 
             gsap.timeline({
@@ -878,10 +845,10 @@
                 scrub: true,
                 markers: false,
                 onUpdate: (self) => {
-                    if(width.value>(768 - 1)){
+                    if(width.value>(992 - 1)){
                         updatePosition(-13.5, 0, 0, 0, 0, 0, self.progress);
                     }else{
-                        updatePosition(0, -2, 0, 0, 0, 0, self.progress);
+                        updatePosition(0, -3, 0, 0, 0, 0, self.progress);
                     }
                 },
                 onLeave: () => {
@@ -893,37 +860,6 @@
                 },
             },    
         })
-
-        const itemCount = 12; // 元素總數
-
-        const desktopPositions = {
-            1: {x: 50, y: -350, z: 3200},
-            2: {x: 400, y: -150, z: 3200},
-            3: {x: 580, y: 50, z: 3200},
-            4: {x: 350, y: 150, z: 3200},
-            5: {x: 220, y: 0, z: 3200},
-            6: {x: 200, y: 300, z: 3200},
-            7: {x: -180, y: 350, z: 3200},
-            8: {x: -400, y: 200, z: 3200},
-            9: {x: -190, y: 100, z: 3200},
-            10: {x: -550, y: 50, z: 3200},
-            11: {x: -500, y: -250, z: 3200},
-            12: {x: -300, y: -150, z: 3200},
-        };
-        const mobilePositions = {
-            1: {x: 250, y: -550, z: 1200},
-            2: {x: -200, y: -450, z: 1200},
-            3: {x: 150, y: -350, z: 1200},
-            4: {x: -300, y: -250, z: 1200},
-            5: {x: 200, y: -150, z: 1200},
-            6: {x: -150, y: -50, z: 1200},
-            7: {x: 300, y: 50, z: 1200},
-            8: {x: -250, y: 150, z: 1200},
-            9: {x: 200, y: 250, z: 1200},
-            10: {x: -300, y: 350, z: 1200},
-            11: {x: 200, y: 450, z: 1200},
-            12: {x: -200, y: 550, z: 1200},
-        };
 
         const partnersSectionTimeline = gsap.timeline({
             scrollTrigger: {
@@ -938,14 +874,6 @@
             }
         });
 
-        let contentGroupTransformZ;
-        if(width.value > (768 - 1)){
-            contentGroupTransformZ = 400;
-        }else if(width.value > (576 - 1)){
-            contentGroupTransformZ = 140;
-        }else{
-            contentGroupTransformZ = 120;
-        }
         partnersSectionTimeline.to('.partners-content-title', {
             opacity: 1,
             duration: 0.3
@@ -953,7 +881,8 @@
 
         partnersSectionTimeline.to('.partners-content-title', {
             '--transform': 150,
-            duration: 1
+            duration: 1,
+            ease: CustomEase.create("custom", "M0,0 C0,0.5 1,0.5 1,1 "),
         }, 0);
 
         partnersSectionTimeline.to('.partners-content-title', {
@@ -961,24 +890,48 @@
             duration: 0.3
         }, 0.7);
 
-        // partnersSectionTimeline.to('.partners-content-title', {
-        //     scale: 1.5,
-        //     duration: 1,
-        //     ease: CustomEase.create("custom", "M0,0 C0,0.5 1,0.5 1,1 "),
-        // }, 0);
-
-        partnersSectionTimeline.to('.partners-content-group', {
-            '--transform-z': contentGroupTransformZ,
-            ease: CustomEase.create("custom", "M0,0 C0,0.5 1,0.5 1,1 "),
-            duration: 1,
-        },0);
+        const desktopPositions = {
+            1: { x: 25, y: -175 },
+            2: { x: 200, y: -75 },
+            3: { x: 290, y: 25 },
+            4: { x: 175, y: 75 },
+            5: { x: 110, y: 0 },
+            6: { x: 100, y: 150 },
+            7: { x: -90, y: 175 },
+            8: { x: -200, y: 100 },
+            9: { x: -95, y: 50 },
+            10: { x: -275, y: 25 },
+            11: { x: -250, y: -125 },
+            12: { x: -150, y: -75 },
+        };
+        const mobilePositions = {
+            1: {x: 0, y: -45},
+            2: {x: -20, y: -30},
+            3: {x: 25, y: -30},
+            4: {x: -30, y: -20},
+            5: {x: 30, y: -15},
+            6: {x: -35, y: -0},
+            7: {x: 35, y: 5},
+            8: {x: -30, y: 15},
+            9: {x: 30, y: 20},
+            10: {x: -30, y: 35},
+            11: {x: 25, y: 35},
+            12: {x: 0, y: 45},
+        };
         
+        const itemCount = 12; // 元素總數
         const position = width.value > (768 - 1) ? desktopPositions : mobilePositions;
+        const zTransition = 100;
         for (let i = 1; i <= itemCount; i++) {
             partnersSectionTimeline.to(`.partners-content-item-${i}`, {
                 '--transform-x': position[i].x,
                 '--transform-y': position[i].y,
-                '--transform-z': position[i].z,
+                '--transform-z': zTransition,
+                duration: 1,
+                ease: CustomEase.create("custom", "M0,0 C0,0.5 1,0.5 1,1 "),
+            },0);
+
+            partnersSectionTimeline.to(`.partners-content-item-${i}`, {
                 opacity: 1,
                 duration: 0.3,
                 ease: "power4.out",
@@ -1169,6 +1122,35 @@
         }, 100);
     }
 
+
+    function setupMouseTilt() {
+        // 拿到這個容器的 DOM
+        const el = document.querySelector('.partners-content-group');
+        if (!el) return;
+
+        const MAX_ROT_X = 30;
+        const MAX_ROT_Y = 30;
+        const MAX_ROT_Z = 30;
+
+        window.addEventListener('mousemove', e => {
+            // 將游標位置正規化到 [-1, 1]
+            const xNorm = (e.clientX / width.value  - 0.5) * 2;
+            const yNorm = (e.clientY / height.value - 0.5) * 2;
+
+            // 計算要轉多少度
+            const rotY = xNorm * MAX_ROT_Y;       // 水平方向滑動控制 Y 軸
+            const rotX = -yNorm * MAX_ROT_X;      // 垂直方向滑動控制 X 軸（負值是因為往下滑要往上轉）
+            const rotZ = xNorm * MAX_ROT_Z;       // 也可以把 Z 軸綁在水平滑動上
+
+            // 用 GSAP 平滑地更新 transform
+            gsap.to(el, {
+                rotationY: rotY,
+                rotationX: rotX,
+                rotationZ: rotZ,
+            });
+        });
+    }
+
     onMounted(async() => {
         preloadAllMedia();
 
@@ -1185,6 +1167,7 @@
             const windowHeight = height.value;
             document.documentElement.style.setProperty('--h', `${windowHeight}px`);
         }else{
+            setupMouseTilt();
             serviceData.value.forEach((_, i) => textAnimation.initTitle(i))
         }
     });
