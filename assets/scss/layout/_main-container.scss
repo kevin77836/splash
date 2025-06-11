@@ -442,7 +442,7 @@
                     left: 50%;
                     --partnersWidth: 75px;
                     @include max-md{
-                        --partnersWidth: 50px;
+                        --partnersWidth: 125px;
                     }
                     width: var(--partnersWidth);
                     height: calc(var(--partnersWidth) * 9 / 16);
@@ -459,6 +459,13 @@
                         calc(-50% + var(--transform-y, 0) * 1px), 
                         calc(50px + var(--transform-z, 0) * 1px)
                     );
+                    @include max-md{
+                        transform: translate3d(
+                            calc(-50% + var(--transform-x, 0) * 1px), 
+                            calc(-50% + var(--transform-y, 0) * 1px), 
+                            calc(-250px + var(--transform-z, 0) * 1px)
+                        );
+                    }
                     display: flex;
                     align-items: center;
                     justify-content: center;

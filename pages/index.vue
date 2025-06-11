@@ -744,7 +744,7 @@
                     if(width.value>(992 - 1)){
                         updatePosition(0, 0, 10, -13.5, 0, 0, self.progress);
                     }else{
-                        updatePosition(0, 0, 10, 0, -3, 0, self.progress);
+                        updatePosition(0, 0, 10, 0, -4, 0, self.progress);
                     }
                 },
             },
@@ -848,7 +848,7 @@
                     if(width.value>(992 - 1)){
                         updatePosition(-13.5, 0, 0, 0, 0, 0, self.progress);
                     }else{
-                        updatePosition(0, -3, 0, 0, 0, 0, self.progress);
+                        updatePosition(0, -4, 0, 0, 0, 0, self.progress);
                     }
                 },
                 onLeave: () => {
@@ -905,23 +905,24 @@
             12: { x: -150, y: -75 },
         };
         const mobilePositions = {
-            1: {x: 0, y: -45},
-            2: {x: -20, y: -30},
-            3: {x: 25, y: -30},
-            4: {x: -30, y: -20},
-            5: {x: 30, y: -15},
-            6: {x: -35, y: -0},
-            7: {x: 35, y: 5},
-            8: {x: -30, y: 15},
-            9: {x: 30, y: 20},
-            10: {x: -30, y: 35},
-            11: {x: 25, y: 35},
-            12: {x: 0, y: 45},
+            1: { x: 0, y: -180 },
+            2: { x: -80, y: -120 },
+            3: { x: 100, y: -120 },
+            4: { x: -120, y: -80 },
+            5: { x: 120, y: -60 },
+            6: { x: -140, y: 0 },
+            7: { x: 140, y: 20 },
+            8: { x: -120, y: 60 },
+            9: { x: 120, y: 80 },
+            10: { x: -120, y: 140 },
+            11: { x: 100, y: 140 },
+            12: { x: 0, y: 180 },
         };
+
         
         const itemCount = 12; // 元素總數
         const position = width.value > (768 - 1) ? desktopPositions : mobilePositions;
-        const zTransition = 100;
+        const zTransition = width.value > (768 - 1) ? 100 : 500;
         for (let i = 1; i <= itemCount; i++) {
             partnersSectionTimeline.to(`.partners-content-item-${i}`, {
                 '--transform-x': position[i].x,
