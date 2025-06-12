@@ -139,23 +139,29 @@
                 </div> 
             </div>
             <div v-show="isStarted" class="section services-section">
-                <div v-for="(item, index) in serviceData" class="services-content" :class="`services-content-${index+1}`" :key="index">
-                    <h2 class="services-title">{{ item.title }}</h2>
-                    <div class="services-description">
-                        {{ item.description }}
-                    </div>
-                    <div v-if="index !== 0" class="services-projects-group">
-                        <div class="services-projects" v-for="(project,projectsIndex) in item.projects" :key="'services'+ index + projectsIndex">
-                            <div class="banner">
-                                <video v-if="fetchMediaById(project).type === 'video'" :src="fetchMediaById(project).src" autoplay muted loop playsinline></video>
-                                <img v-else :src="fetchMediaById(project).src" alt="">
-                            </div>
-                            <div class="infoGroup">
-                                <div class="title">{{ fetchMediaById(project).title }}</div>
-                                <!-- <div class="descriptionWrap">
-                                    <div class="description">{{ fetchMediaById(project).description }}</div>
-                                </div> -->
-                                <div class="cta">查看專案</div>
+                <div class="services-title-group">
+                    <h2 class="services-title"></h2>
+                    <div class="services-description"></div>
+                </div>
+                <div class="services-content-group">
+                    <div v-for="(item, index) in serviceData" class="services-content" :class="`services-content-${index+1}`" :key="index">
+                        <h2 class="services-title">{{ item.title }}</h2>
+                        <div class="services-description">
+                            {{ item.description }}
+                        </div>
+                        <div v-if="index !==0" class="services-projects-group">
+                            <div class="services-projects" v-for="(project,projectsIndex) in item.projects" :key="'services'+ index + projectsIndex">
+                                <div class="banner">
+                                    <video v-if="fetchMediaById(project).type === 'video'" :src="fetchMediaById(project).src" autoplay muted loop playsinline></video>
+                                    <img v-else :src="fetchMediaById(project).src" alt="">
+                                </div>
+                                <div class="infoGroup">
+                                    <div class="title">{{ fetchMediaById(project).title }}</div>
+                                    <!-- <div class="descriptionWrap">
+                                        <div class="description">{{ fetchMediaById(project).description }}</div>
+                                    </div> -->
+                                    <div class="cta">查看專案</div>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -210,14 +216,12 @@
                 </div>
             </div>
             <div v-show="isStarted" class="section contactUs-section">
-                <div class="contactUs-title">
-                    Let's make a splash
-                </div>
-                <div class="contactUs-description">
+                <div class="contactUs-title"></div>
+                <!-- <div class="contactUs-description">
                     如果有任何疑問或者有報價洽詢的需求，歡迎聯繫我們，
                     我們會在收到訊息後三天內回覆，
                     請留下您的聯絡方式及簡要內容，方便讓我們了解您的需求。
-                </div>
+                </div> -->
                 <div class="contactUs-information">
                     <div class="phone">Phone: 0912-345-678</div>
                     <div class="email">Email: splash-digilab@gmail.com</div>
@@ -245,6 +249,7 @@
     const isStarted = ref(false);
     const isMenuOpen = ref(false);
     const isLandingPage = ref(true);
+    const isSetParnertsMouseEvent = ref(false);
 
     let customEasing;
     let smoother = null;
@@ -296,82 +301,103 @@
                 1,7
             ]
         },
-        // {
-        //     title: '互動設計/數位藝術',
-        //     description: '專注於直覺互動體驗，從動作感應裝置到展覽互動系統，強化體驗參與感。',
-        //     splitTitle: [],
-        //     splitDescription: [],
-        //     projects:[
-        //         1,2,3
-        //     ]
-        // },
     ])
 
     // 文字動態特效
-    const titleStore = new Map()
+    const splitMap = new WeakMap();
+    function animateText(el, text, options = {}) {
+        if (!el || typeof text !== 'string') return;
+        // 默认配置
+        const opts = Object.assign({
+            letters: 'ABCDEFGHIJKLMNOPQRSTUVWXYZ結合設計創意與前端開發擅長跨界沉浸式互動體驗',
+            charRevealDuration: 0.05,
+            randomIntervalDelay: 30,
+            randomDuration: 300,
+            stagger: 0.05,
+        }, options);
 
-    const textAnimation = {
-        initTitle(index) {
-            if (!process.client) return
-            // 如果已初始化，跳过
-            if (titleStore[index]) return
+        // 1. 清除旧内容，写入新文本
+        el.textContent = text;
 
-            const el = document.querySelector(`.services-content-${index+1} .services-title`)
-            if (!el) return
+        // 2. 拆分成字符
+        const split = new SplitText(el, { type: 'chars', charsClass: 'char' });
+        // 存储实例以便后续参考（可选）
+        splitMap.set(el, split);
 
-            const original = el.textContent.trim()
-            // 用 SplitText 拆成字符节点
-            const split = new SplitText(el, { type: 'chars', charsClass: 'char' })
+        // 3. 准备：隐藏所有字符、清空文本
+        split.chars.forEach(c => {
+            c.dataset.original = c.textContent;
+            c.style.visibility = 'hidden';
+            c.textContent = '';
+        });
 
-            // 清空并隐藏所有字符
-            split.chars.forEach(c => {
-                c.dataset.original = c.textContent
-                c.style.visibility = 'hidden'
-                c.textContent = ''
-            })
+        // 4. 创建时间轴，逐字符播放动画
+        const tl = gsap.timeline();
+        split.chars.forEach((charEl, idx) => {
+            const delayTime = idx * opts.stagger;
+            // set 可见
+            tl.set(charEl, { visibility: 'visible' }, delayTime);
+            // 然后一个空动画占位，用 onStart 做闪动
+            tl.to({}, {
+            duration: opts.charRevealDuration,
+            onStart: () => {
+                const iv = setInterval(() => {
+                    const letters = opts.letters;
+                    const r = letters.charAt(Math.floor(Math.random() * letters.length));
+                    charEl.textContent = r;
+                }, opts.randomIntervalDelay);
+                // 随机闪动结束后，显示原字符
+                setTimeout(() => {
+                    clearInterval(iv);
+                    charEl.textContent = charEl.dataset.original;
+                }, opts.randomDuration);
+            }
+            }, delayTime);
+        });
 
-            titleStore[index] = { split, original }
-        },
+        return tl;
+    }
+    function clearText(el, options = {}) {
+        if (!el) return;
+        const opts = Object.assign({
+            charFadeDuration: 0.1,
+            stagger: 0.01,
+            ease: 'power1.out',
+        }, options);
 
-        getRandomLetter() {
-            const letters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ結合設計創意與前端開發擅長跨界沉浸式互動體驗'
-            return letters.charAt(Math.floor(Math.random() * letters.length))
-        },
+        // 获取当前文本
+        const currentText = el.textContent || '';
+        if (!currentText) return; // 已经空则无需操作
 
-        animateTitle(index) {
-            if (!process.client) return
-            this.initTitle(index)
-            const rec = titleStore[index]
-            if (!rec) return
+        // 1. 拆分
+        // 首先把内容设回原文（有助于 SplitText 采用正确节点）
+        el.textContent = currentText;
+        const split = new SplitText(el, { type: 'chars', charsClass: 'char' });
+        splitMap.set(el, split);
 
-            const { split } = rec
-            const chars = split.chars
+        // 2. 准备：确保所有字符可见、opacity 为 1
+        split.chars.forEach(c => {
+            c.style.visibility = 'visible';
+            c.style.opacity = '1';
+        });
 
+        // 3. 创建时间轴：从首字符到末字符依次淡出
+        const tl = gsap.timeline({
+            onComplete: () => {
+            // 最后彻底清空文本（移除拆分 DOM）
+            el.textContent = '';
+            // 可选：清理 SplitText 实例引用
+            splitMap.delete(el);
+            }
+        });
+        tl.to(split.chars, {
+            opacity: 0,
+            duration: opts.charFadeDuration,
+            ease: opts.ease,
+            stagger: opts.stagger
+        });
 
-            chars.forEach(c => {
-                c.style.visibility = 'hidden'
-                c.textContent = ''
-            })
-
-            // 时间轴动画
-            const tl = gsap.timeline()
-            chars.forEach((char, i) => {
-            tl.set(char, { visibility: 'visible' })
-                .to({}, {
-                duration: 0.05,
-                onStart: () => {
-                    // 随机字快速闪动
-                    const iv = setInterval(() => {
-                    char.textContent = this.getRandomLetter()
-                    }, 5)
-                    setTimeout(() => {
-                    clearInterval(iv)
-                    char.textContent = char.dataset.original
-                    }, 50)
-                }
-                }, i * 0.05)
-            })
-        },
+        return tl;
     }
 
     // 新增：媒體資源列表
@@ -730,6 +756,19 @@
         }
     }
     const servicesSectionGsap = () => {
+        const titleGroupEl = document.querySelector('.services-title-group');
+        const titleEl = titleGroupEl.querySelector('.services-title');
+        const descEl  = titleGroupEl.querySelector('.services-description');
+
+        ScrollTrigger.create({
+            trigger: '.services-section',
+            start: 'top top',
+            end: 'bottom top',
+            pin: '.services-title-group',
+            pinSpacing: false,
+            scrub: false,
+        });
+
         gsap.timeline({
             scrollTrigger: {
                 trigger: `.services-content-1`,
@@ -742,7 +781,7 @@
                 },
                 onUpdate: (self) => {
                     if(width.value>(992 - 1)){
-                        updatePosition(0, 0, 10, -13.5, 0, 0, self.progress);
+                        updatePosition(0, 0, 10, -13.5, -1, 0, self.progress);
                     }else{
                         updatePosition(0, 0, 10, 0, -4, 0, self.progress);
                     }
@@ -761,13 +800,17 @@
                     onEnter: () => {
                         growingFunction();
                         changeMaterialType(i-1);
-                        if(!isMobileDevice() && serviceData.value[i-1].isActive == false){
-                            textAnimation.animateTitle(i-1);
-                            serviceData.value[i-1].isActive = true
+                        if(i > 1){
+                            animateText(titleEl, serviceData.value[i-1].title);
+                            animateText(descEl, serviceData.value[i-1].description);
                         }
                     },
                     onLeaveBack: () =>{
                         shrinkingFunction();
+                        if(i == 2){
+                            clearText(titleEl, serviceData.value[i-1].title);
+                            clearText(descEl, serviceData.value[i-1].description);
+                        }
                     },
                 },
             })
@@ -783,15 +826,15 @@
                 }, 0)
             }
 
-            gsap.set(`.services-content-${i} .services-description`, {
-                opacity: 0
-            })
+            // gsap.set(`.services-content-${i} .services-description`, {
+            //     opacity: 0
+            // })
 
-            tiIn.to(`.services-content-${i} .services-description`, {
-                opacity: 1,
-                duration: 0.5,
-                ease: 'power1.inOut'
-            }, 0.2)
+            // tiIn.to(`.services-content-${i} .services-description`, {
+            //     opacity: 1,
+            //     duration: 0.5,
+            //     ease: 'power1.inOut'
+            // }, 0.2)
 
             const els = gsap.utils.toArray(`.services-content-${i} .services-projects`)
             if(els.length){
@@ -805,7 +848,7 @@
                     duration: 0.5,
                     ease: 'power1.inOut',
                     stagger: 0.2
-                }, 0.4)
+                }, 0)
             }
 
             gsap.timeline({
@@ -817,10 +860,18 @@
                     scrub: true,
                     onEnter: () => {
                         shrinkingFunction();
+                        if(i == serviceData.value.length){
+                            clearText(titleEl, serviceData.value[i-1].title);
+                            clearText(descEl, serviceData.value[i-1].description);
+                        }
                     },
                     onLeaveBack: () => {
                         growingFunction();
                         changeMaterialType(i-1);
+                        if(i > 1){
+                            animateText(titleEl, serviceData.value[i-1].title);
+                            animateText(descEl, serviceData.value[i-1].description);
+                        }
                     }
                 },
             })
@@ -846,9 +897,15 @@
                 markers: false,
                 onUpdate: (self) => {
                     if(width.value>(992 - 1)){
-                        updatePosition(-13.5, 0, 0, 0, 0, 0, self.progress);
+                        updatePosition(-13.5, -1, 0, 0, 0, 0, self.progress);
                     }else{
                         updatePosition(0, -4, 0, 0, 0, 0, self.progress);
+                    }
+                },
+                onEnter: ()=>{
+                    if(!isSetParnertsMouseEvent.value){
+                        setupMouseTilt();
+                        isSetParnertsMouseEvent.value = true
                     }
                 },
                 onLeave: () => {
@@ -940,6 +997,7 @@
         }
     }
     const contactUsSectionGsap = () => {
+        const titleEl = document.querySelector('.contactUs-section .contactUs-title');
         gsap.timeline({
             scrollTrigger: {
                 trigger: '.contactUs-section',
@@ -952,7 +1010,11 @@
                 },
                 onEnter: ()=>{
                     shrinkingFunction();
+                    animateText(titleEl, "Let's make a splash");
                 },
+                onEnterBack: () => {
+                    clearText(titleEl, "Let's make a splash");
+                }
             },    
         });
     }
@@ -1007,14 +1069,12 @@
         if (!isAutoPlaying.value) return;
         
         if (animationType === 'growing') {
-        // 生長動畫完成，等待1秒後開始收縮
-        autoPlayTimer = setTimeout(() => {
-            shrinkingFunction();
+            autoPlayTimer = setTimeout(() => {
+                shrinkingFunction();
             }, 0);
         } else if (animationType === 'shrinking') {
-            // 收縮動畫完成，等待2秒後開始生長
-        autoPlayTimer = setTimeout(() => {
-            growingFunction();
+            autoPlayTimer = setTimeout(() => {
+                growingFunction();
             }, 1000);
         }
     }
@@ -1131,7 +1191,6 @@
 
         const MAX_ROT_X = 30;
         const MAX_ROT_Y = 30;
-        const MAX_ROT_Z = 30;
 
         window.addEventListener('mousemove', e => {
             // 將游標位置正規化到 [-1, 1]
@@ -1141,13 +1200,11 @@
             // 計算要轉多少度
             const rotY = xNorm * MAX_ROT_Y;       // 水平方向滑動控制 Y 軸
             const rotX = -yNorm * MAX_ROT_X;      // 垂直方向滑動控制 X 軸（負值是因為往下滑要往上轉）
-            const rotZ = xNorm * MAX_ROT_Z;       // 也可以把 Z 軸綁在水平滑動上
 
             // 用 GSAP 平滑地更新 transform
             gsap.to(el, {
                 rotationY: rotY,
                 rotationX: rotX,
-                rotationZ: rotZ,
             });
         });
     }
@@ -1168,8 +1225,7 @@
             const windowHeight = height.value;
             document.documentElement.style.setProperty('--h', `${windowHeight}px`);
         }else{
-            setupMouseTilt();
-            serviceData.value.forEach((_, i) => textAnimation.initTitle(i))
+
         }
     });
 </script>
