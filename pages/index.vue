@@ -145,10 +145,10 @@
                 </div>
                 <div class="services-content-group">
                     <div v-for="(item, index) in serviceData" class="services-content" :class="`services-content-${index+1}`" :key="index">
-                        <h2 class="services-title" v-if="width < 768 || (width > (768-1) && index == 0)">
+                        <h2 class="services-title" v-if="width < 992 || (width > (992-1) && index == 0)">
                             {{ item.title }}
                         </h2>
-                        <div class="services-description" v-if="width < 768 || (width > (768-1) && index == 0)">
+                        <div class="services-description" v-if="width < 992 || (width > (992-1) && index == 0)">
                             {{ item.description }}
                         </div>
                         <div v-if="index !==0" class="services-projects-group">
@@ -784,7 +784,7 @@
                 markers: false,
                 onEnter: () => {
                     shrinkingFunction();
-                    if(width.value > (768-1)){
+                    if(width.value > (992-1)){
                         firstContentTitleEl.textContent = '';
                         firstContentDescEl.textContent = '';
                     }
@@ -810,62 +810,63 @@
                     onEnter: () => {
                         growingFunction();
                         changeMaterialType(i-1);
-                        if(i > 1 && width.value > (768 - 1)){
+                        if(i > 1 && width.value > (992 - 1)){
                             animateText(titleEl, serviceData.value[i-1].title);
                             animateText(descEl, serviceData.value[i-1].description);
                         }
 
-                        if(i == 1 && width.value > (768 - 1)){
+                        if(i == 1 && width.value > (992 - 1)){
                             animateText(firstContentTitleEl, serviceData.value[0].title);
                             animateText(firstContentDescEl, serviceData.value[0].description);
                         }
                     },
                     onLeaveBack: () =>{
                         shrinkingFunction();
-                        if(i == 2 && width.value > (768 - 1)){
+                        if(i == 2 && width.value > (992 - 1)){
                             clearText(titleEl, serviceData.value[i-1].title);
                             clearText(descEl, serviceData.value[i-1].description);
                         }
                     },
                 },
             })
-            if(width.value < 768){
+            if(width.value < 992){
                 gsap.set(`.services-content-${i} .services-title`, {
-                    opacity: 0
+                    opacity: 1
                 })
 
-                tiIn.to(`.services-content-${i} .services-title`, {
-                    opacity: 1,
-                    duration: 0.5,
-                    ease: 'power1.inOut'
-                }, 0)
+                // tiIn.to(`.services-content-${i} .services-title`, {
+                //     opacity: 1,
+                //     duration: 0.5,
+                //     ease: 'power1.inOut'
+                // }, 0)
 
                 gsap.set(`.services-content-${i} .services-description`, {
-                    opacity: 0
+                    opacity: 1
                 })
 
-                tiIn.to(`.services-content-${i} .services-description`, {
-                    opacity: 1,
-                    duration: 0.5,
-                    ease: 'power1.inOut'
-                }, 0.2)
+                // tiIn.to(`.services-content-${i} .services-description`, {
+                //     opacity: 1,
+                //     duration: 0.5,
+                //     ease: 'power1.inOut'
+                // }, 0.2)
             }
 
-
-            const elsDelayTime = width.value > (768 - 1) ? 0 : 0.4;
             const els = gsap.utils.toArray(`.services-content-${i} .services-projects`)
             if(els.length){
+                const elsOpa = width.value > (992 - 1) ? 0 : 1;
                 els.forEach(el => {
                     gsap.set(el, {
-                        opacity: 0
+                        opacity: elsOpa
                     })
                 })
-                tiIn.to(els,{
-                    opacity: 1,
-                    duration: 0.5,
-                    ease: 'power1.inOut',
-                    stagger: 0.2
-                }, elsDelayTime)
+                if(width.value > (992 - 1)){
+                    tiIn.to(els,{
+                        opacity: 1,
+                        duration: 0.5,
+                        ease: 'power1.inOut',
+                        stagger: 0.2
+                    }, 0)
+                }
             }
 
             gsap.timeline({
@@ -877,7 +878,7 @@
                     scrub: true,
                     onEnter: () => {
                         shrinkingFunction();
-                        if(i == serviceData.value.length && width.value > (768 - 1)){
+                        if(i == serviceData.value.length && width.value > (992 - 1)){
                             clearText(titleEl, serviceData.value[i-1].title);
                             clearText(descEl, serviceData.value[i-1].description);
                         }
@@ -885,7 +886,7 @@
                     onLeaveBack: () => {
                         growingFunction();
                         changeMaterialType(i-1);
-                        if(i > 1 && width.value > (768 - 1)){
+                        if(i > 1 && width.value > (992 - 1)){
                             animateText(titleEl, serviceData.value[i-1].title);
                             animateText(descEl, serviceData.value[i-1].description);
                         }
@@ -893,7 +894,7 @@
                 },
             })
 
-            if(i == 1 && width.value > (768 - 1)){
+            if(i == 1 && width.value > (992 - 1)){
                 gsap.timeline({
                     scrollTrigger: {
                         trigger: `.services-content-${i}`,
@@ -902,7 +903,7 @@
                         markers: false,
                         scrub: true,
                         onUpdate: (self) =>{
-                            updatePosition(-13.5, 0, 0, -13.5, -1, 0, self.progress);
+                            updatePosition(-13.5, 0, 0, -13.5, -1.5, 0, self.progress);
                         },
                     }
                 })
@@ -929,7 +930,7 @@
                 markers: false,
                 onUpdate: (self) => {
                     if(width.value>(992 - 1)){
-                        updatePosition(-13.5, -1, 0, 0, 0, 0, self.progress);
+                        updatePosition(-13.5, -1.5, 0, 0, 0, 0, self.progress);
                     }else{
                         updatePosition(0, -4, 0, 0, 0, 0, self.progress);
                     }
@@ -969,7 +970,7 @@
         }, 0);
 
         partnersSectionTimeline.to('.partners-content-title', {
-            '--transform': 150,
+            '--transform': 200,
             duration: 1,
             ease: CustomEase.create("custom", "M0,0 C0,0.5 1,0.5 1,1 "),
         }, 0);
@@ -1034,7 +1035,7 @@
             scrollTrigger: {
                 trigger: '.contactUs-section',
                 start: 'top bottom',
-                end: 'bottom bottom',
+                end: 'center bottom',
                 scrub: true,
                 markers: false,
                 onUpdate: (self) => {
@@ -1042,6 +1043,8 @@
                 },
                 onEnter: ()=>{
                     shrinkingFunction();
+                },
+                onLeave: ()=>{
                     animateText(titleEl, "Let's make a Splash");
                 },
                 onEnterBack: () => {

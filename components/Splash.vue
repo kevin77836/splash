@@ -71,9 +71,9 @@ const animParams = reactive({
   shrinkEaseInPower: 2.5,         // 收縮緩動指數 (值越大開頭越快)
   
   // 波浪效果設定
-  flowWaveFrequency: 0.001,         // 波浪頻率
+  flowWaveFrequency: 1,         // 波浪頻率
   flowWaveAmplitudeFactor: 0.15,  // 波浪振幅因子
-  flowWaveAmplitudeFactorAtStart: 0.1, // 原點狀態下的波浪振幅因子
+  flowWaveAmplitudeFactorAtStart: 1, // 原點狀態下的波浪振幅因子
   flowWavePhaseFactor: Math.PI * 4, // 波浪相位因子
 });
 
@@ -132,7 +132,7 @@ let textOriginPosition2 = null; // 儲存文字2的原點位置
 // 3. 材質和環境設定
 // =========================================
 
-let stats = null;
+// let stats = null;
 
 // --- 材質類型定義 ---
 const materialTypes = [
@@ -821,7 +821,7 @@ function updateSpheres() {
  * 動畫主循環
  */
 function animate() {
-  stats.begin();
+  // stats.begin();
 
   if (!effect || !material || !camera || !renderer || !scene) {
     return;
@@ -860,7 +860,7 @@ function animate() {
   scene.position.set(targetScrollOffsetX, targetScrollOffsetY, targetScrollOffsetZ);
   scene.updateMatrixWorld();
   
-  stats.end();     
+  // stats.end();     
   renderer.render(scene, camera);
 
   requestAnimationFrame(animate);
@@ -949,11 +949,11 @@ async function initializeScene() {
   // 載入字體並創建文字
   loadFontAndCreateText();
 
-  stats = new Stats();
-  stats.showPanel(0);               // 0: fps, 1: ms, 2: mb, 3+: custom
-  stats.dom.style.position = 'fixed';
-  stats.dom.style.top = '0px';
-  document.body.appendChild(stats.dom);
+  // stats = new Stats();
+  // stats.showPanel(0);               // 0: fps, 1: ms, 2: mb, 3+: custom
+  // stats.dom.style.position = 'fixed';
+  // stats.dom.style.top = '0px';
+  // document.body.appendChild(stats.dom);
 
   // 註冊自定義緩動函數（只註冊一次）
   gsap.registerEase("customGrowEase", function(x) {
