@@ -263,10 +263,9 @@
         .services-title-group{
             display: flex;
             flex-direction: column;
-            justify-content: flex-end;
             height: 100vh;
             width: 40%;
-            padding-bottom: 4rem;
+            padding-top: 40%;
             padding-right: 1rem;
             @include max-lg{
                 display: none;
@@ -276,12 +275,14 @@
                 font-size: 1.5rem;
                 letter-spacing: 0.5rem;
                 color: black;
+                // text-align: center;
             }
             .services-description{
                 font-size: 1rem;
                 line-height: 1.5;
                 margin-top: 0.5rem;
                 color: black;
+                // text-align: center;
             }
         }
         .services-content-group{
@@ -302,30 +303,25 @@
                     font-size: 1.5rem;
                     letter-spacing: 0.5rem;
                     color: black;
-                    // display: none;
-                    // @include max-lg{
-                    //     display: block;
-                    // }
+                    min-height: 1.5rem;
                 }
                 .services-description{
                     font-size: 1rem;
                     line-height: 1.5;
                     margin-top: 0.5rem;
                     color: black;
-                    // display: none;
-                    // @include max-lg{
-                    //     display: block;
-                    // }
                 }
                 .services-projects-group{
                     .services-projects{
                         padding: 1rem 0;
                         display: flex;
-                        --bannerWidth: 40%;
-                        @include max-md{
-                            --bannerWidth: 100%;
-                            flex-direction: column;
-                        }
+                        --bannerWidth: 100%;
+                        flex-direction: column;
+                        // --bannerWidth: 80%;
+                        // @include max-md{
+                        //     --bannerWidth: 100%;
+                        //     flex-direction: column;
+                        // }
                         cursor: pointer;
                         &:hover{
                             .banner{
@@ -348,11 +344,13 @@
                                 transition: 0.5s;
                             }
                             overflow: hidden;
-                            margin-right: 1rem;
-                            @include max-md{
-                                margin-right: 0;
+                            margin-right: 0;
                                 margin-bottom: 1rem;
-                            }
+                            // margin-right: 1rem;
+                            // @include max-md{
+                            //     margin-right: 0;
+                            //     margin-bottom: 1rem;
+                            // }
                         }
                         .infoGroup{
                             display: flex;

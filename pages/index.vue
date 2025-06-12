@@ -128,8 +128,8 @@
                     </div>
                 </div>
             </div>
-            <div v-show="isStarted" class="section works-section">
-                <div v-if="isStarted" class="works-content-container">
+            <div v-if="isStarted" class="section works-section">
+                <div class="works-content-container">
                     <div class="works-content-group">
                         <a v-for="(media,index) in reversedMediaResources" :key="'media'+index" href="media.link" :class="`works-content-item works-content-item-${index+1} ${media.column ? 'column' : ''}`">
                             <video v-if="media.type === 'video'" :src="media.src" autoplay muted loop playsinline></video>
@@ -138,15 +138,17 @@
                     </div>
                 </div> 
             </div>
-            <div v-show="isStarted" class="section services-section">
+            <div v-if="isStarted" class="section services-section">
                 <div class="services-title-group">
                     <h2 class="services-title"></h2>
                     <div class="services-description"></div>
                 </div>
                 <div class="services-content-group">
                     <div v-for="(item, index) in serviceData" class="services-content" :class="`services-content-${index+1}`" :key="index">
-                        <h2 class="services-title">{{ item.title }}</h2>
-                        <div class="services-description">
+                        <h2 class="services-title" v-if="width < 768 || (width > (768-1) && index == 0)">
+                            {{ item.title }}
+                        </h2>
+                        <div class="services-description" v-if="width < 768 || (width > (768-1) && index == 0)">
                             {{ item.description }}
                         </div>
                         <div v-if="index !==0" class="services-projects-group">
@@ -167,7 +169,7 @@
                     </div>
                 </div>
             </div>
-            <div v-show="isStarted" class="section partners-section">
+            <div v-if="isStarted" class="section partners-section">
                 <div class="partners-content-container">
                     <div class="partners-content-title partners-content-title-1">
                         Partners
@@ -215,7 +217,7 @@
                     </div>
                 </div>
             </div>
-            <div v-show="isStarted" class="section contactUs-section">
+            <div v-if="isStarted" class="section contactUs-section">
                 <div class="contactUs-title"></div>
                 <!-- <div class="contactUs-description">
                     如果有任何疑問或者有報價洽詢的需求，歡迎聯繫我們，
@@ -261,13 +263,13 @@
     const serviceData = ref([
         {
             title: 'Services',
-            description: 'Splash DigiLab 結合設計創意與前端開發，擅長跨界沉浸式互動體驗，服務範圍包含 XR 展演策劃、UI/UX 設計、網頁開發、品牌設計、數位藝術、互動設計等。',
+            description: 'Splash DigiLab 結合設計創意與前端開發，擅長跨界沉浸式互動體驗，服務範圍包含 XR 展演策劃、UI/UX 設計、網頁開發、品牌設計、數位藝術、互動設計等...',
             splitActive: false,
             isActive: false,        
         },
         {
             title: 'AR/VR/XR策展',
-            description: '策劃並開發、執行 Web AR/ XR 沉浸式展覽、行銷活動或產品展示，打造虛實整合體驗。',
+            description: '策劃並開發、執行 Web AR/ XR 沉浸式展覽、行銷活動或產品展示，打造虛實整合體驗',
             splitActive: false,
             isActive: false,
             projects:[
@@ -276,7 +278,7 @@
         },
         {
             title: '網頁設計開發',
-            description: '從前端網站設計到3D互動前端，整合 Nuxt、Three.js 等技術，實現網頁創新體驗。',
+            description: '從前端網站設計到3D互動前端，整合 Nuxt、Three.js 等技術，實現網頁創新體驗',
             splitActive: false,
             isActive: false,
             projects:[
@@ -285,7 +287,7 @@
         },
         {
             title: '品牌識別規劃',
-            description: '提供品牌識別與視覺系統規劃服務，滿足品牌在實體門店到數位體驗中的各式需求。',
+            description: '提供品牌識別與視覺系統規劃服務，滿足品牌在實體門店到數位體驗中的各式需求',
             splitActive: false,
             isActive: false,
             projects:[
@@ -294,7 +296,7 @@
         },
         {
             title: '2D/3D動畫',
-            description: '製作 3D 動畫、CGI 與 Web AR 結合的視覺內容，豐富數位敘事層次。',
+            description: '製作 3D 動畫、CGI 與 Web AR 結合的視覺內容，豐富數位敘事層次',
             splitActive: false,
             isActive: false,
             projects:[
@@ -760,6 +762,10 @@
         const titleEl = titleGroupEl.querySelector('.services-title');
         const descEl  = titleGroupEl.querySelector('.services-description');
 
+        const firstContentGroupEl = document.querySelector('.services-content-1');
+        const firstContentTitleEl = firstContentGroupEl.querySelector('.services-title');
+        const firstContentDescEl  = firstContentGroupEl.querySelector('.services-description');
+
         ScrollTrigger.create({
             trigger: '.services-section',
             start: 'top top',
@@ -777,11 +783,15 @@
                 scrub: false,
                 markers: false,
                 onEnter: () => {
-                    shrinkingFunction()
+                    shrinkingFunction();
+                    if(width.value > (768-1)){
+                        firstContentTitleEl.textContent = '';
+                        firstContentDescEl.textContent = '';
+                    }
                 },
                 onUpdate: (self) => {
                     if(width.value>(992 - 1)){
-                        updatePosition(0, 0, 10, -13.5, -1, 0, self.progress);
+                        updatePosition(0, 0, 10, -13.5, 0, 0, self.progress);
                     }else{
                         updatePosition(0, 0, 10, 0, -4, 0, self.progress);
                     }
@@ -800,21 +810,26 @@
                     onEnter: () => {
                         growingFunction();
                         changeMaterialType(i-1);
-                        if(i > 1){
+                        if(i > 1 && width.value > (768 - 1)){
                             animateText(titleEl, serviceData.value[i-1].title);
                             animateText(descEl, serviceData.value[i-1].description);
+                        }
+
+                        if(i == 1 && width.value > (768 - 1)){
+                            animateText(firstContentTitleEl, serviceData.value[0].title);
+                            animateText(firstContentDescEl, serviceData.value[0].description);
                         }
                     },
                     onLeaveBack: () =>{
                         shrinkingFunction();
-                        if(i == 2){
+                        if(i == 2 && width.value > (768 - 1)){
                             clearText(titleEl, serviceData.value[i-1].title);
                             clearText(descEl, serviceData.value[i-1].description);
                         }
                     },
                 },
             })
-            if(isMobileDevice()){
+            if(width.value < 768){
                 gsap.set(`.services-content-${i} .services-title`, {
                     opacity: 0
                 })
@@ -824,18 +839,20 @@
                     duration: 0.5,
                     ease: 'power1.inOut'
                 }, 0)
+
+                gsap.set(`.services-content-${i} .services-description`, {
+                    opacity: 0
+                })
+
+                tiIn.to(`.services-content-${i} .services-description`, {
+                    opacity: 1,
+                    duration: 0.5,
+                    ease: 'power1.inOut'
+                }, 0.2)
             }
 
-            // gsap.set(`.services-content-${i} .services-description`, {
-            //     opacity: 0
-            // })
 
-            // tiIn.to(`.services-content-${i} .services-description`, {
-            //     opacity: 1,
-            //     duration: 0.5,
-            //     ease: 'power1.inOut'
-            // }, 0.2)
-
+            const elsDelayTime = width.value > (768 - 1) ? 0 : 0.4;
             const els = gsap.utils.toArray(`.services-content-${i} .services-projects`)
             if(els.length){
                 els.forEach(el => {
@@ -848,7 +865,7 @@
                     duration: 0.5,
                     ease: 'power1.inOut',
                     stagger: 0.2
-                }, 0)
+                }, elsDelayTime)
             }
 
             gsap.timeline({
@@ -860,7 +877,7 @@
                     scrub: true,
                     onEnter: () => {
                         shrinkingFunction();
-                        if(i == serviceData.value.length){
+                        if(i == serviceData.value.length && width.value > (768 - 1)){
                             clearText(titleEl, serviceData.value[i-1].title);
                             clearText(descEl, serviceData.value[i-1].description);
                         }
@@ -868,13 +885,28 @@
                     onLeaveBack: () => {
                         growingFunction();
                         changeMaterialType(i-1);
-                        if(i > 1){
+                        if(i > 1 && width.value > (768 - 1)){
                             animateText(titleEl, serviceData.value[i-1].title);
                             animateText(descEl, serviceData.value[i-1].description);
                         }
                     }
                 },
             })
+
+            if(i == 1 && width.value > (768 - 1)){
+                gsap.timeline({
+                    scrollTrigger: {
+                        trigger: `.services-content-${i}`,
+                        start: `bottom-=200px center`,
+                        end: `bottom+=200px center`,
+                        markers: false,
+                        scrub: true,
+                        onUpdate: (self) =>{
+                            updatePosition(-13.5, 0, 0, -13.5, -1, 0, self.progress);
+                        },
+                    }
+                })
+            }
         }
     }
     const partnersSectionGsap = () => {
@@ -1010,10 +1042,10 @@
                 },
                 onEnter: ()=>{
                     shrinkingFunction();
-                    animateText(titleEl, "Let's make a splash");
+                    animateText(titleEl, "Let's make a Splash");
                 },
                 onEnterBack: () => {
-                    clearText(titleEl, "Let's make a splash");
+                    clearText(titleEl, "Let's make a Splash");
                 }
             },    
         });
