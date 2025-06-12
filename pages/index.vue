@@ -131,9 +131,9 @@
             <div v-if="isStarted" class="section works-section">
                 <div class="works-content-container">
                     <div class="works-content-group">
-                        <a v-for="(media,index) in reversedMediaResources" :key="'media'+index" href="media.link" :class="`works-content-item works-content-item-${index+1} ${media.column ? 'column' : ''}`">
+                        <a v-for="(media,index) in mediaResources" :key="'media'+index" href="media.link" :class="`works-content-item works-content-item-${index+1} ${media.column ? 'column' : ''}`">
                             <video v-if="media.type === 'video'" :src="media.src" autoplay muted loop playsinline></video>
-                            <img v-else :src="media.src" alt="">
+                            <img v-if="media.type === 'image'" :src="media.src" alt="">
                         </a>
                     </div>
                 </div> 
@@ -404,26 +404,22 @@
 
     // 新增：媒體資源列表
     const mediaResources = ref([
-        { id: 15,type: 'video', src: '/works/works15.mp4', link: '#', column: true, title:'專案標題', description:'專案內文專案內文專案內文專案內文專案內文專案內文專案內文專案內文專案內文專案內文專案內文專案內文專案內文專案內文專案內文' },
-        { id: 14,type: 'video', src: '/works/works14.mp4', link: '#', column: true, title:'專案標題', description:'專案內文專案內文專案內文專案內文專案內文專案內文專案內文專案內文專案內文專案內文專案內文專案內文專案內文專案內文專案內文' },
-        { id: 13,type: 'video', src: '/works/works13.mp4', link: '#', column: false, title:'CIS | Composite Hybrid International Co.,Ltd.', description:'專案內文專案內文專案內文專案內文專案內文專案內文專案內文專案內文專案內文專案內文專案內文專案內文專案內文專案內文專案內文' },
-        { id: 12,type: 'image', src: '/works/works12.webp', link: '#', column: false, title:'專案標題', description:'專案內文專案內文專案內文專案內文專案內文專案內文專案內文專案內文專案內文專案內文專案內文專案內文專案內文專案內文專案內文' },
-        { id: 11,type: 'video', src: '/works/works11.mp4', link: '#', column: true, title:'Web AR | 2024 康士坦的變化球 KST 眠月線演唱會 高雄站', description:'專案內文專案內文專案內文專案內文專案內文專案內文專案內文專案內文專案內文專案內文專案內文專案內文專案內文專案內文專案內文' },
-        { id: 10,type: 'video', src: '/works/works10.mp4', link: '#', column: true, title:'專案標題', description:'專案內文專案內文專案內文專案內文專案內文專案內文專案內文專案內文專案內文專案內文專案內文專案內文專案內文專案內文專案內文' },
-        { id: 9,type: 'video', src: '/works/works9.mp4', link: '#', column: true, title:'AR | 打狗祭 2024 × AR 小怪獸現身!', description:'今年，小怪獸們不只盤據舞台，更將透過 AR 擴增實境，衝破次元，降臨你的世界！📱✨' },
-        { id: 8,type: 'image', src: '/works/works8.webp', link: '#', column: false, title:'專案標題', description:'專案內文專案內文專案內文專案內文專案內文專案內文專案內文專案內文專案內文專案內文專案內文專案內文專案內文專案內文專案內文' },
-        { id: 7,type: 'video', src: '/works/works7.mp4', link: '#', column: false, title:'AR Card / 3D Animation | 黑金派對 2024 – 可可占星術', description:'專案內文專案內文專案內文專案內文專案內文專案內文專案內文專案內文專案內文專案內文專案內文專案內文專案內文專案內文專案內文' },
-        { id: 6,type: 'video', src: '/works/works6.mp4', link: '#', column: true, title:'專案標題', description:'專案內文專案內文專案內文專案內文專案內文專案內文專案內文專案內文專案內文專案內文專案內文專案內文專案內文專案內文專案內文' },
-        { id: 5,type: 'video', src: '/works/works5.mp4', link: '#', column: true, title:'專案標題', description:'專案內文專案內文專案內文專案內文專案內文專案內文專案內文專案內文專案內文專案內文專案內文專案內文專案內文專案內文專案內文' },
-        { id: 4,type: 'image', src: '/works/works4.webp', link: '#', column: false, title:'CIS | Da Zi Zai 東方美人茶', description:'專案內文專案內文專案內文專案內文專案內文專案內文專案內文專案內文專案內文專案內文專案內文專案內文專案內文專案內文專案內文' },
-        { id: 3,type: 'video', src: '/works/works3.mp4', link: '#', column: false, title:'AR Card / 3D Animation | 黑金派對 2024 – 可可占星術', description:'《黑金派對 2024 – 可可占星術》可可（Cacao）一詞源自瑪雅銘文的 Kakaw，在古瑪雅文化中，被視為蘊藏神秘力量的珍寶。而在《黑金派對 2024》，這股神秘魔力將透過 AR 可可占星術，為你揭開內心深處的秘密！' },
-        { id: 2,type: 'video', src: '/works/works2.mp4', link: '#', column: false, title:'Web Development | Composite Hybrid 官方網站', description:'專案內文專案內文專案內文專案內文專案內文專案內文專案內文專案內文專案內文專案內文專案內文專案內文專案內文專案內文專案內文' },
-        { id: 1,type: 'video', src: '/works/works1.mp4', link: '#', column: false, title:'Web AR | 2024 康士坦的變化球 KST 眠月線演唱會 高雄站', description:'《2024 康士坦的變化球 KST 眠月線演唱會 高雄站》在康士坦變化球《眠月線》高雄演唱會，打造了一場獨特的 Web AR 互動體驗，透過手機瀏覽器無須下載App即可開啟活動體驗，親身走進《眠月線》MV的夢境與現實交錯之中，尋找遺落的記憶碎片。' }
+        { id: 1,type: 'video', src: '/works/works1.mp4', link: '#', column: false, title:'Web AR | 2024 康士坦的變化球 KST 眠月線演唱會 高雄站'},
+        { id: 2,type: 'video', src: '/works/works2.mp4', link: '#', column: false, title:'Web Development | Composite Hybrid 官方網站'},
+        { id: 3,type: 'video', src: '/works/works3.mp4', link: '#', column: false, title:'AR Card / 3D Animation | 黑金派對 2024 – 可可占星術'},
+        { id: 4,type: 'image', src: '/works/works4.webp', link: '#', column: false, title:'CIS | Da Zi Zai 東方美人茶'},
+        { id: 5,type: 'video', src: '/works/works5.mp4', link: '#', column: true, title:'專案標題'},
+        { id: 6,type: 'video', src: '/works/works6.mp4', link: '#', column: true, title:'專案標題'},
+        { id: 7,type: 'video', src: '/works/works7.mp4', link: '#', column: false, title:'AR Card / 3D Animation | 黑金派對 2024 – 可可占星術'},
+        { id: 8,type: 'image', src: '/works/works8.webp', link: '#', column: false, title:'專案標題'},
+        { id: 9,type: 'video', src: '/works/works9.mp4', link: '#', column: true, title:'AR | 打狗祭 2024 × AR 小怪獸現身!'},
+        { id: 10,type: 'video', src: '/works/works10.mp4', link: '#', column: true, title:'專案標題'},
+        { id: 11,type: 'video', src: '/works/works11.mp4', link: '#', column: true, title:'Web AR | 2024 康士坦的變化球 KST 眠月線演唱會 高雄站'},
+        { id: 12,type: 'image', src: '/works/works12.webp', link: '#', column: false, title:'專案標題'},
+        { id: 13,type: 'video', src: '/works/works13.mp4', link: '#', column: false, title:'CIS | Composite Hybrid International Co.,Ltd.'},
+        { id: 14,type: 'video', src: '/works/works14.mp4', link: '#', column: true, title:'專案標題'},
+        { id: 15,type: 'video', src: '/works/works15.mp4', link: '#', column: true, title:'專案標題'},
     ]);
-    // 新增：反轉後的媒體資源列表
-    const reversedMediaResources = computed(() => {
-        return [...mediaResources.value].reverse();
-    });
 
     const materialData =[
         {
@@ -936,7 +932,7 @@
                     }
                 },
                 onEnter: ()=>{
-                    if(!isSetParnertsMouseEvent.value){
+                    if(!isSetParnertsMouseEvent.value && !isMobileDevice()){
                         setupMouseTilt();
                         isSetParnertsMouseEvent.value = true
                     }
@@ -1078,11 +1074,6 @@
     const changeMaterialType = (index) => {
         if (splashRef.value) {
             splashRef.value.changeMaterialType(materialData[index].value);
-            // const color = materialData[materialData[index].backgroundColor];
-            // if (color) {
-            //     document.documentElement.style.backgroundColor = color;
-            //     document.body.style.backgroundColor = color;
-            // }
         }
     }
 
@@ -1208,7 +1199,6 @@
                 }else if(sectionClass == 'services-section'){
                     position = section.offsetTop - section.offsetHeight / 12;
                 }
-                
 
                 window.scrollTo({
                     top: position,
@@ -1259,8 +1249,6 @@
         if (isMobileDevice()) {
             const windowHeight = height.value;
             document.documentElement.style.setProperty('--h', `${windowHeight}px`);
-        }else{
-
         }
     });
 </script>
