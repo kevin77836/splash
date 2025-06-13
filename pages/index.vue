@@ -156,8 +156,7 @@
                         <div v-if="index !==0" class="services-projects-group">
                             <div class="services-projects" v-for="(project,projectsIndex) in item.projects" :key="'services'+ index + projectsIndex">
                                 <div class="banner">
-                                    <video v-if="fetchMediaById(project).type === 'video'" :src="fetchMediaById(project).src" autoplay muted loop playsinline></video>
-                                    <img v-else :src="fetchMediaById(project).src" alt="">
+                                    <img :src="fetchMediaById(project).banner" alt="">
                                 </div>
                                 <div class="infoGroup">
                                     <div class="title">{{ fetchMediaById(project).title }}</div>
@@ -240,6 +239,9 @@
     import { SplitText } from 'gsap/SplitText';
     const { width, height } = useWindowSize();
     import { isMobileDevice } from '../utils/device';
+    import worksData from '/data/worksData.json'
+
+    console.log('worksData', worksData)
 
     if (process.client) {
         gsap.registerPlugin(ScrollTrigger, CustomEase, SplitText, ScrollSmoother);
@@ -267,28 +269,28 @@
             title: 'AR/VR/XR策展',
             description: '策劃並開發、執行 Web AR/ XR 沉浸式展覽、行銷活動或產品展示，打造虛實整合體驗',
             projects:[
-                1,3,9
+                1,5,6
             ]
         },
         {
             title: '網頁設計開發',
             description: '從前端網站設計到3D互動前端，整合 Nuxt、Three.js 等技術，實現網頁創新體驗',
             projects:[
-                2,11
+                2,1
             ]
         },
         {
             title: '品牌識別規劃',
             description: '提供品牌識別與視覺系統規劃服務，滿足品牌在實體門店到數位體驗中的各式需求',
             projects:[
-                4,13
+                4,3
             ]
         },
         {
             title: '2D/3D動畫',
             description: '製作 3D 動畫、CGI 與 Web AR 結合的視覺內容，豐富數位敘事層次',
             projects:[
-                1,7
+                7,1
             ]
         },
     ])
@@ -313,21 +315,21 @@
     // ]);
 
     const mediaResources = ref([
-        { id: 1,type: 'image', src: '/works/works1.webp', link: '#', column: false, title:'Web AR | 2024 康士坦的變化球 KST 眠月線演唱會 高雄站'},
-        { id: 2,type: 'image', src: '/works/works2.webp', link: '#', column: false, title:'Web Development | Composite Hybrid 官方網站'},
-        { id: 3,type: 'image', src: '/works/works3.webp', link: '#', column: false, title:'AR Card / 3D Animation | 黑金派對 2024 – 可可占星術'},
+        { id: 1,type: 'video', src: '/works/works1.mp4', link: '#', column: false, title:'Web AR | 2024 康士坦的變化球 KST 眠月線演唱會 高雄站'},
+        { id: 2,type: 'video', src: '/works/works2.mp4', link: '#', column: false, title:'Web Development | Composite Hybrid 官方網站'},
+        { id: 3,type: 'video', src: '/works/works3.mp4', link: '#', column: false, title:'AR Card / 3D Animation | 黑金派對 2024 – 可可占星術'},
         { id: 4,type: 'image', src: '/works/works4.webp', link: '#', column: false, title:'CIS | Da Zi Zai 東方美人茶'},
-        { id: 5,type: 'image', src: '/works/works5.webp', link: '#', column: true, title:'專案標題'},
-        { id: 6,type: 'image', src: '/works/works6.webp', link: '#', column: true, title:'專案標題'},
-        { id: 7,type: 'image', src: '/works/works7.webp', link: '#', column: false, title:'AR Card / 3D Animation | 黑金派對 2024 – 可可占星術'},
+        { id: 5,type: 'video', src: '/works/works5.mp4', link: '#', column: true, title:'專案標題'},
+        { id: 6,type: 'video', src: '/works/works6.mp4', link: '#', column: true, title:'專案標題'},
+        { id: 7,type: 'video', src: '/works/works7.mp4', link: '#', column: false, title:'AR Card / 3D Animation | 黑金派對 2024 – 可可占星術'},
         { id: 8,type: 'image', src: '/works/works8.webp', link: '#', column: false, title:'專案標題'},
-        { id: 9,type: 'image', src: '/works/works9.webp', link: '#', column: true, title:'AR | 打狗祭 2024 × AR 小怪獸現身!'},
-        { id: 10,type: 'image', src: '/works/works10.webp', link: '#', column: true, title:'專案標題'},
-        { id: 11,type: 'image', src: '/works/works11.webp', link: '#', column: true, title:'Web AR | 2024 康士坦的變化球 KST 眠月線演唱會 高雄站'},
+        { id: 9,type: 'video', src: '/works/works9.mp4', link: '#', column: true, title:'AR | 打狗祭 2024 × AR 小怪獸現身!'},
+        { id: 10,type: 'video', src: '/works/works10.mp4', link: '#', column: true, title:'專案標題'},
+        { id: 11,type: 'video', src: '/works/works11.mp4', link: '#', column: true, title:'Web AR | 2024 康士坦的變化球 KST 眠月線演唱會 高雄站'},
         { id: 12,type: 'image', src: '/works/works12.webp', link: '#', column: false, title:'專案標題'},
-        { id: 13,type: 'image', src: '/works/works13.webp', link: '#', column: false, title:'CIS | Composite Hybrid International Co.,Ltd.'},
-        { id: 14,type: 'image', src: '/works/works14.webp', link: '#', column: true, title:'專案標題'},
-        { id: 15,type: 'image', src: '/works/works15.webp', link: '#', column: true, title:'專案標題'},
+        { id: 13,type: 'video', src: '/works/works13.mp4', link: '#', column: false, title:'CIS | Composite Hybrid International Co.,Ltd.'},
+        { id: 14,type: 'video', src: '/works/works14.mp4', link: '#', column: true, title:'專案標題'},
+        { id: 15,type: 'video', src: '/works/works15.mp4', link: '#', column: true, title:'專案標題'},
     ]);
 
     const materialData =[
@@ -340,7 +342,7 @@
     ]
 
     function fetchMediaById(id) {
-        return mediaResources.value.find(item => item.id === id);
+        return worksData.data.find(item => item.id === id);
     }
 
     // loading
@@ -554,18 +556,10 @@
         });
 
         const itemCount = 15;
-        const zDistance = 10000;
-        let totalDistance;
-        if(width.value > (1400 - 1)){
-            totalDistance = 3500;
-        }else if(width.value > (1200 - 1)){
-            totalDistance = 3000;
-        }else if(width.value > (992 - 1)){
-            totalDistance = 2500;
-        }else if(width.value > (768 - 1)){
-            totalDistance = 2500;
-        }else{
-            totalDistance = 2500;
+        const zDistance = 1000;
+        let totalDistance = 250;
+        if(width.value < (992 - 1)){
+            totalDistance = 150;
         }
         const radToDeg = rad => rad * 180 / Math.PI;
         const clampAngle = angle => ((angle % 360) + 360) % 360;
@@ -976,13 +970,12 @@
                 onLeave: ()=>{
                     gsap.to(titleEl, {
                         opacity: 1,
-                        duration: 1
+                        duration: 2
                     });
                 },
                 onEnterBack: () => {
-                    gsap.to(titleEl, {
+                    gsap.set(titleEl, {
                         opacity: 0,
-                        duration: 1
                     });
                 }
             },    

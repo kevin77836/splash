@@ -47,7 +47,7 @@ const thParams = reactive({
 
 // --- 球體參數配置 ---
 const sphereParams = reactive({
-  count: 20,           // 球體數量
+  count: 15,           // 球體數量
   minRadius: 0.35,      // 最小半徑
   maxRadius: 0.5,      // 最大半徑
   minLength: 3.0,      // 最小目標長度
@@ -169,7 +169,7 @@ class MaterialManager {
           transmission: 1.0,
           ior: 1.5,
           thickness: 1,
-          envMapIntensity: 10.0,
+          envMapIntensity: 5.0,
           side: THREE.DoubleSide
         }
       },

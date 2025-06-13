@@ -1,0 +1,53 @@
+{
+    "data":[
+        {
+            "id": 1,
+            "link": "#",
+            "banner": "/works/works16.webp",
+            "title": "Web AR - 2024 康士坦的變化球 KST 眠月線演唱會 高雄站",
+            "description": "《2024 康士坦的變化球 KST 眠月線演唱會 高雄站》在康士坦變化球《眠月線》高雄演唱會，打造了一場獨特的 Web AR 互動體驗，透過手機瀏覽器無須下載App即可開啟活動體驗，親身走進《眠月線》MV的夢境與現實交錯之中，尋找遺落的記憶碎片。"
+        },
+        {
+            "id": 2,
+            "link": "#",
+            "banner": "/works/works2.webp",
+            "title": "Web Development - Composite Hybrid International Co.,Ltd. 官方網站",
+            "description": ""
+        },
+        {
+            "id": 3,
+            "link": "#",
+            "banner": "/works/works8.webp",
+            "title": "CIS - Composite Hybrid International Co.,Ltd.",
+            "description": ""
+        },
+        {
+            "id": 4,
+            "link": "#",
+            "banner": "/works/works4.webp",
+            "title": "CIS - Da Zi Zai 東方美人茶",
+            "description": ""
+        },
+        {
+            "id": 5,
+            "link": "#",
+            "banner": "/works/works17.webp",
+            "title": "AR - 打狗祭 2024 × AR 小怪獸現身!",
+            "description": ""
+        },
+        {
+            "id": 6,
+            "link": "#",
+            "banner": "/works/works18.webp",
+            "title": "AR - 黑金派對 2024 – 可可占星術",
+            "description": ""
+        },
+        {
+            "id": 7,
+            "link": "#",
+            "banner": "/works/works7.webp",
+            "title": "3D Animation | 黑金派對 2024 – 可可占星術",
+            "description": ""
+        }
+    ]
+}

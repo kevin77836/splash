@@ -204,7 +204,7 @@
         }
     } 
     .works-section{
-        height: calc(var(--h) * 1.5);
+        height: calc(var(--h) * 3);
         .works-content-container{
             width: 100%;
             height: 100dvh;
@@ -218,7 +218,7 @@
                     position: absolute;
                     top: 50%;
                     left: 50%;
-                    width: 2000px;
+                    width: 100px;
                     aspect-ratio: 16 / 9;
                     opacity: 0;
                     // border-radius: 2rem;
@@ -229,10 +229,10 @@
                     transform: translate3d(
                         calc(-50% + var(--transform-x, 0) * 1px), 
                         calc(-50% + var(--transform-y, 0) * 1px), 
-                        calc(-10000px + var(--transform-z, 0) * 1px)
+                        calc(-100px + var(--transform-z, 0) * 1px)
                     );
                     &.column{
-                        width: calc(2500px * 9 / 16);
+                        width: calc(150px * 9 / 16);
                         aspect-ratio: 9 / 16;
                     }
                     img,video{
@@ -279,7 +279,6 @@
                 font-size: 1.5rem;
                 letter-spacing: 0.5rem;
                 color: black;
-                // text-align: center;
             }
             .services-description{
                 font-size: 1rem;
@@ -287,7 +286,6 @@
                 margin-top: 1rem;
                 color: black;
                 height: calc(1rem * 1.5 * 2);
-                // text-align: center;
             }
             .cta{
                 margin-top: 1rem;
@@ -306,6 +304,11 @@
                 flex-direction: column;
                 justify-content: center;
                 opacity: 1;
+                &-1{
+                    .services-description{
+                        min-height: calc(1rem * 1.5 * 2);
+                    }
+                }
                 .services-title{
                     font-weight: bold;
                     font-size: 1.5rem;
