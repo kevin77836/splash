@@ -131,10 +131,10 @@
             <div v-if="isStarted" class="section works-section">
                 <div class="works-content-container">
                     <div class="works-content-group">
-                        <a v-for="(media,index) in mediaResources" :key="'media'+index" href="media.link" :class="`works-content-item works-content-item-${index+1} ${media.column ? 'column' : ''}`">
+                        <div v-for="(media,index) in mediaResources" :key="'media'+index" :class="`works-content-item works-content-item-${index+1} ${media.column ? 'column' : ''}`">
                             <video v-if="media.type === 'video'" :src="media.src" autoplay muted loop playsinline></video>
-                            <img v-if="media.type === 'image'" :src="media.src" alt="">
-                        </a>
+                            <img v-else-if="media.type === 'image'" :src="media.src" alt="">
+                        </div>
                     </div>
                 </div> 
             </div>
@@ -142,6 +142,7 @@
                 <div class="services-title-group">
                     <h2 class="services-title"></h2>
                     <div class="services-description"></div>
+                    <div class="cta">All Works</div>
                 </div>
                 <div class="services-content-group">
                     <div v-for="(item, index) in serviceData" class="services-content" :class="`services-content-${index+1}`" :key="index">
@@ -151,6 +152,7 @@
                         <div class="services-description" v-if="width < 992 || (width > (992-1) && index == 0)">
                             {{ item.description }}
                         </div>
+                        <div v-if="width > (992-1) && index == 0" class="cta">All Works</div>
                         <div v-if="index !==0" class="services-projects-group">
                             <div class="services-projects" v-for="(project,projectsIndex) in item.projects" :key="'services'+ index + projectsIndex">
                                 <div class="banner">
@@ -162,7 +164,7 @@
                                     <!-- <div class="descriptionWrap">
                                         <div class="description">{{ fetchMediaById(project).description }}</div>
                                     </div> -->
-                                    <div class="cta">查看專案</div>
+                                    <div class="cta active">Show More</div>
                                 </div>
                             </div>
                         </div>
@@ -218,12 +220,7 @@
                 </div>
             </div>
             <div v-if="isStarted" class="section contactUs-section">
-                <div class="contactUs-title"></div>
-                <!-- <div class="contactUs-description">
-                    如果有任何疑問或者有報價洽詢的需求，歡迎聯繫我們，
-                    我們會在收到訊息後三天內回覆，
-                    請留下您的聯絡方式及簡要內容，方便讓我們了解您的需求。
-                </div> -->
+                <div class="contactUs-title">Let's make a Splash</div>
                 <div class="contactUs-information">
                     <div class="phone">Phone: 0912-345-678</div>
                     <div class="email">Email: splash-digilab@gmail.com</div>
@@ -243,6 +240,10 @@
     import { SplitText } from 'gsap/SplitText';
     const { width, height } = useWindowSize();
     import { isMobileDevice } from '../utils/device';
+
+    if (process.client) {
+        gsap.registerPlugin(ScrollTrigger, CustomEase, SplitText, ScrollSmoother);
+    }
     
     const splashRef = ref(null);
     const loadComplete = ref(false);
@@ -255,23 +256,16 @@
 
     let customEasing;
     let smoother = null;
-
-    if (process.client) {
-        gsap.registerPlugin(ScrollTrigger, CustomEase, SplitText, ScrollSmoother);
-    }
+    let autoPlayTimer = null;
 
     const serviceData = ref([
         {
             title: 'Services',
-            description: 'Splash DigiLab 結合設計創意與前端開發，擅長跨界沉浸式互動體驗，服務範圍包含 XR 展演策劃、UI/UX 設計、網頁開發、品牌設計、數位藝術、互動設計等...',
-            splitActive: false,
-            isActive: false,        
+            description: 'Splash DigiLab 結合設計創意與前端開發，擅長跨界沉浸式互動體驗，服務範圍包含 XR 展演策劃、UI/UX 設計、網頁開發、品牌設計、數位藝術、互動設計等...',    
         },
         {
             title: 'AR/VR/XR策展',
             description: '策劃並開發、執行 Web AR/ XR 沉浸式展覽、行銷活動或產品展示，打造虛實整合體驗',
-            splitActive: false,
-            isActive: false,
             projects:[
                 1,3,9
             ]
@@ -279,8 +273,6 @@
         {
             title: '網頁設計開發',
             description: '從前端網站設計到3D互動前端，整合 Nuxt、Three.js 等技術，實現網頁創新體驗',
-            splitActive: false,
-            isActive: false,
             projects:[
                 2,11
             ]
@@ -288,8 +280,6 @@
         {
             title: '品牌識別規劃',
             description: '提供品牌識別與視覺系統規劃服務，滿足品牌在實體門店到數位體驗中的各式需求',
-            splitActive: false,
-            isActive: false,
             projects:[
                 4,13
             ]
@@ -297,161 +287,63 @@
         {
             title: '2D/3D動畫',
             description: '製作 3D 動畫、CGI 與 Web AR 結合的視覺內容，豐富數位敘事層次',
-            splitActive: false,
-            isActive: false,
             projects:[
                 1,7
             ]
         },
     ])
 
-    // 文字動態特效
-    const splitMap = new WeakMap();
-    function animateText(el, text, options = {}) {
-        if (!el || typeof text !== 'string') return;
-        // 默认配置
-        const opts = Object.assign({
-            letters: 'ABCDEFGHIJKLMNOPQRSTUVWXYZ結合設計創意與前端開發擅長跨界沉浸式互動體驗',
-            charRevealDuration: 0.05,
-            randomIntervalDelay: 30,
-            randomDuration: 300,
-            stagger: 0.05,
-        }, options);
-
-        // 1. 清除旧内容，写入新文本
-        el.textContent = text;
-
-        // 2. 拆分成字符
-        const split = new SplitText(el, { type: 'chars', charsClass: 'char' });
-        // 存储实例以便后续参考（可选）
-        splitMap.set(el, split);
-
-        // 3. 准备：隐藏所有字符、清空文本
-        split.chars.forEach(c => {
-            c.dataset.original = c.textContent;
-            c.style.visibility = 'hidden';
-            c.textContent = '';
-        });
-
-        // 4. 创建时间轴，逐字符播放动画
-        const tl = gsap.timeline();
-        split.chars.forEach((charEl, idx) => {
-            const delayTime = idx * opts.stagger;
-            // set 可见
-            tl.set(charEl, { visibility: 'visible' }, delayTime);
-            // 然后一个空动画占位，用 onStart 做闪动
-            tl.to({}, {
-            duration: opts.charRevealDuration,
-            onStart: () => {
-                const iv = setInterval(() => {
-                    const letters = opts.letters;
-                    const r = letters.charAt(Math.floor(Math.random() * letters.length));
-                    charEl.textContent = r;
-                }, opts.randomIntervalDelay);
-                // 随机闪动结束后，显示原字符
-                setTimeout(() => {
-                    clearInterval(iv);
-                    charEl.textContent = charEl.dataset.original;
-                }, opts.randomDuration);
-            }
-            }, delayTime);
-        });
-
-        return tl;
-    }
-    function clearText(el, options = {}) {
-        if (!el) return;
-        const opts = Object.assign({
-            charFadeDuration: 0.1,
-            stagger: 0.01,
-            ease: 'power1.out',
-        }, options);
-
-        // 获取当前文本
-        const currentText = el.textContent || '';
-        if (!currentText) return; // 已经空则无需操作
-
-        // 1. 拆分
-        // 首先把内容设回原文（有助于 SplitText 采用正确节点）
-        el.textContent = currentText;
-        const split = new SplitText(el, { type: 'chars', charsClass: 'char' });
-        splitMap.set(el, split);
-
-        // 2. 准备：确保所有字符可见、opacity 为 1
-        split.chars.forEach(c => {
-            c.style.visibility = 'visible';
-            c.style.opacity = '1';
-        });
-
-        // 3. 创建时间轴：从首字符到末字符依次淡出
-        const tl = gsap.timeline({
-            onComplete: () => {
-            // 最后彻底清空文本（移除拆分 DOM）
-            el.textContent = '';
-            // 可选：清理 SplitText 实例引用
-            splitMap.delete(el);
-            }
-        });
-        tl.to(split.chars, {
-            opacity: 0,
-            duration: opts.charFadeDuration,
-            ease: opts.ease,
-            stagger: opts.stagger
-        });
-
-        return tl;
-    }
-
     // 新增：媒體資源列表
+    // const mediaResources = ref([
+    //     { id: 1,type: 'video', src: '/works/works1.mp4', link: '#', column: false, title:'Web AR | 2024 康士坦的變化球 KST 眠月線演唱會 高雄站'},
+    //     { id: 2,type: 'video', src: '/works/works2.mp4', link: '#', column: false, title:'Web Development | Composite Hybrid 官方網站'},
+    //     { id: 3,type: 'video', src: '/works/works3.mp4', link: '#', column: false, title:'AR Card / 3D Animation | 黑金派對 2024 – 可可占星術'},
+    //     { id: 4,type: 'image', src: '/works/works4.webp', link: '#', column: false, title:'CIS | Da Zi Zai 東方美人茶'},
+    //     { id: 5,type: 'video', src: '/works/works5.mp4', link: '#', column: true, title:'專案標題'},
+    //     { id: 6,type: 'video', src: '/works/works6.mp4', link: '#', column: true, title:'專案標題'},
+    //     { id: 7,type: 'video', src: '/works/works7.mp4', link: '#', column: false, title:'AR Card / 3D Animation | 黑金派對 2024 – 可可占星術'},
+    //     { id: 8,type: 'image', src: '/works/works8.webp', link: '#', column: false, title:'專案標題'},
+    //     { id: 9,type: 'video', src: '/works/works9.mp4', link: '#', column: true, title:'AR | 打狗祭 2024 × AR 小怪獸現身!'},
+    //     { id: 10,type: 'video', src: '/works/works10.mp4', link: '#', column: true, title:'專案標題'},
+    //     { id: 11,type: 'video', src: '/works/works11.mp4', link: '#', column: true, title:'Web AR | 2024 康士坦的變化球 KST 眠月線演唱會 高雄站'},
+    //     { id: 12,type: 'image', src: '/works/works12.webp', link: '#', column: false, title:'專案標題'},
+    //     { id: 13,type: 'video', src: '/works/works13.mp4', link: '#', column: false, title:'CIS | Composite Hybrid International Co.,Ltd.'},
+    //     { id: 14,type: 'video', src: '/works/works14.mp4', link: '#', column: true, title:'專案標題'},
+    //     { id: 15,type: 'video', src: '/works/works15.mp4', link: '#', column: true, title:'專案標題'},
+    // ]);
+
     const mediaResources = ref([
-        { id: 1,type: 'video', src: '/works/works1.mp4', link: '#', column: false, title:'Web AR | 2024 康士坦的變化球 KST 眠月線演唱會 高雄站'},
-        { id: 2,type: 'video', src: '/works/works2.mp4', link: '#', column: false, title:'Web Development | Composite Hybrid 官方網站'},
-        { id: 3,type: 'video', src: '/works/works3.mp4', link: '#', column: false, title:'AR Card / 3D Animation | 黑金派對 2024 – 可可占星術'},
+        { id: 1,type: 'image', src: '/works/works1.webp', link: '#', column: false, title:'Web AR | 2024 康士坦的變化球 KST 眠月線演唱會 高雄站'},
+        { id: 2,type: 'image', src: '/works/works2.webp', link: '#', column: false, title:'Web Development | Composite Hybrid 官方網站'},
+        { id: 3,type: 'image', src: '/works/works3.webp', link: '#', column: false, title:'AR Card / 3D Animation | 黑金派對 2024 – 可可占星術'},
         { id: 4,type: 'image', src: '/works/works4.webp', link: '#', column: false, title:'CIS | Da Zi Zai 東方美人茶'},
-        { id: 5,type: 'video', src: '/works/works5.mp4', link: '#', column: true, title:'專案標題'},
-        { id: 6,type: 'video', src: '/works/works6.mp4', link: '#', column: true, title:'專案標題'},
-        { id: 7,type: 'video', src: '/works/works7.mp4', link: '#', column: false, title:'AR Card / 3D Animation | 黑金派對 2024 – 可可占星術'},
+        { id: 5,type: 'image', src: '/works/works5.webp', link: '#', column: true, title:'專案標題'},
+        { id: 6,type: 'image', src: '/works/works6.webp', link: '#', column: true, title:'專案標題'},
+        { id: 7,type: 'image', src: '/works/works7.webp', link: '#', column: false, title:'AR Card / 3D Animation | 黑金派對 2024 – 可可占星術'},
         { id: 8,type: 'image', src: '/works/works8.webp', link: '#', column: false, title:'專案標題'},
-        { id: 9,type: 'video', src: '/works/works9.mp4', link: '#', column: true, title:'AR | 打狗祭 2024 × AR 小怪獸現身!'},
-        { id: 10,type: 'video', src: '/works/works10.mp4', link: '#', column: true, title:'專案標題'},
-        { id: 11,type: 'video', src: '/works/works11.mp4', link: '#', column: true, title:'Web AR | 2024 康士坦的變化球 KST 眠月線演唱會 高雄站'},
+        { id: 9,type: 'image', src: '/works/works9.webp', link: '#', column: true, title:'AR | 打狗祭 2024 × AR 小怪獸現身!'},
+        { id: 10,type: 'image', src: '/works/works10.webp', link: '#', column: true, title:'專案標題'},
+        { id: 11,type: 'image', src: '/works/works11.webp', link: '#', column: true, title:'Web AR | 2024 康士坦的變化球 KST 眠月線演唱會 高雄站'},
         { id: 12,type: 'image', src: '/works/works12.webp', link: '#', column: false, title:'專案標題'},
-        { id: 13,type: 'video', src: '/works/works13.mp4', link: '#', column: false, title:'CIS | Composite Hybrid International Co.,Ltd.'},
-        { id: 14,type: 'video', src: '/works/works14.mp4', link: '#', column: true, title:'專案標題'},
-        { id: 15,type: 'video', src: '/works/works15.mp4', link: '#', column: true, title:'專案標題'},
+        { id: 13,type: 'image', src: '/works/works13.webp', link: '#', column: false, title:'CIS | Composite Hybrid International Co.,Ltd.'},
+        { id: 14,type: 'image', src: '/works/works14.webp', link: '#', column: true, title:'專案標題'},
+        { id: 15,type: 'image', src: '/works/works15.webp', link: '#', column: true, title:'專案標題'},
     ]);
 
     const materialData =[
-        {
-            value: 'default',
-            backgroundColor: '#F2F2F2',
-        },
-        {
-            value: 'arVrXr',
-            backgroundColor: '#F2F2F2',
-        },
-        {
-            value: 'digiArt',
-            backgroundColor: '#F2F2F2',
-        },
-        {
-            value: 'uiuxDev',
-            backgroundColor: '#F2F2F2',
-        },
-        {
-            value: 'animate',
-            backgroundColor: '#F2F2F2',
-        },
-        {
-            value: 'graphic',
-            backgroundColor: '#F2F2F2',
-        },
+        'default',
+        'arVrXr',
+        'digiArt',
+        'uiuxDev',
+        'animate',
+        'graphic',
     ]
 
     function fetchMediaById(id) {
         return mediaResources.value.find(item => item.id === id);
     }
 
+    // loading
     const loadingPercent = computed(() => {
         const percent = Math.floor((loadedItems.value / (mediaResources.value.length + 1)) * 100);
         if(percent == 100){
@@ -632,6 +524,35 @@
             },    
         });
 
+        const worksTimeline = gsap.timeline({
+            scrollTrigger: {
+                trigger: '.works-section',
+                start: 'top top',
+                end: `bottom bottom`,
+                scrub: true,
+                markers: false,
+                onUpdate: (self) => {
+                    updatePosition(0, 0, -10, 0, 0, 10, self.progress);
+                },
+                onLeave: () => {
+                    for (let i = 0; i < itemCount; i++) {
+                        const itemSelector = `.works-content-item-${i + 1}`;
+                        gsap.set(itemSelector, {
+                            opacity: 0,
+                        });
+                    }
+                },
+                onEnterBack: () => {
+                    for (let i = 0; i < itemCount; i++) {
+                        const itemSelector = `.works-content-item-${i + 1}`;
+                        gsap.set(itemSelector, {
+                            opacity: 1,
+                        });
+                    }
+                }
+            }
+        });
+
         const itemCount = 15;
         const zDistance = 10000;
         let totalDistance;
@@ -689,35 +610,6 @@
             return sequence;
         };
         const worksAngleData = generateAngleSequence(itemCount);
-        
-        const worksTimeline = gsap.timeline({
-            scrollTrigger: {
-                trigger: '.works-section',
-                start: 'top top',
-                end: `bottom bottom`,
-                scrub: true,
-                markers: false,
-                onUpdate: (self) => {
-                    updatePosition(0, 0, -10, 0, 0, 10, self.progress);
-                },
-                onLeave: () => {
-                    for (let i = 0; i < itemCount; i++) {
-                        const itemSelector = `.works-content-item-${i + 1}`;
-                        gsap.set(itemSelector, {
-                            opacity: 0,
-                        });
-                    }
-                },
-                onEnterBack: () => {
-                    for (let i = 0; i < itemCount; i++) {
-                        const itemSelector = `.works-content-item-${i + 1}`;
-                        gsap.set(itemSelector, {
-                            opacity: 1,
-                        });
-                    }
-                }
-            }
-        });
 
         function polarToCartesian(angleDeg, distance) {
             const rad = angleDeg * Math.PI / 180;
@@ -727,40 +619,46 @@
             };
         }
 
-        const durationTime = 1;
+        const durationTime    = 1;
         const opacityDuration = 0.3;
-        const delayPercent = 0.15;
-        for (let i = 0; i < itemCount; i++) {
-            const { x, y } = polarToCartesian(worksAngleData[i], totalDistance);
+        const delayPercent    = 0.15;
 
-            
-            const itemSelector = `.works-content-item-${i + 1}`;
-            const start = (durationTime * delayPercent) * (i-1);
+        const baseDelay    = durationTime * delayPercent;
+        const opacityRatio = opacityDuration / durationTime;
 
-            // 位移動畫
-            worksTimeline.to(itemSelector, {
+        // 1. 一次抓回所有項目元素
+        const items = document.querySelectorAll('.works-content-item');
+
+        items.forEach((el, i) => {
+        // 2. 計算 selector 原本用不到，直接拿 DOM element 操作
+        const start = baseDelay * (i - 1);
+        const { x, y } = polarToCartesian(worksAngleData[i], totalDistance);
+
+        // 3. 依序在同一 Timeline 上串位移 + 淡入
+        worksTimeline
+            .to(el, {
                 '--transform-x': x,
                 '--transform-y': y,
                 '--transform-z': zDistance,
                 duration: durationTime,
-                ease: "power1.out",
-            }, start);
-
-            // 透明動畫（延遲 opacityDelayRatio 啟動）
-            worksTimeline.to(itemSelector, {
+                ease: 'power1.out',
+            }, start)
+            .to(el, {
                 opacity: 1,
-                duration: opacityDuration / durationTime,
+                duration: opacityRatio,
             }, start);
-        }
+        });
     }
     const servicesSectionGsap = () => {
         const titleGroupEl = document.querySelector('.services-title-group');
         const titleEl = titleGroupEl.querySelector('.services-title');
         const descEl  = titleGroupEl.querySelector('.services-description');
+        const ctaEl  = titleGroupEl.querySelector('.cta');
 
         const firstContentGroupEl = document.querySelector('.services-content-1');
         const firstContentTitleEl = firstContentGroupEl.querySelector('.services-title');
         const firstContentDescEl  = firstContentGroupEl.querySelector('.services-description');
+        const firstCtaEl  = firstContentGroupEl.querySelector('.cta');
 
         ScrollTrigger.create({
             trigger: '.services-section',
@@ -783,6 +681,7 @@
                     if(width.value > (992-1)){
                         firstContentTitleEl.textContent = '';
                         firstContentDescEl.textContent = '';
+                        firstCtaEl.classList.remove('active');
                     }
                 },
                 onUpdate: (self) => {
@@ -810,10 +709,14 @@
                             animateText(titleEl, serviceData.value[i-1].title);
                             animateText(descEl, serviceData.value[i-1].description);
                         }
+                        if(i == 2 && width.value > (992 - 1)){
+                            ctaEl.classList.add('active');
+                        }
 
                         if(i == 1 && width.value > (992 - 1)){
                             animateText(firstContentTitleEl, serviceData.value[0].title);
                             animateText(firstContentDescEl, serviceData.value[0].description);
+                            firstCtaEl.classList.add('active');
                         }
                     },
                     onLeaveBack: () =>{
@@ -821,6 +724,7 @@
                         if(i == 2 && width.value > (992 - 1)){
                             clearText(titleEl, serviceData.value[i-1].title);
                             clearText(descEl, serviceData.value[i-1].description);
+                            ctaEl.classList.remove('active');
                         }
                     },
                 },
@@ -877,6 +781,7 @@
                         if(i == serviceData.value.length && width.value > (992 - 1)){
                             clearText(titleEl, serviceData.value[i-1].title);
                             clearText(descEl, serviceData.value[i-1].description);
+                            ctaEl.classList.remove('active');
                         }
                     },
                     onLeaveBack: () => {
@@ -885,6 +790,9 @@
                         if(i > 1 && width.value > (992 - 1)){
                             animateText(titleEl, serviceData.value[i-1].title);
                             animateText(descEl, serviceData.value[i-1].description);
+                        }
+                        if(i == serviceData.value.length && width.value > (992 - 1)){
+                            ctaEl.classList.add('active');
                         }
                     }
                 },
@@ -899,7 +807,7 @@
                         markers: false,
                         scrub: true,
                         onUpdate: (self) =>{
-                            updatePosition(-13.5, 0, 0, -13.5, -1.5, 0, self.progress);
+                            updatePosition(-13.5, 0, 0, -13.5, -2, 0, self.progress);
                         },
                     }
                 })
@@ -907,6 +815,31 @@
         }
     }
     const partnersSectionGsap = () => {
+        function setupMouseTilt() {
+            // 拿到這個容器的 DOM
+            const el = document.querySelector('.partners-content-group');
+            if (!el) return;
+
+            const MAX_ROT_X = 30;
+            const MAX_ROT_Y = 30;
+
+            window.addEventListener('mousemove', e => {
+                // 將游標位置正規化到 [-1, 1]
+                const xNorm = (e.clientX / width.value  - 0.5) * 2;
+                const yNorm = (e.clientY / height.value - 0.5) * 2;
+
+                // 計算要轉多少度
+                const rotY = xNorm * MAX_ROT_Y;       // 水平方向滑動控制 Y 軸
+                const rotX = -yNorm * MAX_ROT_X;      // 垂直方向滑動控制 X 軸（負值是因為往下滑要往上轉）
+
+                // 用 GSAP 平滑地更新 transform
+                gsap.to(el, {
+                    rotationY: rotY,
+                    rotationX: rotX,
+                });
+            });
+        }
+
         ScrollTrigger.create({
             trigger: '.partners-section',
             start: 'top top',
@@ -926,7 +859,7 @@
                 markers: false,
                 onUpdate: (self) => {
                     if(width.value>(992 - 1)){
-                        updatePosition(-13.5, -1.5, 0, 0, 0, 0, self.progress);
+                        updatePosition(-13.5, -2, 0, 0, 0, 0, self.progress);
                     }else{
                         updatePosition(0, -4, 0, 0, 0, 0, self.progress);
                     }
@@ -1041,10 +974,16 @@
                     shrinkingFunction();
                 },
                 onLeave: ()=>{
-                    animateText(titleEl, "Let's make a Splash");
+                    gsap.to(titleEl, {
+                        opacity: 1,
+                        duration: 1
+                    });
                 },
                 onEnterBack: () => {
-                    clearText(titleEl, "Let's make a Splash");
+                    gsap.to(titleEl, {
+                        opacity: 0,
+                        duration: 1
+                    });
                 }
             },    
         });
@@ -1073,7 +1012,7 @@
     }
     const changeMaterialType = (index) => {
         if (splashRef.value) {
-            splashRef.value.changeMaterialType(materialData[index].value);
+            splashRef.value.changeMaterialType(materialData[index]);
         }
     }
 
@@ -1090,7 +1029,6 @@
     }
     
     // 控制自動播放
-    let autoPlayTimer = null;
     const handleAnimationComplete = (animationType) => {
         if (!isAutoPlaying.value) return;
         
@@ -1141,21 +1079,17 @@
             splashRef.value.addMouseControlEvents();
         }
         
-        
-        // 設置滾動動畫
         setupScrollAnimations();
     
         // 創建自定義緩動
         customEasing = CustomEase.create("custom", "M0,0 C0,0 0.015,1 1,1 ");
-        
         gsap.to({
             z: 10
         }, {
             z: 0,
             duration: 1,
-            ease: "customGrowEase", // 使用自定義緩動
+            ease: "customGrowEase",
             onUpdate: function(self) {
-                // 動畫每一幀更新場景位置
                 if (splashRef.value) {
                     splashRef.value.updatePosition(0, 0, this.targets()[0].z);
                 }
@@ -1182,7 +1116,6 @@
     
     // 滾動到指定區塊
     const scrollToSection = (sectionClass, isFromMobile = false) => {
-        // 如果從行動版選單點擊，先關閉選單
         if (isFromMobile) {
             toggleMenu();
         }
@@ -1194,10 +1127,8 @@
 
                 if(sectionClass == 'aboutUs-section'){
                     position = section.offsetTop + section.offsetHeight * 0.5;
-                }else if(sectionClass == 'works-section'){
+                }else if(sectionClass == 'works-section' || sectionClass == 'partners-section'){
                     position = section.offsetTop + section.offsetHeight * 0.15;
-                }else if(sectionClass == 'services-section'){
-                    position = section.offsetTop - section.offsetHeight / 12;
                 }
 
                 window.scrollTo({
@@ -1208,30 +1139,101 @@
         }, 100);
     }
 
+    // 文字動態特效
+    const splitMap = new WeakMap();
+    function animateText(el, text, options = {}) {
+        if (!el || typeof text !== 'string') return;
+        // 默认配置
+        const opts = Object.assign({
+            letters: 'ABCDEFGHIJKLMNOPQRSTUVWXYZ結合設計創意與前端開發擅長跨界沉浸式互動體驗',
+            charRevealDuration: 0.05,
+            randomIntervalDelay: 30,
+            randomDuration: 300,
+            stagger: 0.05,
+        }, options);
 
-    function setupMouseTilt() {
-        // 拿到這個容器的 DOM
-        const el = document.querySelector('.partners-content-group');
-        if (!el) return;
+        // 1. 清除旧内容，写入新文本
+        el.textContent = text;
 
-        const MAX_ROT_X = 30;
-        const MAX_ROT_Y = 30;
+        // 2. 拆分成字符
+        const split = new SplitText(el, { type: 'chars', charsClass: 'char' });
+        // 存储实例以便后续参考（可选）
+        splitMap.set(el, split);
 
-        window.addEventListener('mousemove', e => {
-            // 將游標位置正規化到 [-1, 1]
-            const xNorm = (e.clientX / width.value  - 0.5) * 2;
-            const yNorm = (e.clientY / height.value - 0.5) * 2;
-
-            // 計算要轉多少度
-            const rotY = xNorm * MAX_ROT_Y;       // 水平方向滑動控制 Y 軸
-            const rotX = -yNorm * MAX_ROT_X;      // 垂直方向滑動控制 X 軸（負值是因為往下滑要往上轉）
-
-            // 用 GSAP 平滑地更新 transform
-            gsap.to(el, {
-                rotationY: rotY,
-                rotationX: rotX,
-            });
+        // 3. 准备：隐藏所有字符、清空文本
+        split.chars.forEach(c => {
+            c.dataset.original = c.textContent;
+            c.style.visibility = 'hidden';
+            c.textContent = '';
         });
+
+        // 4. 创建时间轴，逐字符播放动画
+        const tl = gsap.timeline();
+        split.chars.forEach((charEl, idx) => {
+            const delayTime = idx * opts.stagger;
+            // set 可见
+            tl.set(charEl, { visibility: 'visible' }, delayTime);
+            // 然后一个空动画占位，用 onStart 做闪动
+            tl.to({}, {
+            duration: opts.charRevealDuration,
+            onStart: () => {
+                const iv = setInterval(() => {
+                    const letters = opts.letters;
+                    const r = letters.charAt(Math.floor(Math.random() * letters.length));
+                    charEl.textContent = r;
+                }, opts.randomIntervalDelay);
+                // 随机闪动结束后，显示原字符
+                setTimeout(() => {
+                    clearInterval(iv);
+                    charEl.textContent = charEl.dataset.original;
+                }, opts.randomDuration);
+            }
+            }, delayTime);
+        });
+
+        return tl;
+    }
+    function clearText(el, options = {}) {
+        if (!el) return;
+        const opts = Object.assign({
+            charFadeDuration: 0.1,
+            stagger: 0.01,
+            ease: 'power1.out',
+        }, options);
+
+        // 获取当前文本
+        const currentText = el.textContent || '';
+        if (!currentText) return; // 已经空则无需操作
+
+        // 1. 拆分
+        // 首先把内容设回原文（有助于 SplitText 采用正确节点）
+        el.textContent = currentText;
+        const split = new SplitText(el, { type: 'chars', charsClass: 'char' });
+        splitMap.set(el, split);
+
+        // 2. 准备：确保所有字符可见、opacity 为 1
+        split.chars.forEach(c => {
+            c.style.visibility = 'visible';
+            c.style.opacity = '1';
+        });
+
+        // 3. 创建时间轴：从首字符到末字符依次淡出
+        const tl = gsap.timeline({
+            onComplete: () => {
+            // 最后彻底清空文本（移除拆分 DOM）
+            el.textContent = '';
+            // 可选：清理 SplitText 实例引用
+            splitMap.delete(el);
+            }
+        });
+        tl.to(split.chars, {
+            opacity: 0,
+            duration: opts.charFadeDuration,
+            ease: opts.ease,
+            stagger: opts.stagger
+        });
+
+        return tl;
     }
 
     onMounted(async() => {
