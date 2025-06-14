@@ -313,11 +313,10 @@
 
     const materialData =[
         'default',
-        'arVrXr',
-        'digiArt',
-        'uiuxDev',
-        'animate',
-        'graphic',
+        'normalColor',
+        'wireFrame',
+        'staticNoisePos',
+        'toonHatching',
     ]
 
     function fetchMediaById(id) {
@@ -681,6 +680,9 @@
                         if(i > 1 && width.value > (992 - 1)){
                             animateText(titleEl, serviceData.value[i-1].title);
                             animateText(descEl, serviceData.value[i-1].description);
+                            gsap.set(titleGroupEl, {
+                                opacity: 1,
+                            })
                         }
                         if(i == 2 && width.value > (992 - 1)){
                             ctaEl.classList.add('active');
@@ -698,6 +700,12 @@
                             clearText(titleEl, serviceData.value[i-1].title);
                             clearText(descEl, serviceData.value[i-1].description);
                             ctaEl.classList.remove('active');
+
+                            gsap.to(titleGroupEl, {
+                                opacity: 0,
+                                duration: 1,
+                                ease: 'power1.inOut'
+                            })
                         }
                     },
                 },
@@ -755,6 +763,11 @@
                             clearText(titleEl, serviceData.value[i-1].title);
                             clearText(descEl, serviceData.value[i-1].description);
                             ctaEl.classList.remove('active');
+                            gsap.to(titleGroupEl, {
+                                opacity: 0,
+                                duration: 1,
+                                ease: 'power1.inOut'
+                            })
                         }
                     },
                     onLeaveBack: () => {
@@ -766,6 +779,9 @@
                         }
                         if(i == serviceData.value.length && width.value > (992 - 1)){
                             ctaEl.classList.add('active');
+                            gsap.set(titleGroupEl, {
+                                opacity: 1,
+                            })
                         }
                     }
                 },

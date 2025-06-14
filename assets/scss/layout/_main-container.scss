@@ -218,10 +218,7 @@
                     position: absolute;
                     top: 50%;
                     left: 50%;
-                    width: 150px;
-                    aspect-ratio: 16 / 9;
                     opacity: 0;
-                    // border-radius: 2rem;
                     overflow: hidden;
                     --transform-x: 0;
                     --transform-y: 0;
@@ -231,9 +228,17 @@
                         calc(-50% + var(--transform-y, 0) * 1px), 
                         calc(-100px + var(--transform-z, 0) * 1px)
                     );
+                    width: 150px;
+                    aspect-ratio: 16 / 9;
                     &.column{
                         width: calc(150px * 9 / 16);
                         aspect-ratio: 9 / 16;
+                    }
+                    @include max-md{
+                        width: 100px;
+                        &.column{
+                            width: calc(100px * 9 / 16);
+                        }
                     }
                     img,video{
                         width: 100%;

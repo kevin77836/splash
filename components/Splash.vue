@@ -59,8 +59,8 @@ const sphereParams = reactive({
 // --- 流動動畫參數 ---
 const animParams = reactive({
   // 基本設定
-  mobileResolution: 100,
-  resolution: 125,                // Marching Cubes 解析度
+  mobileResolution: 80,
+  resolution: 120,                // Marching Cubes 解析度
   numSegments: 50,                // 每條線分段數量
   subtract: 20,                   // Metaball 減法參數
   
@@ -134,15 +134,364 @@ let textOriginPosition2 = null; // 儲存文字2的原點位置
 
 // let stats = null;
 
-// --- 材質類型定義 ---
 const materialTypes = [
   'default',
-  'arVrXr',
-  'digiArt',
-  'uiuxDev',
-  'animate',
-  'graphic'
+  'metal',
+  'wireFrame',
+  'normalColor',
+  'toonHatching',
+  'fresnelRim',
+  'toonShading',
+  'hatching',
+  'staticNoisePos',
+  'fresnelStatic',
+  'woodTextureStatic',
 ];
+
+// --- 材質配置（集中管理，方便擴充或修改）---
+const materialConfigs = {
+  default: {
+    type: 'physical',
+    props: {
+      metalness: 0,
+      roughness: 0,
+      transparent: true,
+      opacity: 0.75,
+      transmission: 1.0,
+      ior: 1.5,
+      thickness: 1,
+      envMapIntensity: 5.0,
+      side: THREE.DoubleSide
+    }
+  },
+  metal: {
+    type: 'physical',
+    props: {
+      color: 0xffffff,
+      metalness: 1,
+      roughness: 0,
+      transparent: true,
+      transmission: 1,
+      envMapIntensity: 5.0,
+      side: THREE.DoubleSide
+    }
+  },
+  wireFrame: {
+    type: 'basic',
+    props: {
+      color: 0x000000,
+      transparent: true,
+      opacity: 0.15,
+      wireframe: true
+    }
+  },
+  normalColor: {
+    type: 'shader',
+    factory: ({ envMap }) => {
+      const vs = `
+        varying vec3 vNormal;
+        void main() {
+          vNormal = normalize(normalMatrix * normal);
+          gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+        }
+      `;
+      const fs = `
+        precision mediump float;
+        varying vec3 vNormal;
+        void main() {
+          vec3 n = normalize(vNormal);
+          vec3 color = vec3(0.5) + 0.5 * n;
+          gl_FragColor = vec4(color, 1.0);
+        }
+      `;
+      const mat = new THREE.ShaderMaterial({
+        vertexShader: vs,
+        fragmentShader: fs,
+        side: THREE.DoubleSide
+      });
+      if (envMap) { mat.envMap = envMap; mat.needsUpdate = true; }
+      return mat;
+    }
+  },
+  toonHatching: {
+    type: 'shader',
+    factory: ({ envMap }) => {
+      const vs = `
+        varying vec3 vNormal;
+        void main() {
+          gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+          vNormal = normalize(normalMatrix * normal);
+        }
+      `;
+      const fs = `
+        precision mediump float;
+        uniform vec3 uBaseColor;
+        uniform vec3 uLineColor1;
+        uniform vec3 uLineColor2;
+        uniform vec3 uLineColor3;
+        uniform vec3 uLineColor4;
+        uniform vec3 uDirLightPos;
+        uniform vec3 uDirLightColor;
+        uniform vec3 uAmbientLightColor;
+        varying vec3 vNormal;
+        void main() {
+          float directionalLightWeighting = max(dot(normalize(vNormal), uDirLightPos), 0.0);
+          vec3 lightWeighting = uAmbientLightColor + uDirLightColor * directionalLightWeighting;
+          vec4 colorOut = vec4(uBaseColor, 1.0);
+          if (length(lightWeighting) < 1.00) {
+            if (mod(gl_FragCoord.x + gl_FragCoord.y, 10.0) == 0.0) {
+              colorOut = vec4(uLineColor1, 1.0);
+            }
+          }
+          if (length(lightWeighting) < 0.75) {
+            if (mod(gl_FragCoord.x - gl_FragCoord.y, 10.0) == 0.0) {
+              colorOut = vec4(uLineColor2, 1.0);
+            }
+          }
+          if (length(lightWeighting) < 0.50) {
+            if (mod(gl_FragCoord.x + gl_FragCoord.y - 5.0, 10.0) == 0.0) {
+              colorOut = vec4(uLineColor3, 1.0);
+            }
+          }
+          if (length(lightWeighting) < 0.3465) {
+            if (mod(gl_FragCoord.x - gl_FragCoord.y - 5.0, 10.0) == 0.0) {
+              colorOut = vec4(uLineColor4, 1.0);
+            }
+          }
+          gl_FragColor = colorOut;
+          #include <colorspace_fragment>
+        }
+      `;
+      // 克隆 uniforms，避免多实例共享
+      const uniforms = THREE.UniformsUtils.clone({
+        uDirLightPos:       { value: new THREE.Vector3(0.5, 0.8, 0.3).normalize() },
+        uDirLightColor:     { value: new THREE.Color(0xeeeeee) },
+        uAmbientLightColor: { value: new THREE.Color(0x050505) },
+        uBaseColor:         { value: new THREE.Color(0xffffff) },
+        uLineColor1:        { value: new THREE.Color(0x000000) },
+        uLineColor2:        { value: new THREE.Color(0x000000) },
+        uLineColor3:        { value: new THREE.Color(0x000000) },
+        uLineColor4:        { value: new THREE.Color(0x000000) }
+      });
+      const mat = new THREE.ShaderMaterial({
+        vertexShader: vs,
+        fragmentShader: fs,
+        uniforms: uniforms,
+        side: THREE.FrontSide
+      });
+      if (envMap) {
+        mat.envMap = envMap;
+        mat.needsUpdate = true;
+      }
+      return mat;
+    }
+  },
+  fresnelRim: {
+    type: 'shader',
+    factory: ({ envMap }) => {
+      const vs = `
+        varying vec3 vNormal;
+        varying vec3 vViewDir;
+        void main() {
+          vec3 worldPos = (modelMatrix * vec4(position, 1.0)).xyz;
+          vNormal = normalize(normalMatrix * normal);
+          vViewDir = normalize(cameraPosition - worldPos);
+          gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+        }
+      `;
+      const fs = `
+        precision mediump float;
+        varying vec3 vNormal;
+        varying vec3 vViewDir;
+        uniform vec3 baseColor;
+        uniform float power;
+        void main() {
+          float f = pow(1.0 - max(dot(normalize(vNormal), normalize(vViewDir)), 0.0), power);
+          vec3 color = baseColor + vec3(f);
+          gl_FragColor = vec4(color, 1.0);
+        }
+      `;
+      const uniforms = THREE.UniformsUtils.clone({
+        baseColor: { value: new THREE.Color(0x4444ff) },
+        power:     { value: 2.0 }
+      });
+      const mat = new THREE.ShaderMaterial({ vertexShader: vs, fragmentShader: fs, uniforms, side: THREE.DoubleSide });
+      if (envMap && 'envMap' in mat) { mat.envMap = envMap; mat.needsUpdate = true; }
+      return mat;
+    }
+  },
+  toonShading: {
+    type: 'shader',
+    factory: ({ envMap }) => {
+      const vs = `
+        varying vec3 vNormal;
+        varying vec3 vViewDir;
+        void main() {
+          vec3 worldPos = (modelMatrix * vec4(position,1.0)).xyz;
+          vNormal = normalize(normalMatrix * normal);
+          vViewDir = normalize(cameraPosition - worldPos);
+          gl_Position = projectionMatrix * modelViewMatrix * vec4(position,1.0);
+        }
+      `;
+      const fs = `
+        precision mediump float;
+        varying vec3 vNormal;
+        varying vec3 vViewDir;
+        uniform vec3 uBaseColor;
+        uniform vec3 uDirLightPos;
+        uniform vec3 uDirLightColor;
+        uniform vec3 uAmbientLightColor;
+        void main() {
+          float NdotL = max(dot(normalize(vNormal), normalize(uDirLightPos)), 0.0);
+          vec3 lightWeight = uAmbientLightColor + uDirLightColor * NdotL;
+          float intensity = length(lightWeight);
+          // 分段
+          vec3 color;
+          if (intensity < 0.3) {
+            color = uBaseColor * 0.3;
+          } else if (intensity < 0.6) {
+            color = uBaseColor * 0.6;
+          } else {
+            color = uBaseColor;
+          }
+          gl_FragColor = vec4(color, 1.0);
+        }
+      `;
+      const uniforms = THREE.UniformsUtils.clone({
+        uBaseColor:         { value: new THREE.Color(0xffffff) },
+        uDirLightPos:       { value: new THREE.Vector3(0.5, 0.8, 0.3).normalize() },
+        uDirLightColor:     { value: new THREE.Color(0xffffff) },
+        uAmbientLightColor: { value: new THREE.Color(0x222222) }
+      });
+      const mat = new THREE.ShaderMaterial({ vertexShader: vs, fragmentShader: fs, uniforms, side: THREE.DoubleSide });
+      if (envMap && 'envMap' in mat) { mat.envMap = envMap; mat.needsUpdate = true; }
+      return mat;
+    }
+  },
+  hatching: {
+    type: 'shader',
+    factory: ({ envMap }) => {
+      const vs = `
+        varying vec3 vNormal;
+        void main() {
+          vNormal = normalize(normalMatrix * normal);
+          gl_Position = projectionMatrix * modelViewMatrix * vec4(position,1.0);
+        }
+      `;
+      const fs = `
+        precision mediump float;
+        varying vec3 vNormal;
+        uniform vec3 uBaseColor;
+        uniform vec3 uLineColor;
+        void main() {
+          float NdotL = dot(normalize(vNormal), vec3(0.0, 0.0, 1.0));
+          float shade = smoothstep(0.0, 1.0, NdotL);
+          vec3 base = uBaseColor * shade;
+          // 根据片段坐标画静态交叉线
+          if (mod(gl_FragCoord.x + gl_FragCoord.y, 10.0) < 1.0) {
+            base = uLineColor;
+          }
+          gl_FragColor = vec4(base, 1.0);
+        }
+      `;
+      const uniforms = THREE.UniformsUtils.clone({
+        uBaseColor: { value: new THREE.Color(0xffffff) },
+        uLineColor: { value: new THREE.Color(0x000000) }
+      });
+      const mat = new THREE.ShaderMaterial({ vertexShader: vs, fragmentShader: fs, uniforms, side: THREE.DoubleSide });
+      if (envMap && 'envMap' in mat) { mat.envMap = envMap; mat.needsUpdate = true; }
+      return mat;
+    }
+  },
+  staticNoisePos: {
+    type: 'shader',
+    factory: ({ envMap }) => {
+      const vs = `
+        varying vec3 vPos;
+        void main() {
+          vec4 worldPos = modelMatrix * vec4(position, 1.0);
+          vPos = worldPos.xyz;
+          gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+        }
+      `;
+      const fs = `
+        precision mediump float;
+        varying vec3 vPos;
+        float rand(vec3 co) {
+          return fract(sin(dot(co, vec3(12.9898,78.233,45.164))) * 43758.5453);
+        }
+        void main() {
+          float n = rand(vPos);
+          gl_FragColor = vec4(vec3(n), 1.0);
+        }
+      `;
+      const mat = new THREE.ShaderMaterial({ vertexShader: vs, fragmentShader: fs, side: THREE.DoubleSide });
+      if (envMap && 'envMap' in mat) { mat.envMap = envMap; mat.needsUpdate = true; }
+      return mat;
+    }
+  },
+  fresnelStatic: {
+    type: 'shader',
+    factory: ({ envMap }) => {
+      const vs = `
+        varying vec3 vNormal;
+        varying vec3 vViewDir;
+        void main() {
+          vec3 worldPos = (modelMatrix * vec4(position,1.0)).xyz;
+          vNormal = normalize(normalMatrix * normal);
+          vViewDir = normalize(cameraPosition - worldPos);
+          gl_Position = projectionMatrix * modelViewMatrix * vec4(position,1.0);
+        }
+      `;
+      const fs = `
+        precision mediump float;
+        varying vec3 vNormal;
+        varying vec3 vViewDir;
+        uniform vec3 baseColor;
+        uniform float power;
+        void main() {
+          float f = pow(1.0 - max(dot(normalize(vNormal), normalize(vViewDir)), 0.0), power);
+          vec3 color = baseColor + vec3(f);
+          gl_FragColor = vec4(color,1.0);
+        }
+      `;
+      const uniforms = THREE.UniformsUtils.clone({
+        baseColor: { value: new THREE.Color(0x888888) },
+        power:     { value: 2.0 }
+      });
+      const mat = new THREE.ShaderMaterial({ vertexShader: vs, fragmentShader: fs, uniforms, side: THREE.DoubleSide });
+      if (envMap && 'envMap' in mat) { mat.envMap = envMap; mat.needsUpdate = true; }
+      return mat;
+    }
+  },
+  woodTextureStatic: {
+    type: 'shader',
+    factory: ({ envMap }) => {
+      const vs = `
+        varying vec3 vPos;
+        void main() {
+          vec4 worldPos = modelMatrix * vec4(position,1.0);
+          vPos = worldPos.xyz;
+          gl_Position = projectionMatrix * modelViewMatrix * vec4(position,1.0);
+        }
+      `;
+      const fs = `
+        precision mediump float;
+        varying vec3 vPos;
+        float rand(float x) { return fract(sin(x*12.9898)*43758.5453); }
+        void main() {
+          float rings = vPos.x * 5.0 + rand(vPos.z)*0.5;
+          float f = fract(rings);
+          vec3 color = mix(vec3(0.4,0.2,0.1), vec3(0.6,0.4,0.2), f);
+          gl_FragColor = vec4(color,1.0);
+        }
+      `;
+      const mat = new THREE.ShaderMaterial({ vertexShader: vs, fragmentShader: fs, side: THREE.DoubleSide });
+      if (envMap && 'envMap' in mat) { mat.envMap = envMap; mat.needsUpdate = true; }
+      return mat;
+    }
+  },
+};
 
 // --- 材質管理器 ---
 class MaterialManager {
@@ -151,178 +500,97 @@ class MaterialManager {
     this.isInitialized = false;
   }
 
-  // 初始化所有材質
+  // envMap: THREE.CubeTexture or null
   initialize(envMap) {
     if (this.isInitialized) return;
-    
-    // 定義所有材質配置
-    const configs = {
-      default: {
-        type: 'physical',
-        props: {
-          metalness: 0,
-          roughness: 0,
-          transparent: true,
-          opacity: 0.75,
-          transmission: 1.0,
-          ior: 1.5,
-          thickness: 1,
-          envMapIntensity: 5.0,
-          side: THREE.DoubleSide
+    for (const type of materialTypes) {
+      const cfg = materialConfigs[type];
+      if (!cfg) {
+        console.warn(`[MaterialManager] 無配置: ${type}`);
+        continue;
+      }
+      let mat = null;
+      if (cfg.type === 'shader' && typeof cfg.factory === 'function') {
+        mat = cfg.factory({ envMap });
+      } else {
+        const props = cfg.props || {};
+        if (cfg.type === 'physical') {
+          mat = new THREE.MeshPhysicalMaterial(props);
+        } else if (cfg.type === 'standard') {
+          mat = new THREE.MeshStandardMaterial(props);
+        } else if (cfg.type === 'basic') {
+          mat = new THREE.MeshBasicMaterial(props);
+        } else {
+          mat = new THREE.MeshPhysicalMaterial(props);
         }
-      },
-      arVrXr: {
-        type: 'standard',
-        props: {
-          color: 0x101010,
-          roughness: 0.3,
-          metalness: 0,
-          side: THREE.DoubleSide,
-          envMapIntensity: 5.0
-        }
-      },
-      digiArt: {
-        type: 'physical',
-        props: {
-          color: 0xffffff,
-          metalness: 1,
-          roughness: 0,
-          transparent: true,
-          transmission: 1,
-          envMapIntensity: 5.0
-        }
-      },
-      uiuxDev: {
-        type: 'basic',
-        props: {
-          color: 0x000000,
-          transparent: true,
-          opacity: 0.15,
-          wireframe: true
-        }
-      },
-      animate: {
-        type: 'physical',
-        props: {
-          color: 0xffffff,
-          metalness: 0.1,
-          roughness: 0.2,
-          transmission: 0.8,
-          clearcoat: 0.5,
-          side: THREE.DoubleSide,
-          transparent: true,
-          envMapIntensity: 3.0
-        }
-      },
-      graphic: {
-        type: 'physical',
-        props: {
-          color: 0xfff8ee,
-          roughness: 0.05,
-          metalness: 0,
-          clearcoat: 1.0,
-          clearcoatRoughness: 0.02,
-          side: THREE.DoubleSide,
-          envMapIntensity: 2.0
+        if (envMap && 'envMap' in mat) {
+          mat.envMap = envMap;
+          mat.needsUpdate = true;
         }
       }
-    };
-
-    // 創建所有材質
-    for (const [name, config] of Object.entries(configs)) {
-      const material = this.createMaterial(config.type, config.props);
-      if (envMap) {
-        material.envMap = envMap;
-        // material.needsUpdate = true;
+      if (mat) {
+        this.materials.set(type, mat);
       }
-      this.materials.set(name, material);
     }
-
     this.isInitialized = true;
-    console.log('材質初始化完成');
+    console.log('[MaterialManager] 初始化完成，材質數量:', this.materials.size);
   }
 
-  // 創建材質
-  createMaterial(type, props) {
-    let material;
-    switch (type) {
-      case 'physical':
-        material = new THREE.MeshPhysicalMaterial(props);
-        break;
-      case 'standard':
-        material = new THREE.MeshStandardMaterial(props);
-        break;
-      case 'basic':
-        material = new THREE.MeshBasicMaterial(props);
-        break;
-      default:
-        material = new THREE.MeshPhysicalMaterial(props);
-    }
-    return material;
-  }
-
-  // 獲取材質
   getMaterial(type) {
-    return this.materials.get(type) || this.materials.get('default');
+    if (this.materials.has(type)) {
+      return this.materials.get(type);
+    }
+    console.warn(`[MaterialManager] 請求不存在的材質類型: ${type}，返回 default`);
+    return this.materials.get('default');
   }
 
-  // 更新環境貼圖
+  update(delta, elapsed) {
+    const matTime = this.materials.get('timeColor');
+    if (matTime && matTime.uniforms && matTime.uniforms.uTime) {
+      matTime.uniforms.uTime.value = elapsed;
+    }
+  }
+
   updateEnvironmentMaps(envMap) {
-    for (const material of this.materials.values()) {
-      if (material.envMap !== undefined) {
-        material.envMap = envMap;
+    for (const mat of this.materials.values()) {
+      if ('envMap' in mat) {
+        mat.envMap = envMap;
+        mat.needsUpdate = true;
       }
     }
   }
 
-
-  // 釋放資源
   dispose() {
-    for (const material of this.materials.values()) {
-      material.dispose();
+    for (const mat of this.materials.values()) {
+      mat.dispose();
     }
     this.materials.clear();
     this.isInitialized = false;
   }
 }
 
-// 創建材質管理器實例
+// 創建 MaterialManager 實例
 const materialManager = new MaterialManager();
 
-// 當前材質類型
 let currentMaterialType = 'default';
 
 function changeMaterialType(materialType) {
-  if (!effect) return;
-
-  // 檢查材質類型是否有效
+  if (!sphereGroup || !effect) return;
   if (!materialTypes.includes(materialType)) {
     console.warn(`無效的材質類型: ${materialType}`);
     return;
   }
-
-  // 如果是相同的材質類型，不進行切換
   if (currentMaterialType === materialType) return;
-
-  console.log(`切換材質: ${materialType}`);
-
-  // 獲取預編譯的材質
-  const newMaterial = materialManager.getMaterial(materialType);
-  if (!newMaterial) return;
-
-  // 更新當前材質
-  material = newMaterial;
+  const newMat = materialManager.getMaterial(materialType);
+  if (!newMat) return;
   currentMaterialType = materialType;
-
-  // 更新場景中的材質引用
-  effect.material = material;
-  if (sphereGroup) {
-    sphereGroup.traverse((object) => {
-      if (object.isMesh) {
-        object.material = material;
-      }
-    });
-  }
+  effect.material = newMat
+  sphereGroup.traverse(obj => {
+    if (obj.isMesh) {
+      obj.material = newMat;
+      obj.material.needsUpdate = true;
+    }
+  });
 }
 
 function loadEnvironmentMap() {
@@ -357,6 +625,9 @@ function loadEnvironmentMap() {
   });
 }
 
+/**
+ * 文字物件
+ */
 function loadFontAndCreateText() {
   const ttfLoader = new TTFLoader();
   const fontLoader = new FontLoader();
@@ -377,10 +648,6 @@ function loadFontAndCreateText() {
     scene.add(textMesh2);
   });
 }
-
-/**
- * 創建文字物件
- */
 function createText(text, position, align, size = 0.5) {
   const shapes = font.generateShapes(text, size);
   const geometry = new THREE.ShapeGeometry(shapes);
@@ -409,10 +676,6 @@ function createText(text, position, align, size = 0.5) {
   
   return mesh;
 }
-
-/**
- * 文字從原點到目標位置的動畫
- */
 function animateTextToTargetPosition() {
   if (!textMesh1 || !textMesh2 || !textTargetPosition1 || !textTargetPosition2) return;
   
@@ -476,10 +739,6 @@ function animateTextToTargetPosition() {
     ease: "easeOut"
   });
 }
-
-/**
- * 文字從目標位置回到原點的動畫
- */
 function animateTextToOrigin() {
   if (!textMesh1 || !textMesh2) return;
   
