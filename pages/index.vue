@@ -313,7 +313,7 @@
 
     const materialData =[
         'default',
-        'normalColor',
+        'fresnelStatic',
         'wireFrame',
         'staticNoisePos',
         'toonHatching',
