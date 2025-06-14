@@ -266,13 +266,12 @@
             justify-content: flex-end;
             height: 100vh;
             width: 40%;
-            padding: 0 1rem 4rem 0;
+            padding: 0 2rem 4rem 0;
             @include max-xxl{
-                padding: 0 1rem 2rem 0;
+                padding: 0 2rem 2rem 0;
             }
             @include max-lg{
                 display: none;
-                padding: 0 1rem 1rem 0;
             }
             .services-title{
                 font-weight: bold;
@@ -293,7 +292,7 @@
         }
         .services-content-group{
             width: 60%;
-            padding-left: 1rem;
+            padding-left: 2rem;
             @include max-lg{
                 padding: 0;
                 width: 100%;

@@ -241,8 +241,6 @@
     import { isMobileDevice } from '../utils/device';
     import worksData from '/data/worksData.json'
 
-    console.log('worksData', worksData)
-
     if (process.client) {
         gsap.registerPlugin(ScrollTrigger, CustomEase, SplitText, ScrollSmoother);
     }
@@ -295,41 +293,22 @@
         },
     ])
 
-    // 新增：媒體資源列表
-    // const mediaResources = ref([
-    //     { id: 1,type: 'video', src: '/works/works1.mp4', link: '#', column: false, title:'Web AR | 2024 康士坦的變化球 KST 眠月線演唱會 高雄站'},
-    //     { id: 2,type: 'video', src: '/works/works2.mp4', link: '#', column: false, title:'Web Development | Composite Hybrid 官方網站'},
-    //     { id: 3,type: 'video', src: '/works/works3.mp4', link: '#', column: false, title:'AR Card / 3D Animation | 黑金派對 2024 – 可可占星術'},
-    //     { id: 4,type: 'image', src: '/works/works4.webp', link: '#', column: false, title:'CIS | Da Zi Zai 東方美人茶'},
-    //     { id: 5,type: 'video', src: '/works/works5.mp4', link: '#', column: true, title:'專案標題'},
-    //     { id: 6,type: 'video', src: '/works/works6.mp4', link: '#', column: true, title:'專案標題'},
-    //     { id: 7,type: 'video', src: '/works/works7.mp4', link: '#', column: false, title:'AR Card / 3D Animation | 黑金派對 2024 – 可可占星術'},
-    //     { id: 8,type: 'image', src: '/works/works8.webp', link: '#', column: false, title:'專案標題'},
-    //     { id: 9,type: 'video', src: '/works/works9.mp4', link: '#', column: true, title:'AR | 打狗祭 2024 × AR 小怪獸現身!'},
-    //     { id: 10,type: 'video', src: '/works/works10.mp4', link: '#', column: true, title:'專案標題'},
-    //     { id: 11,type: 'video', src: '/works/works11.mp4', link: '#', column: true, title:'Web AR | 2024 康士坦的變化球 KST 眠月線演唱會 高雄站'},
-    //     { id: 12,type: 'image', src: '/works/works12.webp', link: '#', column: false, title:'專案標題'},
-    //     { id: 13,type: 'video', src: '/works/works13.mp4', link: '#', column: false, title:'CIS | Composite Hybrid International Co.,Ltd.'},
-    //     { id: 14,type: 'video', src: '/works/works14.mp4', link: '#', column: true, title:'專案標題'},
-    //     { id: 15,type: 'video', src: '/works/works15.mp4', link: '#', column: true, title:'專案標題'},
-    // ]);
-
     const mediaResources = ref([
-        { id: 1,type: 'video', src: '/works/works1.mp4', link: '#', column: false, title:'Web AR | 2024 康士坦的變化球 KST 眠月線演唱會 高雄站'},
-        { id: 2,type: 'video', src: '/works/works2.mp4', link: '#', column: false, title:'Web Development | Composite Hybrid 官方網站'},
-        { id: 3,type: 'video', src: '/works/works3.mp4', link: '#', column: false, title:'AR Card / 3D Animation | 黑金派對 2024 – 可可占星術'},
-        { id: 4,type: 'image', src: '/works/works4.webp', link: '#', column: false, title:'CIS | Da Zi Zai 東方美人茶'},
-        { id: 5,type: 'video', src: '/works/works5.mp4', link: '#', column: true, title:'專案標題'},
-        { id: 6,type: 'video', src: '/works/works6.mp4', link: '#', column: true, title:'專案標題'},
-        { id: 7,type: 'video', src: '/works/works7.mp4', link: '#', column: false, title:'AR Card / 3D Animation | 黑金派對 2024 – 可可占星術'},
-        { id: 8,type: 'image', src: '/works/works8.webp', link: '#', column: false, title:'專案標題'},
-        { id: 9,type: 'video', src: '/works/works9.mp4', link: '#', column: true, title:'AR | 打狗祭 2024 × AR 小怪獸現身!'},
-        { id: 10,type: 'video', src: '/works/works10.mp4', link: '#', column: true, title:'專案標題'},
-        { id: 11,type: 'video', src: '/works/works11.mp4', link: '#', column: true, title:'Web AR | 2024 康士坦的變化球 KST 眠月線演唱會 高雄站'},
-        { id: 12,type: 'image', src: '/works/works12.webp', link: '#', column: false, title:'專案標題'},
-        { id: 13,type: 'video', src: '/works/works13.mp4', link: '#', column: false, title:'CIS | Composite Hybrid International Co.,Ltd.'},
-        { id: 14,type: 'video', src: '/works/works14.mp4', link: '#', column: true, title:'專案標題'},
-        { id: 15,type: 'video', src: '/works/works15.mp4', link: '#', column: true, title:'專案標題'},
+        { id: 1,type: 'video', src: '/works/works1.mp4', column: false},
+        { id: 2,type: 'video', src: '/works/works2.mp4', column: false},
+        { id: 3,type: 'video', src: '/works/works3.mp4', column: false},
+        { id: 4,type: 'image', src: '/works/works4.webp', column: false},
+        { id: 5,type: 'video', src: '/works/works5.mp4', column: true},
+        { id: 6,type: 'video', src: '/works/works6.mp4', column: true},
+        { id: 7,type: 'video', src: '/works/works7.mp4', column: false},
+        { id: 8,type: 'image', src: '/works/works8.webp', column: false},
+        { id: 9,type: 'video', src: '/works/works9.mp4', column: true},
+        { id: 10,type: 'video', src: '/works/works10.mp4', column: true},
+        { id: 11,type: 'video', src: '/works/works11.mp4', column: true},
+        { id: 12,type: 'image', src: '/works/works12.webp', column: false},
+        { id: 13,type: 'video', src: '/works/works13.mp4', column: false},
+        { id: 14,type: 'video', src: '/works/works14.mp4', column: true},
+        { id: 15,type: 'video', src: '/works/works15.mp4', column: true},
     ]);
 
     const materialData =[
