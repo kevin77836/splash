@@ -615,7 +615,7 @@
 
         const durationTime    = 1;
         const opacityDuration = 0.3;
-        const delayPercent    = 0.15;
+        const delayPercent    = 0.1;
 
         const baseDelay    = durationTime * delayPercent;
         const opacityRatio = opacityDuration / durationTime;
@@ -680,7 +680,7 @@
                 },
                 onUpdate: (self) => {
                     if(width.value>(992 - 1)){
-                        updatePosition(0, 0, 10, -13.5, 0, 0, self.progress);
+                        updatePosition(0, 0, 10, -14, 0, 0, self.progress);
                     }else{
                         updatePosition(0, 0, 10, 0, -4, 0, self.progress);
                     }
@@ -801,7 +801,7 @@
                         markers: false,
                         scrub: true,
                         onUpdate: (self) =>{
-                            updatePosition(-13.5, 0, 0, -13.5, -2, 0, self.progress);
+                            updatePosition(-14, 0, 0, -14, -2, 0, self.progress);
                         },
                     }
                 })
@@ -814,8 +814,8 @@
             const el = document.querySelector('.partners-content-group');
             if (!el) return;
 
-            const MAX_ROT_X = 30;
-            const MAX_ROT_Y = 30;
+            const MAX_ROT_X = 15;
+            const MAX_ROT_Y = 15;
 
             window.addEventListener('mousemove', e => {
                 // 將游標位置正規化到 [-1, 1]
@@ -853,7 +853,7 @@
                 markers: false,
                 onUpdate: (self) => {
                     if(width.value>(992 - 1)){
-                        updatePosition(-13.5, -2, 0, 0, 0, 0, self.progress);
+                        updatePosition(-14, -2, 0, 0, 0, 0, self.progress);
                     }else{
                         updatePosition(0, -4, 0, 0, 0, 0, self.progress);
                     }
@@ -970,12 +970,13 @@
                 onLeave: ()=>{
                     gsap.to(titleEl, {
                         opacity: 1,
-                        duration: 2
+                        duration: 5
                     });
                 },
                 onEnterBack: () => {
-                    gsap.set(titleEl, {
+                    gsap.to(titleEl, {
                         opacity: 0,
+                        duration: 5
                     });
                 }
             },    

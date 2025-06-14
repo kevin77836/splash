@@ -59,8 +59,8 @@ const sphereParams = reactive({
 // --- 流動動畫參數 ---
 const animParams = reactive({
   // 基本設定
-  mobileResolution: 80,
-  resolution: 100,                // Marching Cubes 解析度
+  mobileResolution: 100,
+  resolution: 150,                // Marching Cubes 解析度
   numSegments: 50,                // 每條線分段數量
   subtract: 20,                   // Metaball 減法參數
   
@@ -154,8 +154,6 @@ class MaterialManager {
   // 初始化所有材質
   initialize(envMap) {
     if (this.isInitialized) return;
-    
-    console.log('開始初始化材質...');
     
     // 定義所有材質配置
     const configs = {
@@ -273,7 +271,6 @@ class MaterialManager {
     for (const material of this.materials.values()) {
       if (material.envMap !== undefined) {
         material.envMap = envMap;
-        // material.needsUpdate = true;
       }
     }
   }
